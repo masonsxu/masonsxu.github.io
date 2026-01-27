@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面未找到 | masonsxu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f172a',
+                        accent: '#0ea5e9',
+                        secondary: '#334155',
+                        dark: '#020617',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #e2e8f0;
+        }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #22d3ee 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+        .tech-grid {
+            background-image: radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.15) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="antialiased overflow-hidden">
+
+    <div class="min-h-screen flex items-center justify-center relative overflow-hidden tech-grid">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent"></div>
+        <div class="absolute top-1/4 -left-20 w-72 h-72 bg-accent/20 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+
+        <div class="max-w-2xl mx-auto px-6 relative z-10 text-center animate-fade-in">
+            <!-- 404 Number -->
+            <div class="mb-8">
+                <h1 class="text-[12rem] md:text-[16rem] font-bold gradient-text mono leading-none">404</h1>
+            </div>
+
+            <!-- Error Message -->
+            <div class="glass-card rounded-2xl p-8 mb-8 animate-float">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-100 mb-4">页面未找到</h2>
+                <p class="text-slate-400 mb-6 leading-relaxed">
+                    抱歉，您访问的页面不存在或已被移除。<br>
+                    就像微服务调用中找不到目标实例一样，这个页面暂时无法响应。
+                </p>
+
+                <!-- Navigation Buttons -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="/" class="px-8 py-3 bg-accent hover:bg-accent/90 text-white rounded-full font-medium transition-all hover:scale-105 shadow-lg shadow-accent/25">
+                        返回首页
+                    </a>
+                    <a href="mailto:masonsxu@foxmail.com" class="px-8 py-3 glass-card hover:bg-slate-800 text-slate-200 rounded-full font-medium transition-all border border-slate-700">
+                        联系我
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="flex flex-wrap justify-center gap-6 text-sm text-slate-500">
+                <a href="#about" class="hover:text-accent transition-colors">关于</a>
+                <span class="text-slate-700">•</span>
+                <a href="#skills" class="hover:text-accent transition-colors">技能</a>
+                <span class="text-slate-700">•</span>
+                <a href="#projects" class="hover:text-accent transition-colors">项目</a>
+                <span class="text-slate-700">•</span>
+                <a href="#experience" class="hover:text-accent transition-colors">经历</a>
+                <span class="text-slate-700">•</span>
+                <a href="#opensource" class="hover:text-accent transition-colors">开源</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto redirect after 10 seconds (optional)
+        setTimeout(() => {
+            console.log('404 page loaded. User can navigate to homepage.');
+        }, 1000);
+    </script>
+</body>
+</html>
