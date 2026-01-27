@@ -3,16 +3,27 @@
 
 <head>
     <meta charset="UTF-8">
+    <!-- Redirect to Vercel (Access Fix) -->
+    <!-- 1. Meta Refresh: Immediate redirect for fastest response -->
+    <meta http-equiv="refresh" content="0; url=https://masonsxu.vercel.app/">
+    <!-- 2. Canonical: Transfer SEO weight to the new domain -->
+    <link rel="canonical" href="https://masonsxu.vercel.app/">
+    <!-- 3. JavaScript: Smart redirect preserving path and query params -->
+    <script>
+        if (window.location.hostname.includes('github.io')) {
+            window.location.replace("https://masonsxu.vercel.app" + window.location.pathname + window.location.search);
+        }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <title>徐俊飞 | 资深后端工程师 (Go & Python)</title>
     <meta name="description" content="徐俊飞 - 5年后端研发经验，资深后端工程师(Go/Python)，深度掌握微服务与AI工程化">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Fonts (Using loli.net mirror for China access) -->
+    <link rel="preconnect" href="https://fonts.loli.net">
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
         rel="stylesheet">
 
     <!-- Tailwind CSS -->
