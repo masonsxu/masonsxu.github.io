@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.loli.net">
     <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
     <link
-        href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
         rel="stylesheet">
 
     <!-- Tailwind CSS -->
@@ -33,21 +33,41 @@
                 extend: {
                     fontFamily: {
                         sans: ['Noto Sans SC', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        bg: '#09090b',       // Zinc 950
-                        surface: '#18181b',  // Zinc 900
-                        surfaceLight: '#27272a', // Zinc 800
-                        border: '#27272a',   // Zinc 800
-                        primary: '#3b82f6',  // Blue 500
-                        accent: '#8b5cf6',   // Violet 500
-                        text: '#e4e4e7',     // Zinc 200
-                        muted: '#a1a1aa',    // Zinc 400
+                        obsidian: '#0C0C0E',
+                        pearl: '#FCFCFC',
+                        gold: '#D4AF37',
+                        midnightIndigo: '#1E1B4B',
+                        zincMuted: '#A1A1AA',
+                        bg: '#0C0C0E',       // Updated to Obsidian
+                        surface: '#121214',  // Slightly lighter than obsidian
+                        surfaceLight: '#1E1E21',
+                        border: 'rgba(212, 175, 55, 0.2)', // Updated to Gold border
+                        primary: '#D4AF37',  // Updated to Gold
+                        accent: '#F2D288',   // Light Gold
+                        text: '#FCFCFC',     // Updated to Pearl
+                        muted: '#A1A1AA',    // Updated to Zinc Muted
                     },
                     backgroundImage: {
                         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                        'hero-glow': 'conic-gradient(from 90deg at 50% 50%, #00000000 50%, #09090b 100%), radial-gradient(rgba(59,130,246,0.1) 0%, transparent 50%)',
+                        'hero-glow': 'conic-gradient(from 90deg at 50% 50%, #00000000 50%, #0C0C0E 100%), radial-gradient(rgba(212,175,55,0.1) 0%, transparent 50%)',
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 3s infinite linear',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
                     }
                 }
             }
@@ -55,8 +75,8 @@
     </script>
     <style>
         body {
-            background-color: #09090b;
-            color: #e4e4e7;
+            background-color: #0C0C0E;
+            color: #FCFCFC;
         }
 
         /* Custom Scrollbar */
@@ -65,29 +85,29 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #09090b;
+            background: #0C0C0E;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #27272a;
+            background: #1E1E21;
             border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #3f3f46;
+            background: #D4AF37;
         }
 
         .glass {
-            background: rgba(9, 9, 11, 0.6);
+            background: rgba(12, 12, 14, 0.7);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
         }
 
         /* Spotlight Effect */
         .spotlight-card {
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .spotlight-card::before {
@@ -97,7 +117,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+            background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(212, 175, 55, 0.08), transparent 40%);
             opacity: 0;
             transition: opacity 0.3s;
             pointer-events: none;
@@ -108,17 +128,47 @@
             opacity: 1;
         }
 
+        .gold-gradient-text {
+            background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-effect::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.15), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer-anim 4s infinite;
+        }
+
+        @keyframes shimmer-anim {
+            100% {
+                left: 200%;
+            }
+        }
+
         /* Tech Grid Background */
         .tech-bg {
-            background-image: radial-gradient(#27272a 1px, transparent 1px);
-            background-size: 24px 24px;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+            background-size: 32px 32px;
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
         }
     </style>
 </head>
 
-<body class="antialiased selection:bg-primary/20 selection:text-blue-200">
+<body class="antialiased selection:bg-gold/20 selection:text-gold">
 
     <!-- Background Grid -->
     <div class="fixed inset-0 tech-bg z-[-1] pointer-events-none opacity-40"></div>
@@ -129,8 +179,8 @@
             <!-- Logo -->
             <a href="#" class="group flex items-center gap-3">
                 <div
-                    class="w-8 h-8 rounded bg-surface border border-border flex items-center justify-center font-mono font-bold text-white group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all">
-                    <span class="text-primary">&lt;</span>X<span class="text-primary">/&gt;</span>
+                    class="w-8 h-8 rounded bg-surface border border-gold/20 flex items-center justify-center font-mono font-bold text-white group-hover:border-gold/50 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all">
+                    <span class="text-gold">&lt;</span>X<span class="text-gold">/&gt;</span>
                 </div>
                 <span
                     class="font-bold text-sm tracking-wide text-muted group-hover:text-white transition-colors">MASONS.XU</span>
@@ -178,34 +228,62 @@
         <section class="mb-32 relative">
             <!-- Glow Effect -->
             <div
-                class="absolute -top-20 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none">
+                class="absolute -top-20 -left-20 w-96 h-96 bg-gold/5 rounded-full blur-[100px] pointer-events-none">
+            </div>
+
+            <!-- Constellation Background for Hero -->
+            <div class="absolute right-0 top-0 w-full md:w-1/2 h-full pointer-events-none opacity-30 md:block">
+                <svg viewBox="0 0 400 400" class="w-full h-full animate-float">
+                    <defs>
+                        <linearGradient id="heroLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:0" />
+                            <stop offset="50%" style="stop-color:#D4AF37;stop-opacity:0.8" />
+                            <stop offset="100%" style="stop-color:#D4AF37;stop-opacity:0" />
+                        </linearGradient>
+                    </defs>
+                    <g fill="none" stroke="url(#heroLineGrad)" stroke-width="1">
+                        <path d="M100,120 L180,180 L220,160 L280,140" />
+                        <path d="M180,180 L160,250 L200,320" />
+                        <path d="M180,180 L250,220 L320,240" />
+                    </g>
+                    <g fill="#D4AF37">
+                        <circle cx="100" cy="120" r="2" />
+                        <circle cx="180" cy="180" r="3" />
+                        <circle cx="220" cy="160" r="2" />
+                        <circle cx="280" cy="140" r="1.5" />
+                        <circle cx="160" cy="250" r="2" />
+                        <circle cx="200" cy="320" r="2.5" />
+                        <circle cx="250" cy="220" r="1.5" />
+                        <circle cx="320" cy="240" r="2" />
+                    </g>
+                </svg>
             </div>
 
             <div class="relative z-10">
                 <div
-                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-primary/20 text-xs font-medium text-primary mb-8 animate-fade-in">
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/20 text-xs font-medium text-gold mb-8 animate-fade-in">
                     <span class="relative flex h-2 w-2">
                         <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
                     </span>
                     可接受新机会 / Open to Work
                 </div>
 
                 <h1 class="font-bold tracking-tight text-white mb-8">
-                    <div class="flex flex-col md:flex-row md:items-baseline gap-4 mb-4">
-                        <span class="text-5xl md:text-7xl">徐俊飞</span>
-                        <span class="text-3xl md:text-4xl text-muted font-normal">Mason Xu</span>
-                        <span class="animate-pulse text-primary text-5xl md:text-7xl font-thin -ml-2">_</span>
+                    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
+                        <span class="text-5xl md:text-7xl font-serif">徐俊飞</span>
+                        <span class="text-2xl md:text-4xl text-muted font-light font-serif italic">Mason Xu</span>
+                        <span class="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
                     </div>
                     <div
-                        class="text-4xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-accent leading-tight pb-3">
+                        class="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">
                         资深后端工程师 (Go & Python)
                     </div>
                 </h1>
 
                 <p class="text-lg md:text-xl text-muted max-w-3xl leading-relaxed mb-10">
-                    5 年后端研发经验，<strong>4 年 Python 生产环境实战 + 1 年 Go 微服务转型</strong>。
+                    5 年后端研发经验，<strong class="text-pearl">4 年 Python 生产环境实战 + 1 年 Go 微服务转型</strong>。
                     <br>
                     既具备构建大规模 AI 数据处理工程的能力，也拥有设计高并发微服务架构的实战经验。
                     擅长使用工程化手段解决医疗影像处理与分布式系统的复杂难题。
@@ -213,8 +291,8 @@
 
                 <div class="flex flex-wrap gap-4">
                     <a href="#projects"
-                        class="group px-6 py-3 bg-white text-black font-medium rounded hover:bg-gray-200 transition-all flex items-center gap-2">
-                        查看核心项目
+                        class="group px-8 py-3 bg-white text-black font-bold uppercase tracking-wider text-xs rounded hover:bg-gray-200 transition-all flex items-center gap-2 shimmer-effect">
+                        查看核心项目 / View Projects
                         <svg class="w-4 h-4 transition-transform group-hover:translate-y-1" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -222,8 +300,8 @@
                         </svg>
                     </a>
                     <a href="mailto:masonsxu@foxmail.com"
-                        class="px-6 py-3 bg-surface border border-border text-white font-medium rounded hover:bg-surfaceLight hover:border-primary/50 transition-colors">
-                        联系我
+                        class="px-8 py-3 bg-midnightIndigo border border-gold/30 text-gold font-bold uppercase tracking-wider text-xs rounded hover:border-gold/60 transition-colors">
+                        联系我 / Contact Me
                     </a>
                 </div>
             </div>
@@ -567,17 +645,17 @@
 
                 <!-- Project 3: Mria -->
                 <div
-                    class="group relative bg-surface border border-border rounded-lg overflow-hidden hover:border-green-500/30 transition-colors">
+                    class="group relative bg-surface border border-gold/10 rounded-lg overflow-hidden hover:border-gold/30 transition-colors">
                     <div class="grid md:grid-cols-12 gap-0">
                         <div class="md:col-span-8 p-8 flex flex-col justify-between h-full relative z-10">
                             <div>
                                 <div class="flex items-center gap-3 mb-4">
                                     <span
-                                        class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-mono font-bold">LEGACY</span>
+                                        class="px-2 py-0.5 rounded-full bg-zincMuted/10 text-zincMuted text-xs font-mono font-bold uppercase tracking-wider">Legacy</span>
                                     <span class="text-muted text-xs font-mono">2021.06 - 至今</span>
                                 </div>
                                 <h3
-                                    class="text-2xl font-bold text-white mb-3 group-hover:text-green-500 transition-colors">
+                                    class="text-2xl font-bold text-white mb-3 group-hover:text-gold transition-colors font-serif">
                                     Mria 信息管理系统重构
                                 </h3>
                                 <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
@@ -585,18 +663,18 @@
                                 </p>
                                 <div class="space-y-2 mb-8">
                                     <div class="flex items-start gap-3 text-sm text-text">
-                                        <span class="text-green-500 mt-1">▹</span>
-                                        <span>完成 Shell 脚本到 <strong class="text-white">Docker 容器化</strong> 的部署转型，部署耗时从 4h
+                                        <span class="text-gold mt-1">▹</span>
+                                        <span>完成 Shell 脚本到 <strong class="text-pearl">Docker 容器化</strong> 的部署转型，部署耗时从 4h
                                             缩减至 30min</span>
                                     </div>
                                     <div class="flex items-start gap-3 text-sm text-text">
-                                        <span class="text-green-500 mt-1">▹</span>
-                                        <span>在 <strong class="text-white">WebDicomView</strong> 系统中攻克 Dicom
+                                        <span class="text-gold mt-1">▹</span>
+                                        <span>在 <strong class="text-pearl">WebDicomView</strong> 系统中攻克 Dicom
                                             解析与窗宽窗位转换难题，响应时间缩短 35%</span>
                                     </div>
                                     <div class="flex items-start gap-3 text-sm text-text">
-                                        <span class="text-green-500 mt-1">▹</span>
-                                        <span>基于 <strong class="text-white">Asyncio + Pydantic</strong> 重构核心链路，数据查询效率提升
+                                        <span class="text-gold mt-1">▹</span>
+                                        <span>基于 <strong class="text-pearl">Asyncio + Pydantic</strong> 重构核心链路，数据查询效率提升
                                             50%</span>
                                     </div>
                                 </div>
@@ -716,10 +794,10 @@
                 <div class="h-px bg-border flex-1 ml-6"></div>
             </div>
 
-            <div class="bg-surface border border-border rounded-lg p-8 hover:border-white/20 transition-colors">
+            <div class="bg-surface border border-gold/10 rounded-lg p-8 hover:border-gold/30 transition-colors">
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
                     <div>
-                        <h3 class="text-lg font-bold text-text">信息管理与信息系统 (大数据方向)</h3>
+                        <h3 class="text-lg font-bold text-text font-serif">信息管理与信息系统 (大数据方向)</h3>
                         <div class="text-muted text-sm mt-1">河南城建学院 · 本科</div>
                     </div>
                     <div class="font-mono text-xs text-muted bg-surfaceLight px-2 py-1 rounded mt-2 md:mt-0">
@@ -728,7 +806,7 @@
                 </div>
                 <div class="mt-6 border-t border-border pt-4">
                     <div class="text-xs font-bold text-muted uppercase mb-4 tracking-widest">Honors & Awards</div>
-                    <div class="grid md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="flex items-start gap-3 group">
                             <div class="mt-0.5 text-yellow-500 opacity-80 group-hover:opacity-100 transition-opacity">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -737,36 +815,125 @@
                                 </svg>
                             </div>
                             <div>
-                                <div class="text-sm text-white font-medium group-hover:text-primary transition-colors">
+                                <div class="text-sm text-white font-medium group-hover:text-gold transition-colors">
                                     国家级单项奖学金 <span class="text-xs text-muted font-normal ml-1">×2</span></div>
                                 <div class="text-xs text-muted">2018 / 2019 · 国家级</div>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 group">
-                            <div class="mt-0.5 text-blue-400 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <div class="mt-0.5 text-gold opacity-80 group-hover:opacity-100 transition-opacity">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path
                                         d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                 </svg>
                             </div>
                             <div>
-                                <div class="text-sm text-white font-medium group-hover:text-primary transition-colors">
+                                <div class="text-sm text-white font-medium group-hover:text-gold transition-colors font-serif">
                                     河南省优秀学位论文</div>
                                 <div class="text-xs text-muted">2021 · 省级荣誉 (Top 0.5%-1%)</div>
                             </div>
                         </div>
                         <div class="flex items-start gap-3 group">
-                            <div class="mt-0.5 text-blue-400 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <div class="mt-0.5 text-gold opacity-80 group-hover:opacity-100 transition-opacity">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path
-                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
                                 </svg>
                             </div>
                             <div>
-                                <div class="text-sm text-white font-medium group-hover:text-primary transition-colors">
-                                    省级单项奖学金</div>
-                                <div class="text-xs text-muted">2020 · 省级</div>
+                                <div class="text-sm text-white font-medium group-hover:text-gold transition-colors font-serif">
+                                    中国大学生计算机设计大赛</div>
+                                <div class="text-xs text-muted">2020 · 国家级三等奖 (Top 10%)</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Essence Section -->
+        <section id="essence" class="mb-32 relative">
+            <div class="flex items-center justify-between mb-12">
+                <h2 class="text-sm font-bold text-muted uppercase tracking-widest">灵魂底色 / The Essence</h2>
+                <div class="h-px bg-border flex-1 ml-6"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Philosophy Text -->
+                <div class="space-y-6">
+                    <h3 class="text-3xl md:text-4xl font-serif font-bold text-pearl leading-tight">
+                        设计与架构的<br><span class="gold-gradient-text italic">华丽交响</span>
+                    </h3>
+                    <p class="text-zincMuted leading-relaxed md:text-lg">
+                        我认为，一段优雅的代码应当如顶级奢侈品般，在隐秘处追求极致的细节。<strong>Midnight Pearl</strong> 不仅仅是一套配色方案，它代表了我对系统架构的追求：深邃、稳定且散发着理性的光芒。
+                    </p>
+                    <div class="flex gap-8 py-4 border-y border-gold/10">
+                        <div>
+                            <div class="text-gold font-serif text-2xl">Obsidian</div>
+                            <div class="text-[10px] text-muted uppercase tracking-widest">Stability / 稳健</div>
+                        </div>
+                        <div>
+                            <div class="text-gold font-serif text-2xl">Pearl</div>
+                            <div class="text-[10px] text-muted uppercase tracking-widest">Clarity / 纯粹</div>
+                        </div>
+                        <div>
+                            <div class="text-gold font-serif text-2xl">Gold</div>
+                            <div class="text-[10px] text-muted uppercase tracking-widest">Excellence / 卓越</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zodiac Card (Integrated) -->
+                <div class="relative group">
+                    <div class="absolute -inset-4 bg-gold/5 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                    <div class="relative bg-surface border border-gold/20 rounded-[1.5rem] p-6 md:p-8 spotlight-card overflow-hidden">
+                        <!-- Constellation SVG -->
+                        <div class="absolute inset-0 pointer-events-none opacity-30">
+                            <svg viewBox="0 0 400 400" class="w-full h-full animate-float">
+                                <defs>
+                                    <linearGradient id="cardLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:0" />
+                                        <stop offset="50%" style="stop-color:#D4AF37;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:#D4AF37;stop-opacity:0" />
+                                    </linearGradient>
+                                </defs>
+                                <g fill="none" stroke="url(#cardLineGrad)" stroke-width="1.5">
+                                    <path d="M100,120 L180,180 L220,160 L280,140" />
+                                    <path d="M180,180 L160,250 L200,320" />
+                                    <path d="M180,180 L250,220 L320,240" />
+                                </g>
+                                <g fill="#D4AF37">
+                                    <circle cx="100" cy="120" r="3" />
+                                    <circle cx="180" cy="180" r="4" />
+                                    <circle cx="200" cy="320" r="3" />
+                                    <circle cx="320" cy="240" r="3" />
+                                </g>
+                            </svg>
+                        </div>
+                        
+                        <div class="relative z-10">
+                            <div class="flex justify-between items-start mb-8">
+                                <div>
+                                    <span class="text-gold text-[10px] uppercase tracking-[0.3em] font-bold block mb-1">Constellation</span>
+                                    <h4 class="text-pearl text-3xl font-serif font-bold">Taurus</h4>
+                                    <div class="text-zincMuted text-sm font-light">金牛座 / 4.20 - 5.20</div>
+                                </div>
+                                <div class="w-8 h-8 border border-gold/30 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-zincMuted italic font-serif text-sm leading-relaxed mb-6">
+                                "Luxury is the balance of design and function, much like the steady heart of the Bull."
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-8">
+                                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] text-zincMuted uppercase tracking-wider">Reliable</span>
+                                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] text-zincMuted uppercase tracking-wider">Artistic</span>
+                            </div>
+                            <button class="w-full py-3 bg-midnightIndigo border border-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest rounded shimmer-effect hover:border-gold/50 transition-all">
+                                Energy / 探索星能
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -782,46 +949,46 @@
 
             <div class="grid md:grid-cols-3 gap-4">
                 <a href="https://github.com/hertz-contrib/jwt/pull/27" target="_blank"
-                    class="block p-5 bg-surface border border-border rounded hover:border-primary/50 hover:bg-surfaceLight/30 transition-all group">
+                    class="block p-5 bg-surface border border-gold/20 rounded hover:border-gold/50 hover:bg-surfaceLight/30 transition-all group">
                     <div class="flex items-center justify-between mb-3">
-                        <div class="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">PR #27</div>
+                        <div class="font-mono text-xs text-gold bg-gold/10 px-2 py-0.5 rounded">PR #27</div>
                         <svg class="w-4 h-4 text-muted group-hover:text-white" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-white mb-1 group-hover:text-primary transition-colors">hertz-contrib/jwt
+                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">hertz-contrib/jwt
                     </h3>
                     <p class="text-xs text-muted">修复 RefreshToken 方法中 orig_iat 被意外重置的 Bug</p>
                 </a>
 
                 <a href="https://github.com/hertz-contrib/obs-opentelemetry/pull/67" target="_blank"
-                    class="block p-5 bg-surface border border-border rounded hover:border-blue-400/50 hover:bg-surfaceLight/30 transition-all group">
+                    class="block p-5 bg-surface border border-gold/20 rounded hover:border-gold/50 hover:bg-surfaceLight/30 transition-all group">
                     <div class="flex items-center justify-between mb-3">
-                        <div class="font-mono text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded">PR #67</div>
+                        <div class="font-mono text-xs text-gold bg-gold/10 px-2 py-0.5 rounded">PR #67</div>
                         <svg class="w-4 h-4 text-muted group-hover:text-white" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">obs-opentelemetry
+                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">obs-opentelemetry
                     </h3>
                     <p class="text-xs text-muted">优化可观测性组件，提升链路追踪稳定性</p>
                 </a>
 
                 <a href="https://github.com/cloudwego/abcoder/pull/84" target="_blank"
-                    class="block p-5 bg-surface border border-border rounded hover:border-accent/50 hover:bg-surfaceLight/30 transition-all group">
+                    class="block p-5 bg-surface border border-gold/20 rounded hover:border-gold/50 hover:bg-surfaceLight/30 transition-all group">
                     <div class="flex items-center justify-between mb-3">
-                        <div class="font-mono text-xs text-accent bg-accent/10 px-2 py-0.5 rounded">PR #84</div>
+                        <div class="font-mono text-xs text-gold bg-gold/10 px-2 py-0.5 rounded">PR #84</div>
                         <svg class="w-4 h-4 text-muted group-hover:text-white" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-white mb-1 group-hover:text-accent transition-colors">cloudwego/abcoder
+                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">cloudwego/abcoder
                     </h3>
                     <p class="text-xs text-muted">修复 Go 1.25+ 环境下 sonic 依赖版本导致的安装编译错误</p>
                 </a>
@@ -845,17 +1012,24 @@
     </main>
 
     <script>
-        // Mouse tracking for spotlight effect
-        document.addEventListener('mousemove', e => {
+        // Mouse/Touch tracking for spotlight effect
+        const updateSpotlight = (e, isTouch = false) => {
             const cards = document.getElementsByClassName('spotlight-card');
+            const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+            const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
             for (const card of cards) {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
                 card.style.setProperty('--mouse-x', `${x}px`);
                 card.style.setProperty('--mouse-y', `${y}px`);
             }
-        });
+        };
+
+        document.addEventListener('mousemove', e => updateSpotlight(e));
+        document.addEventListener('touchstart', e => updateSpotlight(e, true), { passive: true });
+        document.addEventListener('touchmove', e => updateSpotlight(e, true), { passive: true });
 
         // Mobile menu toggle
         const btn = document.getElementById('mobile-menu-btn');

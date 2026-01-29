@@ -1,30 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 - 页面未找到 | masonsxu</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        primary: '#0f172a',
-                        accent: '#0ea5e9',
-                        secondary: '#334155',
-                        dark: '#020617',
+                        obsidian: '#0C0C0E',
+                        pearl: '#FCFCFC',
+                        gold: '#D4AF37',
+                        midnightIndigo: '#1E1B4B',
+                        zincMuted: '#A1A1AA',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.8s ease-out',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 3s infinite linear',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' },
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
@@ -35,88 +42,132 @@
             }
         }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
+            background-color: #0C0C0E;
+            color: #FCFCFC;
             font-family: 'Inter', sans-serif;
-            background-color: #020617;
-            color: #e2e8f0;
         }
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 50%, #22d3ee 100%);
+
+        .gold-gradient-text {
+            background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
+
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-effect::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.15), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer-anim 4s infinite;
+        }
+
+        @keyframes shimmer-anim {
+            100% {
+                left: 200%;
+            }
+        }
+
         .glass-card {
-            background: rgba(30, 41, 59, 0.6);
+            background: rgba(18, 18, 20, 0.6);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.1);
         }
+
         .tech-grid {
-            background-image: radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.15) 1px, transparent 0);
+            background-image: radial-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px);
             background-size: 40px 40px;
         }
     </style>
 </head>
+
 <body class="antialiased overflow-hidden">
 
     <div class="min-h-screen flex items-center justify-center relative overflow-hidden tech-grid">
-        <!-- Background Effects -->
-        <div class="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent"></div>
-        <div class="absolute top-1/4 -left-20 w-72 h-72 bg-accent/20 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+        <!-- Background Constellation -->
+        <div class="absolute inset-0 pointer-events-none opacity-20">
+            <svg viewBox="0 0 400 400" class="w-full h-full animate-float">
+                <defs>
+                    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:0" />
+                        <stop offset="50%" style="stop-color:#D4AF37;stop-opacity:0.8" />
+                        <stop offset="100%" style="stop-color:#D4AF37;stop-opacity:0" />
+                    </linearGradient>
+                </defs>
+                <g fill="none" stroke="url(#lineGrad)" stroke-width="1.5">
+                    <path d="M100,120 L180,180 L220,160 L280,140" />
+                    <path d="M180,180 L160,250 L200,320" />
+                    <path d="M180,180 L250,220 L320,240" />
+                </g>
+                <g fill="#D4AF37">
+                    <circle cx="100" cy="120" r="3" />
+                    <circle cx="180" cy="180" r="4" />
+                    <circle cx="220" cy="160" r="2.5" />
+                    <circle cx="280" cy="140" r="2" />
+                    <circle cx="160" cy="250" r="2.5" />
+                    <circle cx="200" cy="320" r="3" />
+                    <circle cx="250" cy="220" r="2" />
+                    <circle cx="320" cy="240" r="3" />
+                </g>
+            </svg>
+        </div>
 
-        <div class="max-w-2xl mx-auto px-6 relative z-10 text-center animate-fade-in">
+        <div class="max-w-2xl mx-auto px-6 relative z-10 text-center">
             <!-- 404 Number -->
             <div class="mb-8">
-                <h1 class="text-[12rem] md:text-[16rem] font-bold gradient-text mono leading-none">404</h1>
+                <h1 class="text-[8rem] md:text-[14rem] font-bold gold-gradient-text font-serif leading-none opacity-90 transition-all duration-700">404</h1>
             </div>
 
             <!-- Error Message -->
-            <div class="glass-card rounded-2xl p-8 mb-8 animate-float">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-100 mb-4">页面未找到</h2>
-                <p class="text-slate-400 mb-6 leading-relaxed">
+            <div class="glass-card rounded-2xl p-8 md:p-10 mb-8 shadow-[0_0_50px_rgba(212,175,55,0.05)]">
+                <h2 class="text-2xl md:text-4xl font-serif font-bold text-pearl mb-4">页面已遁入星空 / Page Not Found</h2>
+                <p class="text-zincMuted mb-8 leading-relaxed italic font-light text-sm md:text-base">
                     抱歉，您访问的页面不存在或已被移除。<br>
                     就像微服务调用中找不到目标实例一样，这个页面暂时无法响应。
                 </p>
 
                 <!-- Navigation Buttons -->
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="/" class="px-8 py-3 bg-accent hover:bg-accent/90 text-white rounded-full font-medium transition-all hover:scale-105 shadow-lg shadow-accent/25">
-                        返回首页
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="/" class="px-10 py-4 bg-white text-obsidian rounded-lg font-bold uppercase tracking-widest text-[10px] md:text-xs transition-all hover:bg-pearl hover:scale-105 shimmer-effect shadow-xl">
+                        返回首页 / Home
                     </a>
-                    <a href="mailto:masonsxu@foxmail.com" class="px-8 py-3 glass-card hover:bg-slate-800 text-slate-200 rounded-full font-medium transition-all border border-slate-700">
-                        联系我
+                    <a href="mailto:masonsxu@foxmail.com" class="px-10 py-4 bg-midnightIndigo border border-gold/30 text-gold rounded-lg font-bold uppercase tracking-widest text-[10px] md:text-xs transition-all hover:border-gold/60">
+                        联系我 / Contact
                     </a>
                 </div>
             </div>
 
             <!-- Quick Links -->
-            <div class="flex flex-wrap justify-center gap-6 text-sm text-slate-500">
-                <a href="#about" class="hover:text-accent transition-colors">关于</a>
-                <span class="text-slate-700">•</span>
-                <a href="#skills" class="hover:text-accent transition-colors">技能</a>
-                <span class="text-slate-700">•</span>
-                <a href="#projects" class="hover:text-accent transition-colors">项目</a>
-                <span class="text-slate-700">•</span>
-                <a href="#experience" class="hover:text-accent transition-colors">经历</a>
-                <span class="text-slate-700">•</span>
-                <a href="#opensource" class="hover:text-accent transition-colors">开源</a>
+            <div class="flex flex-wrap justify-center gap-6 md:gap-8 text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-zincMuted">
+                <a href="/#about" class="hover:text-gold transition-colors">关于 / About</a>
+                <a href="/#projects" class="hover:text-gold transition-colors">项目 / Projects</a>
+                <a href="/#experience" class="hover:text-gold transition-colors">经历 / Experience</a>
             </div>
         </div>
     </div>
 
     <script>
-        // Auto redirect after 10 seconds (optional)
-        setTimeout(() => {
-            console.log('404 page loaded. User can navigate to homepage.');
-        }, 1000);
+        // Spotlight touch support
+        const updateSpotlight = (e, isTouch = false) => {
+            const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+            const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+            document.documentElement.style.setProperty('--mouse-x', `${clientX}px`);
+            document.documentElement.style.setProperty('--mouse-y', `${clientY}px`);
+        };
+        document.addEventListener('mousemove', e => updateSpotlight(e));
+        document.addEventListener('touchstart', e => updateSpotlight(e, true), { passive: true });
     </script>
 </body>
+
 </html>
