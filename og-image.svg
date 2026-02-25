@@ -153,7 +153,7 @@
   <text x="242" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · gRPC · Kubernetes · MySQL</text>
 
   <!-- Bottom-right: URL -->
-  <text x="1144" y="583" text-anchor="end" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.55" letter-spacing="0.5">masonsxu.vercel.app</text>
+  <text x="1144" y="583" text-anchor="end" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.55" letter-spacing="0.5">masonsxu-github-io.pages.dev</text>
 
   <!-- Bottom-right decorative accent line -->
   <line x1="1060" y1="590" x2="1148" y2="590" stroke="#D4AF37" stroke-opacity="0.3" stroke-width="1"/>
