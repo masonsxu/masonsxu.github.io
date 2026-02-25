@@ -13,3 +13,4 @@ Thumbs.db
 
 # Local notes
 *.txt
+!robots.txt
