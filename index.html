@@ -134,6 +134,49 @@
             mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
         }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger Children */
+        .stagger > * {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stagger.visible > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nav Active Indicator */
+        .nav-active {
+            color: #FCFCFC !important;
+        }
+
+        /* Star Twinkle */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Accessibility: Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            .reveal, .stagger > * {
+                transition: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .shimmer-effect::after { animation: none !important; }
+        }
     </style>
 </head>
 
@@ -218,14 +261,14 @@
                         <path d="M180,180 L250,220 L320,240" />
                     </g>
                     <g fill="#D4AF37">
-                        <circle cx="100" cy="120" r="2" />
-                        <circle cx="180" cy="180" r="3" />
-                        <circle cx="220" cy="160" r="2" />
-                        <circle cx="280" cy="140" r="1.5" />
-                        <circle cx="160" cy="250" r="2" />
-                        <circle cx="200" cy="320" r="2.5" />
-                        <circle cx="250" cy="220" r="1.5" />
-                        <circle cx="320" cy="240" r="2" />
+                        <circle cx="100" cy="120" r="2" style="animation: twinkle 3s ease-in-out infinite" />
+                        <circle cx="180" cy="180" r="3" style="animation: twinkle 4s ease-in-out 0.5s infinite" />
+                        <circle cx="220" cy="160" r="2" style="animation: twinkle 3.5s ease-in-out 1s infinite" />
+                        <circle cx="280" cy="140" r="1.5" style="animation: twinkle 5s ease-in-out 1.5s infinite" />
+                        <circle cx="160" cy="250" r="2" style="animation: twinkle 4s ease-in-out 2s infinite" />
+                        <circle cx="200" cy="320" r="2.5" style="animation: twinkle 3s ease-in-out 0.8s infinite" />
+                        <circle cx="250" cy="220" r="1.5" style="animation: twinkle 4.5s ease-in-out 1.2s infinite" />
+                        <circle cx="320" cy="240" r="2" style="animation: twinkle 3.5s ease-in-out 2.5s infinite" />
                     </g>
                 </svg>
             </div>
@@ -291,7 +334,7 @@
                 <div class="h-px bg-border flex-1 ml-6"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 stagger">
 
                 <!-- Core: Three Pillars -->
                 <div
@@ -396,7 +439,7 @@
                 <div class="h-px bg-border flex-1 ml-6"></div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger">
 
                 <!-- Skill Group 1: Go 微服务架构 -->
                 <div class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
@@ -492,7 +535,7 @@
                 <div class="h-px bg-border flex-1 ml-6"></div>
             </div>
 
-            <div class="space-y-6">
+            <div class="space-y-6 stagger">
 
                 <!-- Project 1 -->
                 <div
@@ -661,7 +704,7 @@
                 <div class="absolute left-3 top-2 bottom-2 w-px bg-border"></div>
 
                 <!-- Job 1 -->
-                <div class="relative pl-10 group">
+                <div class="relative pl-10 group reveal">
                     <div
                         class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-surface border-4 border-bg flex items-center justify-center z-10 group-hover:border-primary transition-colors">
                         <div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
@@ -696,7 +739,7 @@
                 </div>
 
                 <!-- Job 2 -->
-                <div class="relative pl-10 group">
+                <div class="relative pl-10 group reveal">
                     <div
                         class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-surface border-4 border-bg flex items-center justify-center z-10 group-hover:border-white transition-colors">
                         <div class="w-1.5 h-1.5 rounded-full bg-muted"></div>
@@ -739,7 +782,7 @@
                 <div class="h-px bg-border flex-1 ml-6"></div>
             </div>
 
-            <div class="bg-surface border border-gold/10 rounded-lg p-8 hover:border-gold/30 transition-colors">
+            <div class="bg-surface border border-gold/10 rounded-lg p-8 hover:border-gold/30 transition-colors reveal">
                 <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
                     <div>
                         <h3 class="text-lg font-bold text-text font-serif">信息管理与信息系统 (大数据方向)</h3>
@@ -803,7 +846,7 @@
                 <div class="h-px bg-border flex-1 ml-6"></div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center stagger">
                 <!-- Philosophy Text -->
                 <div class="space-y-6">
                     <h3 class="text-3xl md:text-4xl font-serif font-bold text-pearl leading-tight">
@@ -848,10 +891,10 @@
                                     <path d="M180,180 L250,220 L320,240" />
                                 </g>
                                 <g fill="#D4AF37">
-                                    <circle cx="100" cy="120" r="3" />
-                                    <circle cx="180" cy="180" r="4" />
-                                    <circle cx="200" cy="320" r="3" />
-                                    <circle cx="320" cy="240" r="3" />
+                                    <circle cx="100" cy="120" r="3" style="animation: twinkle 4s ease-in-out infinite" />
+                                    <circle cx="180" cy="180" r="4" style="animation: twinkle 3s ease-in-out 0.7s infinite" />
+                                    <circle cx="200" cy="320" r="3" style="animation: twinkle 3.5s ease-in-out 1.4s infinite" />
+                                    <circle cx="320" cy="240" r="3" style="animation: twinkle 5s ease-in-out 2s infinite" />
                                 </g>
                             </svg>
                         </div>
@@ -893,7 +936,7 @@
             </div>
 
             <!-- Featured Project: Architecture Template -->
-            <div class="mb-8 group relative bg-surface border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors">
+            <div class="mb-8 group relative bg-surface border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors reveal">
                 <div class="p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-4">
                         <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-mono font-bold">OPEN SOURCE</span>
@@ -926,7 +969,7 @@
 
             <!-- PR Contributions -->
             <div class="text-xs text-muted font-mono uppercase tracking-widest mb-4">Merged Pull Requests</div>
-            <div class="grid md:grid-cols-3 gap-4">
+            <div class="grid md:grid-cols-3 gap-4 stagger">
                 <a href="https://github.com/hertz-contrib/jwt/pull/27" target="_blank"
                     class="block p-5 bg-surface border border-gold/20 rounded hover:border-gold/50 hover:bg-surfaceLight/30 transition-all group">
                     <div class="flex items-center justify-between mb-3">
@@ -1034,6 +1077,38 @@
                 }
             });
         });
+
+        // Scroll Reveal (IntersectionObserver)
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal, .stagger').forEach(el => revealObserver.observe(el));
+
+        // Stagger delay assignment
+        document.querySelectorAll('.stagger').forEach(container => {
+            [...container.children].forEach((child, i) => {
+                child.style.transitionDelay = `${i * 0.12}s`;
+            });
+        });
+
+        // Navigation scroll highlight
+        const navSections = document.querySelectorAll('section[id]');
+        const navAnchors = document.querySelectorAll('nav a[href^="#"]');
+        const highlightNav = () => {
+            let current = '';
+            navSections.forEach(s => {
+                if (window.scrollY >= s.offsetTop - 120) current = s.id;
+            });
+            navAnchors.forEach(l => l.classList.toggle('nav-active', l.getAttribute('href') === '#' + current));
+        };
+        window.addEventListener('scroll', highlightNav, { passive: true });
+        highlightNav();
     </script>
 
     <!-- JSON-LD Structured Data (Person Schema) -->
