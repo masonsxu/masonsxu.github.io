@@ -296,7 +296,7 @@
                     <li><strong>架构落地能力：</strong>主导核心医疗数据管理平台从0到1完整落地：以业务能力为边界拆分多个独立微服务，DDD四层+API网关+服务治理+权限体系+可观测性全链路贯通，技术方案成为公司微服务标准。</li>
                     <li><strong>生产稳定性保障：</strong>主导多家医院生产环境运维兜底，多次完成P0级故障当日恢复，系统长期保持99.9%可用性，根治Redis内核污染、SSH依赖断裂等疑难故障。</li>
                     <li><strong>可靠性与安全：</strong>医疗场景对数据准确性要求严苛，主导设计数据校验、异常处理、重传机制，多家医院生产环境长期维持99.9%数据准确率；基于Casbin RBAC/ABAC实现组织-部门-用户三级权限隔离，满足多院区合规要求。</li>
-                    <li><strong>工程与团队：</strong>主导容器化改造(故障率↓45%)，建立代码评审、技术分享、IDL优先开发等工程规范；CloudWeGo生态贡献者，具备框架底层机制深度理解能力。</li>
+                    <li><strong>工程与AI效能：</strong>主导容器化改造(故障率↓45%)，建立代码评审、技术分享、IDL优先开发等工程规范；系统性落地AI辅助开发(Vibe Coding)，将架构决策与工程规范编码为AI可执行知识，构建自动化开发与DevOps工作流；CloudWeGo生态贡献者。</li>
                 </ul>
             </div>
         </div>
@@ -352,6 +352,8 @@
                                 <span class="skill-tag">Podman</span>
                                 <span class="skill-tag">容器化运维</span>
                                 <span class="skill-tag">代码评审</span>
+                                <span class="skill-tag">AI辅助开发</span>
+                                <span class="skill-tag">Claude Code</span>
                             </div>
                         </div>
                         <div class="skill-category">
@@ -451,10 +453,11 @@
 
             <div class="project">
                 <div class="project-header">
-                    <div class="project-title">▶ CloudWeGo 生态 - 生产级架构模板 & 开源贡献</div>
+                    <div class="project-title">▶ CloudWeGo 生态 - 生产级架构模板 & AI辅助开发实践 & 开源贡献</div>
                     <div class="project-date">架构设计 / 社区贡献者 | 2025 | github.com/masonsxu/cloudwego-microservice-demo</div>
                 </div>
                 <p><strong>架构模板：</strong>基于生产级Go微服务实践提炼的CloudWeGo微服务标准模板(Go 1.24+ / Kitex RPC + Hertz HTTP / etcd / Casbin / OpenTelemetry / Google Wire / Docker)，涵盖API网关、服务发现、RBAC权限、链路追踪与完整容器编排，经生产验证，具备完善文档与部署指南。</p>
+                <p><strong>AI辅助开发(Vibe Coding)落地：</strong>编写330+行AGENTS.md将架构规范、分层约束、错误处理模式等领域知识编码为AI可理解的结构化上下文；设计8个Custom Skills封装端到端开发流程(如/add-rpc-method一键完成IDL→DAL→Converter→Logic→Handler全层实现+测试编写)；部署3个AI驱动GitHub Actions(Issue自动实现/PR自动Review/Issue自动分类)，构建从编码到DevOps的全流程人机协作体系。</p>
                 <ul>
                     <li><strong>hertz-contrib/jwt(PR #27)：</strong>修复RefreshToken中orig_iat被意外重置的核心Bug，解决MaxRefresh窗口计算完全失效的问题，被官方合并，覆盖数千开发者使用场景。</li>
                     <li><strong>hertz-contrib/obs-opentelemetry(PR #67)：</strong>可观测性组件优化，提升链路追踪稳定性与准确性。</li>
