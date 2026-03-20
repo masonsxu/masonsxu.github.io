@@ -1,27 +1,49 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>徐俊飞 - 资深后端工程师 | Go 微服务方向</title>
+    <title>XuJunfei - Senior Go Backend Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         @page {
             size: A4 portrait;
             margin: 7.5mm 7mm;
         }
 
-        html, body {
+        html,
+        body {
             width: 210mm;
-            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-            font-size: 9.35pt;
-            line-height: 1.35;
+            font-family: 'Noto Sans SC', "Helvetica Neue", Arial, sans-serif;
+            font-size: 9.7pt;
+            line-height: 1.42;
             color: #1f2937;
             background: #ffffff;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
+
+        /* 确保所有加粗使用 700 字重，对应引入的字体 */
+        /* strong,
+        h1,
+        h2,
+        h3,
+        h4,
+        .metric,
+        .section-title,
+        .job-title,
+        .project-title {
+            font-weight: 700;
+        } */
 
         .container {
             width: 196mm;
@@ -30,8 +52,9 @@
         }
 
         :root {
-            --accent: #0369a1;
-            --accent-light: #0ea5e9;
+            --accent: #3370FF;
+            --accent-light: #5B8DEF;
+            --highlight: #D97706;
             --neutral-100: #f8fafc;
             --neutral-200: #e2e8f0;
             --neutral-700: #334155;
@@ -39,70 +62,87 @@
             --success: #15803d;
         }
 
+        /* Metric highlight */
+        .metric {
+            color: var(--highlight);
+            font-weight: 700;
+        }
+
         /* Header */
         .header {
             text-align: center;
-            padding-bottom: 9pt;
-            margin-bottom: 9pt;
+            padding-bottom: 9.5pt;
+            margin-bottom: 9.5pt;
             border-bottom: 2.5pt solid var(--accent);
         }
+
         .header h1 {
-            font-size: 25.5pt;
+            font-size: 25.8pt;
             font-weight: 800;
             color: var(--neutral-800);
             letter-spacing: 1.6pt;
             margin-bottom: 2pt;
         }
+
         .header .title {
-            font-size: 12.8pt;
+            font-size: 13pt;
             color: var(--accent);
             font-weight: 600;
         }
+
         .contact-bar {
-            margin-top: 7pt;
-            font-size: 8.7pt;
+            margin-top: 7.5pt;
+            font-size: 9pt;
             color: var(--neutral-700);
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 13pt;
+            gap: 13.5pt;
         }
-        .contact-bar a { color: var(--accent); text-decoration: none; }
+
+        .contact-bar a {
+            color: var(--accent);
+            text-decoration: none;
+        }
 
         /* Section Title */
         .section-title {
-            font-size: 12.2pt;
+            font-size: 12.5pt;
             font-weight: 700;
             color: var(--neutral-800);
-            padding: 2.5pt 10pt;
+            padding: 2.8pt 10pt;
             border-left: 4.2pt solid var(--accent);
             background: var(--neutral-100);
             display: inline-block;
-            margin-bottom: 6pt;
+            margin-bottom: 7pt;
         }
 
         /* Core Competency */
         .core-box {
             background: var(--neutral-100);
             border-left: 4.2pt solid var(--accent);
-            padding: 7pt 10pt;
+            padding: 7.5pt 10.5pt;
             border-radius: 3px;
-            margin-bottom: 8pt;
+            margin-bottom: 9pt;
         }
+
         .core-box p {
-            font-size: 9.35pt;
-            margin-bottom: 6pt;
+            font-size: 9.7pt;
+            margin-bottom: 6.5pt;
         }
+
         .core-box ul {
             list-style: none;
             margin-left: 2pt;
         }
+
         .core-box li {
-            margin-bottom: 4pt;
+            margin-bottom: 4.5pt;
             padding-left: 14pt;
             position: relative;
-            font-size: 9.3pt;
+            font-size: 9.6pt;
         }
+
         .core-box li:before {
             content: "●";
             position: absolute;
@@ -115,134 +155,166 @@
             display: table;
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6pt;
+            margin-bottom: 7pt;
         }
-        .skills-row { display: table-row; }
+
+        .skills-row {
+            display: table-row;
+        }
+
         .skills-cell {
             display: table-cell;
             width: 50%;
             vertical-align: top;
             padding: 0 5pt;
         }
-        .skills-cell:first-child { padding-left: 0; border-right: 1px solid var(--neutral-200); }
-        .skill-category {
-            margin-bottom: 7pt;
+
+        .skills-cell:first-child {
+            padding-left: 0;
+            border-right: 1px solid var(--neutral-200);
         }
+
+        .skill-category {
+            margin-bottom: 8pt;
+        }
+
         .skill-category h4 {
-            font-size: 10pt;
+            font-size: 10.2pt;
             color: var(--neutral-800);
             font-weight: 700;
-            margin-bottom: 4pt;
+            margin-bottom: 4.5pt;
             border-bottom: 1px solid var(--neutral-200);
             padding-bottom: 2pt;
         }
+
         .skill-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 3.5pt;
+            gap: 3.8pt;
         }
+
         .skill-tag {
-            background: #f0f9ff;
-            color: #0c4a6e;
-            font-size: 8.3pt;
-            padding: 1.5pt 6.5pt;
+            background: #EFF4FF;
+            color: #1D3A8A;
+            font-size: 8.5pt;
+            padding: 1.8pt 6.8pt;
             border-radius: 10px;
-            border: 1px solid #bae6fd;
+            border: 1px solid #BEDAFF;
             white-space: nowrap;
         }
 
         /* Work Experience & Projects */
-        .job ul, .project ul {
+        .job ul,
+        .project ul {
             list-style: none;
             margin-left: 11pt;
-            font-size: 9.1pt;
+            font-size: 9.4pt;
         }
-        .job li, .project li {
-            margin-bottom: 3.5pt;
+
+        .job li,
+        .project li {
+            margin-bottom: 4pt;
             padding-left: 8pt;
             position: relative;
         }
-        .job li:before, .project li:before {
+
+        .job li:before,
+        .project li:before {
             content: "•";
             position: absolute;
             left: 0;
             color: var(--accent-light);
         }
 
-        .job, .project {
-            margin-bottom: 8pt;
-            padding-bottom: 7pt;
+        .job,
+        .project {
+            margin-bottom: 9pt;
+            padding-bottom: 8pt;
             border-bottom: 1px dashed var(--neutral-200);
             page-break-inside: avoid;
         }
-        .job:last-child, .project:last-child {
+
+        .job:last-child,
+        .project:last-child {
             border-bottom: none;
             margin-bottom: 0;
             padding-bottom: 0;
         }
 
-        .job-header, .project-header {
+        .job-header,
+        .project-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4pt;
+            margin-bottom: 4.5pt;
             align-items: flex-start;
         }
-        .job-title, .project-title {
-            font-size: 10.8pt;
+
+        .job-title,
+        .project-title {
+            font-size: 11pt;
             font-weight: 700;
             color: var(--neutral-800);
         }
+
         .promotion-badge {
             display: inline-block;
             background: var(--success);
             color: white;
-            font-size: 7.6pt;
+            font-size: 7.8pt;
             padding: 0.5pt 5.5pt;
             border-radius: 10px;
             margin-right: 6pt;
         }
-        .job-company, .project-meta {
-            font-size: 9pt;
+
+        .job-company,
+        .project-meta {
+            font-size: 9.2pt;
             color: var(--accent);
             margin-top: 0.5pt;
         }
-        .job-date, .project-date {
-            font-size: 8.6pt;
+
+        .job-date,
+        .project-date {
+            font-size: 8.8pt;
             color: var(--neutral-700);
             white-space: nowrap;
             font-style: italic;
         }
 
         .project p {
-            font-size: 9.1pt;
-            margin: 4.5pt 0;
+            font-size: 9.4pt;
+            margin: 4.8pt 0;
         }
 
         /* Education */
         .education-box {
             background: var(--neutral-100);
-            padding: 7pt 10pt;
+            padding: 7.5pt 10.5pt;
             border-radius: 3px;
             border-left: 3.8pt solid var(--accent-light);
             page-break-inside: avoid;
         }
+
         .education-left h4 {
-            font-size: 10.7pt;
+            font-size: 10.9pt;
             font-weight: 700;
             color: var(--neutral-800);
         }
+
         .education-left p {
-            font-size: 9.1pt;
+            font-size: 9.4pt;
             color: var(--neutral-700);
         }
+
         .education-right {
-            font-size: 9.1pt;
+            font-size: 9.4pt;
             color: var(--neutral-700);
             text-align: right;
         }
+
         .honors {
-            margin-top: 5pt;
-            font-size: 8.7pt;
+            margin-top: 5.5pt;
+            font-size: 9pt;
             color: var(--neutral-700);
         }
 
@@ -252,9 +324,10 @@
             padding-top: 6pt;
             border-top: 1.6pt solid var(--accent);
             text-align: center;
-            font-size: 7.9pt;
+            font-size: 8.1pt;
             color: var(--neutral-700);
         }
+
         .footer a {
             color: var(--accent);
             text-decoration: none;
@@ -262,16 +335,42 @@
 
         /* 打印控制 */
         @media print {
-            .container { width: 100%; padding: 0; }
-            .job, .project, .core-box, .skill-category, .education-box { page-break-inside: avoid !important; }
-            .section-title { page-break-after: avoid !important; }
-            .footer { page-break-before: avoid !important; }
-            ul { page-break-inside: avoid !important; }
-            .skills-table { page-break-inside: avoid !important; }
-            a { color: var(--accent) !important; }
+            .container {
+                width: 100%;
+                padding: 0;
+            }
+
+            .job,
+            .project,
+            .core-box,
+            .skill-category,
+            .education-box {
+                page-break-inside: avoid !important;
+            }
+
+            .section-title {
+                page-break-after: avoid !important;
+            }
+
+            .footer {
+                page-break-before: avoid !important;
+            }
+
+            ul {
+                page-break-inside: avoid !important;
+            }
+
+            .skills-table {
+                page-break-inside: avoid !important;
+            }
+
+            a {
+                color: var(--accent) !important;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
 
@@ -282,21 +381,27 @@
             <div class="contact-bar">
                 <span>📧 masonsxu@foxmail.com</span>
                 <span>🔗 <a href="https://github.com/masonsxu">github.com/masonsxu</a></span>
-                <span>📍 厦门(可接受异地)</span>
+                <span>📍 现居厦门 · 意向城市: 上海/杭州</span>
                 <span>💼 意向: Go 后端 / 微服务架构</span>
             </div>
         </div>
 
-        <!-- Core Competency（已优化） -->
+        <!-- Core Competency -->
         <div class="section">
             <div class="section-title">核心竞争力</div>
             <div class="core-box">
-                <p><strong>5年医疗信息化后端研发经验，Go微服务架构专家。</strong>主导公司Python单体向Go微服务全面转型，带领8人团队落地新一代医疗数字化平台，架构方案成为公司技术标准；主导核心系统支撑多家医院生产部署，数据传输准确率99.9%，部署效率提升87.5%，系统故障率降低45%；CloudWeGo开源生态贡献者。</p>
+                <p><strong>5 年后端研发经验，Go 微服务架构专家。</strong>主导 Python 单体→Go 微服务全面转型，带领 8
+                    人团队交付新一代医疗数字化平台，架构方案成为公司技术标准；核心系统支撑多家医院生产运行，数据准确率 <span class="metric">99.9%</span>、部署效率提升 <span
+                        class="metric">87.5%</span>、故障率降低 <span class="metric">45%</span>；CloudWeGo 开源贡献者。</p>
                 <ul>
-                    <li><strong>架构落地能力：</strong>主导核心医疗数据管理平台从0到1完整落地：以业务能力为边界拆分多个独立微服务，DDD四层+API网关+服务治理+权限体系+可观测性全链路贯通，技术方案成为公司微服务标准。</li>
-                    <li><strong>生产稳定性保障：</strong>主导多家医院生产环境运维兜底，多次完成P0级故障当日恢复，系统长期保持99.9%可用性，根治Redis内核污染、SSH依赖断裂等疑难故障。</li>
-                    <li><strong>可靠性与安全：</strong>医疗场景对数据准确性要求严苛，主导设计数据校验、异常处理、重传机制，多家医院生产环境长期维持99.9%数据准确率；基于Casbin RBAC/ABAC实现组织-部门-用户三级权限隔离，满足多院区合规要求。</li>
-                    <li><strong>工程与AI效能：</strong>主导容器化改造(故障率↓45%)，建立代码评审、技术分享、IDL优先开发等工程规范；系统性落地AI辅助开发(Vibe Coding)，将架构决策与工程规范编码为AI可执行知识，构建自动化开发与DevOps工作流；CloudWeGo生态贡献者。</li>
+                    <li><strong>架构落地：</strong>从 0 到 1 主导核心平台微服务架构设计与交付——DDD 四层 + API 网关 + 服务治理 + 权限体系 +
+                        可观测性全链路贯通，方案成为公司微服务技术标准。</li>
+                    <li><strong>生产保障：</strong>系统可用性 <span class="metric">99.9%</span>，多次 P0 级故障当日恢复，根治 Redis 内核污染、SSH
+                        依赖断裂等疑难问题。</li>
+                    <li><strong>数据可靠性：</strong>数据传输准确率 <span class="metric">99.9%</span>，设计校验/异常处理/重传全链路机制；基于 Casbin
+                        RBAC 实现组织-部门-用户三级权限隔离，满足多院区合规要求。</li>
+                    <li><strong>工程效能：</strong>容器化改造故障率↓<span class="metric">45%</span>；系统性落地 AI 辅助开发(Vibe
+                        Coding)，将架构规范编码为 AI 可执行知识，构建自动化 DevOps 工作流；CloudWeGo 开源贡献者。</li>
                 </ul>
             </div>
         </div>
@@ -312,15 +417,15 @@
                             <div class="skill-tags">
                                 <span class="skill-tag">Go 1.24+</span>
                                 <span class="skill-tag">goroutine/channel</span>
-                                <span class="skill-tag">GC调优</span>
+                                <span class="skill-tag">GC 调优</span>
                                 <span class="skill-tag">CloudWeGo</span>
                                 <span class="skill-tag">Kitex RPC</span>
                                 <span class="skill-tag">Hertz HTTP</span>
                                 <span class="skill-tag">gRPC</span>
                                 <span class="skill-tag">etcd</span>
-                                <span class="skill-tag">DDD架构</span>
+                                <span class="skill-tag">DDD 架构</span>
                                 <span class="skill-tag">Thrift IDL</span>
-                                <span class="skill-tag">API网关</span>
+                                <span class="skill-tag">API 网关</span>
                                 <span class="skill-tag">Google Wire</span>
                             </div>
                         </div>
@@ -334,8 +439,8 @@
                                 <span class="skill-tag">全链路追踪</span>
                                 <span class="skill-tag">监控告警</span>
                                 <span class="skill-tag">Casbin RBAC</span>
-                                <span class="skill-tag">JWT认证</span>
-                                <span class="skill-tag">API级鉴权</span>
+                                <span class="skill-tag">JWT 认证</span>
+                                <span class="skill-tag">API 级鉴权</span>
                             </div>
                         </div>
                     </div>
@@ -347,19 +452,19 @@
                                 <span class="skill-tag">MySQL</span>
                                 <span class="skill-tag">MongoDB</span>
                                 <span class="skill-tag">Redis</span>
-                                <span class="skill-tag">S3对象存储</span>
+                                <span class="skill-tag">S3 对象存储</span>
                                 <span class="skill-tag">Docker</span>
                                 <span class="skill-tag">Podman</span>
                                 <span class="skill-tag">容器化运维</span>
                                 <span class="skill-tag">代码评审</span>
-                                <span class="skill-tag">AI辅助开发</span>
+                                <span class="skill-tag">AI 辅助开发</span>
                                 <span class="skill-tag">Claude Code</span>
                             </div>
                         </div>
                         <div class="skill-category">
                             <h4>差异化领域能力</h4>
                             <div class="skill-tags">
-                                <span class="skill-tag">DICOM影像解析</span>
+                                <span class="skill-tag">DICOM 影像解析</span>
                                 <span class="skill-tag">医疗系统集成</span>
                                 <span class="skill-tag">数据湖</span>
                                 <span class="skill-tag">Polars</span>
@@ -376,7 +481,7 @@
         <!-- Work Experience -->
         <div class="section">
             <div class="section-title">工作经历</div>
-            
+
             <div class="job">
                 <div class="job-header">
                     <div>
@@ -386,12 +491,13 @@
                     </div>
                     <div class="job-date">2025.03 - 至今</div>
                 </div>
-                <div style="font-size:8.95pt;color:#475569;margin-bottom:4pt;">医疗信息化领域 · 核心技术成员</div>
+                <div style="font-size:9.2pt;color:#475569;margin-bottom:4.5pt;">医疗信息化领域 · 核心技术成员</div>
                 <ul>
-                    <li><strong>架构转型主导：</strong>识别Python单体架构的扩展性瓶颈，主导向Go微服务架构全面转型——完成技术选型评估(CloudWeGo/etcd/PostgreSQL体系)、系统架构设计(DDD+API网关+服务治理+权限体系)、工程规范建立，独立交付完整微服务体系，成为公司技术标准。</li>
-                    <li><strong>核心系统交付：</strong>设计并落地核心医疗数据管理平台(按业务域拆分为多个独立微服务)，覆盖身份认证、医疗数据管理、DICOM影像、数据分析、权限管理等核心业务域，各服务独立部署、独立扩展。</li>
-                    <li><strong>团队技术建设：</strong>带领8人团队(3后端+2前端+2测试+1产品)完成技术体系升级，建立代码评审、技术分享、IDL优先开发、文档规范等工程化机制，显著提升团队研发成熟度与交付质量。</li>
-                    <li><strong>生产保障：</strong>负责技术选型决策、架构方案审查、核心模块攻关，保障多家医院生产环境长期稳定运行；数据传输准确率维持99.9%，医疗数据安全合规，异常数据全链路可追踪。</li>
+                    <li><strong>架构转型：</strong>主导 Python 单体→Go 微服务全面转型，完成技术选型(CloudWeGo/etcd/PostgreSQL)、架构设计(DDD + API
+                        网关 + 服务治理 + 权限)、工程规范建立，独立交付完整微服务体系，<strong>成为公司技术标准</strong>。</li>
+                    <li><strong>核心交付：</strong>设计并交付核心数据管理平台，按业务域拆分多个独立微服务(认证/数据管理/DICOM 影像/分析/权限)，各服务独立部署与扩展。</li>
+                    <li><strong>团队建设：</strong>带领 8 人团队完成技术体系升级，建立代码评审、IDL-First 开发、文档规范等工程机制，提升研发成熟度与交付质量。</li>
+                    <li><strong>生产保障：</strong>保障多家医院生产环境稳定运行，数据传输准确率 <span class="metric">99.9%</span>，异常数据全链路可追踪。</li>
                 </ul>
             </div>
 
@@ -404,10 +510,14 @@
                     <div class="job-date">2021.06 - 2025.03</div>
                 </div>
                 <ul>
-                    <li><strong>核心链路重构：</strong>主导Mria医院信息管理系统核心链路重构，基于Asyncio + Pydantic重新设计数据校验与处理架构，表单查询效率提升50%，代码可维护性与测试覆盖率大幅改善。</li>
-                    <li><strong>医疗影像攻坚：</strong>攻克WebDicomView系统DICOM解析与窗宽窗位转换技术难点，通过算法级重构将医疗影像加载响应时间缩短35%，直接改善放射科医生工作流效率。</li>
-                    <li><strong>工程化改造：</strong>主导Shell脚本 → Docker容器化全面迁移，设计多环境镜像构建策略，部署时间4小时→30分钟(降幅87.5%)，系统故障率降低45%。</li>
-                    <li><strong>规模化部署：</strong>主导完成多家医院生产环境系统部署与技术对接，设计多类型第三方医疗系统数据接口集成方案(含数据校验、异常处理、重传机制)，数据传输准确率99.9%。</li>
+                    <li><strong>核心重构：</strong>基于 Asyncio + Pydantic 重构核心链路，表单查询效率提升 <span
+                            class="metric">50%</span>，代码可维护性大幅改善。</li>
+                    <li><strong>影像优化：</strong>攻克 DICOM 解析与窗宽窗位转换技术难点，算法级优化使影像加载响应时间缩短 <span class="metric">35%</span>。
+                    </li>
+                    <li><strong>容器化改造：</strong>Shell→Docker 容器化改造，部署时间 4h→30min(效率提升 <span
+                            class="metric">87.5%</span>)，故障率降低 <span class="metric">45%</span>。</li>
+                    <li><strong>规模化部署：</strong>主导多家医院部署与第三方系统集成，设计数据校验/异常处理/重传机制，数据准确率 <span
+                            class="metric">99.9%</span>。</li>
                 </ul>
             </div>
         </div>
@@ -418,21 +528,23 @@
         <!-- Projects -->
         <div class="section">
             <div class="section-title">架构设计与重点项目</div>
-            
+
             <div class="project">
                 <div class="project-header">
                     <div class="project-title">▶ 医疗数据管理平台（核心项目） - 完整微服务架构设计与落地</div>
                     <div class="project-date">技术负责人 / 架构设计 | 2025.03 - 至今 | 生产系统</div>
                 </div>
-                <p><strong>项目定位：</strong>对原有Python单体系统进行整体重架构，构建公司新一代医疗数字化基础设施，覆盖患者信息管理、医学影像(DICOM)处理、数据分析、权限管理等核心业务域。作为独立架构师完成从技术选型、架构设计到全量代码交付的全链路工作。</p>
-                <p><strong>技术架构：</strong>Go 1.24、CloudWeGo(Kitex RPC + Hertz HTTP)、PostgreSQL、etcd、Docker、Google Wire、Thrift IDL</p>
-                <p><strong>系统规模：</strong>多个业务微服务 + API网关，按业务域独立部署；IDL-First驱动开发</p>
+                <p><strong>核心目标：</strong>重架构 Python 单体系统，构建公司新一代医疗数字化基础设施。作为独立架构师完成技术选型到全量交付的全链路工作。</p>
+                <p><strong>技术方案：</strong>Go 1.24 + CloudWeGo(Kitex RPC + Hertz HTTP) + PostgreSQL + etcd + Docker +
+                    Google Wire + Thrift IDL；多个业务微服务 + API 网关，IDL-First 驱动开发。</p>
                 <ul>
-                    <li><strong>服务边界设计：</strong>以业务能力(而非数据层)为准则划分多个微服务，规避跨服务分布式事务，保障各服务独立演进；DDD四层架构(Handler→Logic→DAL→Converter)+ 仓储模式，将业务逻辑与框架彻底解耦，服务可独立替换底层存储。</li>
-                    <li><strong>医疗数据湖：</strong>设计数据湖服务，实现高性能数据处理，为数据分析层提供统一访问接口。</li>
-                    <li><strong>多级权限体系：</strong>基于Casbin实现RBAC权限模型，设计组织-部门-用户三级权限结构，实现菜单权限动态解析和API级鉴权，满足多院区、多科室的差异化权限管理需求。</li>
-                    <li><strong>可观测性体系：</strong>设计RPC追踪中间件(request_id/trace_id全链路透传)，建立统一6位数字错误码体系，实现分层错误转换，接入OpenTelemetry链路追踪与监控告警。</li>
-                    <li><strong>项目成果：</strong>完整替代Python单体系统，成为公司新一代医疗数字化基础设施；服务边界设计与工程规范成为团队微服务技术标准，直接指导后续系统建设；2,000+行架构文档沉淀，有效支撑团队技术对齐与知识传承。</li>
+                    <li>以业务能力为准则划分多个微服务，规避跨服务分布式事务；DDD 四层(Handler→Logic→DAL→Converter) + 仓储模式，业务逻辑与框架彻底解耦，可独立替换底层存储。
+                    </li>
+                    <li>设计数据湖服务实现高性能数据处理，为分析层提供统一访问接口。</li>
+                    <li>基于 Casbin RBAC 实现组织-部门-用户三级权限，菜单权限动态解析 + API 级鉴权，满足多院区差异化管理。</li>
+                    <li>RPC 追踪中间件(request_id/trace_id 全链路透传) + 统一 6 位错误码 + 分层错误转换 + OpenTelemetry 链路追踪与监控告警。</li>
+                    <li><strong>成果：</strong>完整替代 Python 单体系统，成为公司新一代技术基础设施；服务边界设计与工程规范成为团队标准；<span
+                            class="metric">2,000+</span> 行架构文档沉淀，支撑技术对齐与知识传承。</li>
                 </ul>
             </div>
 
@@ -441,27 +553,37 @@
                     <div class="project-title">▶ Mria 医院信息管理系统 - 核心重构与工程化改造</div>
                     <div class="project-date">后端主程 / 核心开发 | 2021.06 - 至今 | 生产系统(多家医院)</div>
                 </div>
-                <p><strong>技术栈：</strong>Python、Flask、Asyncio、Pydantic、医学影像处理库、Docker、Portainer</p>
-                <p><strong>量化成果：</strong>Asyncio + Pydantic重构核心链路，表单查询效率↑50%；DICOM影像算法优化，加载响应时间↓35%；Shell→Docker容器化改造，部署时间4h→30min(↓87.5%)，故障率↓45%；主导多家医院系统部署与接口对接，数据传输准确率99.9%。</p>
+                <p><strong>技术栈：</strong>Python、Flask、Asyncio、Pydantic、DICOM 影像处理、Docker、Portainer</p>
+                <p><strong>量化成果：</strong>查询效率↑<span class="metric">50%</span> · 影像加载↓<span class="metric">35%</span> ·
+                    部署效率↑<span class="metric">87.5%</span>(4h→30min) · 故障率↓<span class="metric">45%</span> · 数据准确率 <span
+                        class="metric">99.9%</span></p>
                 <p><strong>典型线上事故处理：</strong></p>
                 <ul>
-                    <li><strong>服务器死机恢复：</strong>Redis升级时gcc源码编译污染内核，服务器重启失败——确认备份完整后指导现场重装系统，在公司同规格服务器上交叉编译Redis二进制包传送，完成零依赖升级，系统当日恢复。</li>
-                    <li><strong>SSH失效依赖修复：</strong>安全补丁安装引发apt依赖链断裂，SSH不可用——通过nc逐一传输缺失deb包，在无SSH环境下完成全部服务依赖恢复。</li>
-                    <li><strong>语音合成卡顿根治：</strong>Python ctypes内嵌调用C模块引发系统级卡顿——主动介入，将C代码重构为接收命令行参数的独立可执行程序，改用subprocess进程隔离调用，彻底解决卡顿。</li>
+                    <li><strong>Redis 内核污染恢复：</strong>gcc 源码编译污染内核致服务器重启失败——确认备份后指导现场重装，交叉编译 Redis
+                        二进制包完成零依赖升级，<strong>当日恢复</strong>。</li>
+                    <li><strong>SSH 失效修复：</strong>安全补丁引发 apt 依赖链断裂——通过 nc 逐一传输缺失 deb 包，无 SSH 环境下完成全部服务依赖恢复。</li>
+                    <li><strong>语音合成卡顿根治：</strong>Python ctypes 内嵌 C 模块引发系统级卡顿——将 C 代码重构为独立可执行程序，subprocess 进程隔离调用，彻底解决。
+                    </li>
                 </ul>
             </div>
 
             <div class="project">
                 <div class="project-header">
-                    <div class="project-title">▶ CloudWeGo 生态 - 生产级架构模板 & AI辅助开发实践 & 开源贡献</div>
-                    <div class="project-date">架构设计 / 社区贡献者 | 2025 | github.com/masonsxu/cloudwego-microservice-demo</div>
+                    <div class="project-title">▶ CloudWeGo 生态 - 架构模板 & AI辅助开发 & 开源贡献</div>
+                    <div class="project-date">架构设计 / 社区贡献者 | 2025 | github.com/masonsxu/cloudwego-microservice-demo
+                    </div>
                 </div>
-                <p><strong>架构模板：</strong>基于生产级Go微服务实践提炼的CloudWeGo微服务标准模板(Go 1.24+ / Kitex RPC + Hertz HTTP / etcd / Casbin / OpenTelemetry / Google Wire / Docker)，涵盖API网关、服务发现、RBAC权限、链路追踪与完整容器编排，经生产验证，具备完善文档与部署指南。</p>
-                <p><strong>AI辅助开发(Vibe Coding)落地：</strong>编写330+行AGENTS.md将架构规范、分层约束、错误处理模式等领域知识编码为AI可理解的结构化上下文；设计8个Custom Skills封装端到端开发流程(如/add-rpc-method一键完成IDL→DAL→Converter→Logic→Handler全层实现+测试编写)；部署3个AI驱动GitHub Actions(Issue自动实现/PR自动Review/Issue自动分类)，构建从编码到DevOps的全流程人机协作体系。</p>
+                <p><strong>架构模板：</strong>基于生产实践提炼的 CloudWeGo 微服务标准模板(Go 1.24+ / Kitex + Hertz / etcd / Casbin /
+                    OpenTelemetry / Wire / Docker)，涵盖 API 网关、服务发现、RBAC、链路追踪与容器编排，经生产验证。</p>
+                <p><strong>AI 辅助开发(Vibe Coding)：</strong><span class="metric">330+</span> 行 AGENTS.md 编码架构规范为 AI
+                    可理解上下文；<span class="metric">8 个</span> Custom Skills 封装端到端开发流程(如 /add-rpc-method 一键完成 IDL→全层实现 +
+                    测试)；<span class="metric">3 个</span> AI 驱动 GitHub Actions(Issue 自动实现/PR 自动 Review/Issue 分类)，构建编码到
+                    DevOps 全流程人机协作。</p>
                 <ul>
-                    <li><strong>hertz-contrib/jwt(PR #27)：</strong>修复RefreshToken中orig_iat被意外重置的核心Bug，解决MaxRefresh窗口计算完全失效的问题，被官方合并，覆盖数千开发者使用场景。</li>
+                    <li><strong>hertz-contrib/jwt(PR #27)：</strong>修复 RefreshToken 中 orig_iat 被意外重置的核心 Bug，解决 MaxRefresh
+                        窗口计算失效问题，已合并，覆盖数千开发者。</li>
                     <li><strong>hertz-contrib/obs-opentelemetry(PR #67)：</strong>可观测性组件优化，提升链路追踪稳定性与准确性。</li>
-                    <li><strong>cloudwego/abcoder(PR #84)：</strong>修复Go 1.25+环境下sonic依赖版本导致的安装编译错误。</li>
+                    <li><strong>cloudwego/abcoder(PR #84)：</strong>修复 Go 1.25+ 环境下 sonic 依赖版本导致的编译错误。</li>
                 </ul>
             </div>
         </div>
@@ -478,16 +600,19 @@
                     <div class="education-right">2017.07 - 2021.06</div>
                 </div>
                 <div class="honors">
-                    <strong>荣誉奖项：</strong>2021 · 河南省优秀学位论文(省级荣誉 / Top 0.5%-1%) | 2018/2019 · 国家级单项奖学金(×2) | 2020 · 省级单项奖学金
+                    <strong>荣誉奖项：</strong>2021 · 河南省优秀学位论文(省级荣誉 / Top 0.5%-1%) | 2018/2019 · 国家级单项奖学金(×2) | 2020 ·
+                    省级单项奖学金
                 </div>
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            最后更新：2026年3月　|　GitHub: <a href="https://github.com/masonsxu">github.com/masonsxu</a>　|　核心项目：<a href="https://github.com/masonsxu/cloudwego-microservice-demo">cloudwego-microservice-demo</a>
+            最后更新：2026 年 3 月　|　GitHub: <a href="https://github.com/masonsxu">github.com/masonsxu</a>　|　核心项目：<a
+                href="https://github.com/masonsxu/cloudwego-microservice-demo">cloudwego-microservice-demo</a>
         </div>
 
     </div>
 </body>
+
 </html>
