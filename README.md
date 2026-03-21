@@ -6,41 +6,83 @@
 
 ## 技术栈
 
-- 纯静态 HTML，无框架，无打包工具
-- [Tailwind CSS](https://tailwindcss.com) — 本地 CLI 构建，非 CDN
-- 字体：Inter（英文）、Noto Sans SC（中文）、JetBrains Mono（代码）（通过 `fonts.loli.net` 加载，国内可访问）
+- **React 19** + **TypeScript** — 函数式组件
+- **Vite** — 构建工具，支持 HMR
+- **Tailwind CSS v4** — 样式（CSS `@theme` 配置，无 `tailwind.config.js`）
+- **Remotion** — 时间线 SVG 动画（星座效果）
+- **framer-motion** — 滚动触发动画
+- **lucide-react** — 图标库
+- 字体：Noto Sans SC（中文）、Playfair Display（衬线）、JetBrains Mono（代码）（通过 `fonts.loli.net` 加载）
 
 ## 项目结构
 
 ```
-.
-├── index.html          # 主页（全部内容内联）
-├── 404.html            # 自定义 404 页面
-├── tailwind.css        # Tailwind 构建产物（已提交，部署时无需构建）
-├── tailwind.config.js  # Tailwind 配置（主题色、字体、动画）
-├── src/input.css       # Tailwind 入口文件
-├── package.json        # 仅含 tailwindcss 开发依赖
-├── og-image.png        # 社交分享封面图（1200×630）
-├── og-image.svg        # 封面图矢量源文件
-├── sitemap.xml         # 站点地图
-├── robots.txt          # 爬虫声明
-└── favicon.svg         # 网站图标
+├── index.html              # Vite 入口（meta 标签、SEO、JSON-LD）
+├── vite.config.ts          # Vite 配置（React、Tailwind v4、chunk splitting）
+├── tsconfig.json           # TypeScript 项目引用
+├── public/                 # 静态资源（原样复制到 dist/）
+│   ├── favicon.svg
+│   ├── og-image.png / .svg
+│   ├── resume.pdf / .html
+│   ├── robots.txt / sitemap.xml
+│   ├── CNAME
+│   └── 404.html            # 独立 404 页面
+├── src/
+│   ├── main.tsx            # React 入口
+│   ├── App.tsx             # 根组件（聚光灯效果、布局）
+│   ├── index.css           # Tailwind v4 @theme + 全局 CSS
+│   ├── components/
+│   │   ├── Navbar.tsx      # 固定毛玻璃导航栏
+│   │   ├── Hero.tsx        # Hero 区（Remotion 星座动画）
+│   │   ├── Architecture.tsx # 架构能力（Bento Box 网格）
+│   │   ├── Skills.tsx      # 专业技能（标签式展示）
+│   │   ├── Projects.tsx    # 核心项目
+│   │   ├── Experience.tsx  # 职业经历时间线
+│   │   ├── Education.tsx   # 教育背景与奖项
+│   │   ├── Essence.tsx     # 设计哲学 + 星座卡片
+│   │   ├── OpenSource.tsx  # 开源贡献 & PR
+│   │   ├── Footer.tsx
+│   │   ├── SectionHeader.tsx  # 通用区块标题
+│   │   └── ScrollReveal.tsx   # framer-motion 滚动动画
+│   └── remotion/
+│       └── ConstellationAnimation.tsx  # Remotion 动画（spring + interpolate）
 ```
 
 ## 本地开发
 
-直接用浏览器打开 `index.html` 即可，无需启动服务器。
-
-修改内容后若新增了 Tailwind 类，需重新构建 CSS：
-
 ```bash
-npm install        # 首次使用
-npm run build:css  # 重新生成 tailwind.css
+npm install     # 安装依赖
+npm run dev     # 启动 Vite 开发服务器（HMR）
+npm run build   # 生产构建（TypeScript 检查 + Vite 构建 → dist/）
+npm run preview # 本地预览构建产物
 ```
 
 ## 部署
 
-推送到 `main` 分支后，Cloudflare Pages 自动部署。`tailwind.css` 已提交到仓库，Cloudflare 无需执行构建命令，直接托管静态文件即可。
+推送到 `main` 分支后，Cloudflare Pages 自动构建部署：
+- Build command: `npm run build`
+- Output directory: `dist`
+- 自定义域名: `masonsxu-github-io.pages.dev`
+
+## 设计系统
+
+**"Midnight Pearl" 黑金主题**（在 `src/index.css` 的 `@theme` 中定义）：
+
+| 变量 | 色值 | 用途 |
+|------|------|------|
+| `bg` | `#0C0C0E` | 页面背景 |
+| `surface` | `#121214` | 卡片背景 |
+| `surface-light` | `#1E1E21` | 次级背景 |
+| `border` | `#D4AF37` | 边框（需加 `/20` 透明度） |
+| `primary` | `#D4AF37` | 主色（金） |
+| `accent` | `#F2D288` | 强调色（浅金） |
+| `muted` | `#A1A1AA` | 次要文字 |
+
+**代码规范**：
+- 始终使用语义化 class（`bg-surface`、`border-border/20`、`text-primary`）
+- 禁止硬编码颜色值
+- 图标统一使用 `lucide-react`
+- 卡片统一使用 `rounded-lg` + `spotlight-card`
 
 ## Commit 规范
 

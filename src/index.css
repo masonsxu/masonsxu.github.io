@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0C0C0E;
+  --color-surface: #121214;
+  --color-surface-light: #1E1E21;
+  --color-border: #D4AF37;
+  --color-primary: #D4AF37;
+  --color-accent: #F2D288;
+  --color-text: #FCFCFC;
+  --color-muted: #A1A1AA;
+  --color-obsidian: #0C0C0E;
+  --color-pearl: #FCFCFC;
+  --color-gold: #D4AF37;
+  --color-midnight-indigo: #1E1B4B;
+  --color-zinc-muted: #A1A1AA;
+
+  --font-sans: 'Noto Sans SC', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --animate-shimmer: shimmer 3s infinite linear;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+body {
+  background-color: #0B0E14;
+  color: #FCFCFC;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0C0C0E; }
+::-webkit-scrollbar-thumb { background: #1E1E21; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+.glass {
+  background: rgba(11, 14, 20, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spotlight-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(212, 175, 55, 0.08), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 8s ease infinite;
+}
+
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-effect::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.15), transparent);
+  transform: skewX(-25deg);
+  animation: shimmer-anim 4s infinite;
+}
+
+@keyframes shimmer-anim {
+  100% { left: 200%; }
+}
+
+.tech-bg {
+  background-image: radial-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+
+.nav-active {
+  color: #FCFCFC !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-effect::after {
+    animation: none !important;
+  }
+}
