@@ -40,12 +40,14 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 │   │   ├── Experience.tsx  # Career timeline
 │   │   ├── Education.tsx   # Education & awards
 │   │   ├── Essence.tsx     # Philosophy + Zodiac card with Remotion
+│   │   ├── TechCardShowcase.tsx # Showreel section with Remotion Player
 │   │   ├── OpenSource.tsx  # Open source contributions & PRs
 │   │   ├── Footer.tsx
 │   │   ├── SectionHeader.tsx  # Reusable section header
 │   │   └── ScrollReveal.tsx   # framer-motion scroll animations
 │   └── remotion/
-│       └── ConstellationAnimation.tsx  # Remotion composition (spring + interpolate)
+│       ├── ConstellationAnimation.tsx  # Remotion composition (spring + interpolate)
+│       └── TechCardVideo.tsx           # 15s tech card video (1920x1080, 30fps)
 ```
 
 ## Key Design Decisions
@@ -65,7 +67,7 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - Mono: JetBrains Mono
 
 **Animation Stack**:
-- **Remotion**: Timeline-based constellation SVG animation (`spring()`, `interpolate()`, `Easing`)
+- **Remotion**: Timeline-based SVG animations (`spring()`, `interpolate()`, `Easing`) + video compositions
 - **framer-motion**: Scroll-triggered reveal & stagger animations (`useInView`, `motion.div`)
 - **CSS**: Spotlight card effect (mouse-tracking), shimmer, gradient shift
 
@@ -100,6 +102,14 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - All animations must use `useCurrentFrame()` + `useVideoConfig().fps`
 - CSS animations are forbidden inside Remotion components
 - Use `spring()` for natural motion, `interpolate()` for mapped values
+- Use `Sequence` with `premountFor` for timeline sequencing
+- Use `AbsoluteFill` for layout composition
+
+**Modifying TechCardVideo**: Edit `src/remotion/TechCardVideo.tsx`
+- Configurable constants at file top: `NAME_CN`, `NAME_EN`, `TAGS`, `DOMAIN`, `COLORS`
+- Modular sub-components: `BackgroundGrid`, `NameEntrance`, `TagCarousel`, `Outro`
+- 1920x1080 @ 30fps, 15s duration (450 frames)
+- Embedded via `@remotion/player` in `TechCardShowcase.tsx` with playback controls
 
 ## Deployment Notes
 
