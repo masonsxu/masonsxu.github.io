@@ -114,7 +114,7 @@
   <text x="66" y="282" font-family="'Noto Sans SC', sans-serif" font-size="38" font-style="italic" font-weight="400" fill="#D4AF37" fill-opacity="0.75" letter-spacing="1">Mason Xu</text>
 
   <!-- Role title with gradient -->
-  <text x="60" y="348" font-family="'Noto Sans SC', sans-serif" font-size="46" font-weight="700" fill="url(#goldGrad)" letter-spacing="1">Go 微服务架构工程师</text>
+  <text x="60" y="348" font-family="'Noto Sans SC', sans-serif" font-size="40" font-weight="700" fill="url(#goldGrad)" letter-spacing="1">后端技术负责人 · 分布式系统架构师</text>
 
   <!-- ── Divider ── -->
   <line x1="60" y1="376" x2="760" y2="376" stroke="url(#dividerGrad)" stroke-width="1"/>
@@ -123,16 +123,16 @@
   <!-- Stat 1: 5年 -->
   <g transform="translate(60, 390)">
     <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">5年</text>
-    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">医疗信息化专注</text>
+    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">分布式系统架构</text>
   </g>
 
   <!-- Vertical separator 1 -->
   <line x1="230" y1="400" x2="230" y2="468" stroke="#D4AF37" stroke-opacity="0.2" stroke-width="1"/>
 
-  <!-- Stat 2: 数十家 -->
+  <!-- Stat 2: 众多 -->
   <g transform="translate(250, 390)">
-    <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">数十家</text>
-    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">医院生产部署</text>
+    <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">众多</text>
+    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">生产环境部署</text>
   </g>
 
   <!-- Vertical separator 2 -->
@@ -141,13 +141,13 @@
   <!-- Stat 3: 99.9% -->
   <g transform="translate(470, 390)">
     <text y="52" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="48" font-weight="700" fill="#D4AF37">99.9%</text>
-    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">数据传输准确率</text>
+    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">系统可用性</text>
   </g>
 
   <!-- ── Bottom bar ── -->
   <!-- Bottom-left: status -->
   <circle cx="66" cy="578" r="5" fill="#22C55E"/>
-  <text x="80" y="583" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="#A1A1AA" letter-spacing="0.5">资深后端工程师</text>
+  <text x="80" y="583" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="#A1A1AA" letter-spacing="0.5">后端技术负责人 · 分布式系统架构师</text>
   <!-- Dot separator -->
   <circle cx="230" cy="578" r="2" fill="#A1A1AA" fill-opacity="0.4"/>
   <text x="242" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · CloudWeGo · gRPC · PostgreSQL</text>

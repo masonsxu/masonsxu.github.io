@@ -8,7 +8,7 @@
 
 - 纯静态 HTML，无框架，无打包工具
 - [Tailwind CSS](https://tailwindcss.com) — 本地 CLI 构建，非 CDN
-- 字体：Noto Sans SC、JetBrains Mono、Playfair Display（通过 `fonts.loli.net` 加载，国内可访问）
+- 字体：Inter（英文）、Noto Sans SC（中文）、JetBrains Mono（代码）（通过 `fonts.loli.net` 加载，国内可访问）
 
 ## 项目结构
 

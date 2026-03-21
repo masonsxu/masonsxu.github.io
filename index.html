@@ -37,17 +37,17 @@
     <!-- Fonts (Using loli.net mirror for China access) -->
     <link rel="preconnect" href="https://fonts.loli.net">
     <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
-<link
-         href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
-         rel="stylesheet">
+    <link
+        href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind CSS (production build) -->
     <link rel="stylesheet" href="tailwind.css">
     <style>
-body {
-             background-color: #0B0E14;
-             color: #FCFCFC;
-         }
+        body {
+            background-color: #0B0E14;
+            color: #FCFCFC;
+        }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -67,106 +67,111 @@ body {
             background: #D4AF37;
         }
 
-.glass {
-             background: rgba(11, 14, 20, 0.7);
-             backdrop-filter: blur(12px);
-             border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-         }
+        .glass {
+            background: rgba(11, 14, 20, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
 
-/* Spotlight Effect */
-         .spotlight-card {
-             position: relative;
-             overflow: hidden;
-             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-         }
-         
-         /* Enhanced Spotlight with Depth */
-         .spotlight-card:hover {
-             transform: translateY(-4px);
-             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
-         }
-         
-         /* Parallax Background Layers */
-         .parallax-layer {
-             position: absolute;
-             inset: 0;
-             pointer-events: none;
-             overflow: hidden;
-         }
-         
-         .parallax-layer:nth-child(1) {
-             transform: translateZ(0) scale(1);
-         }
-         
-         .parallax-layer:nth-child(2) {
-             transform: translateZ(-100px) scale(2);
-         }
-         
-         .parallax-layer:nth-child(3) {
-             transform: translateZ(-200px) scale(3);
-         }
-         
-         /* Micro-interaction Enhancements */
-         .tech-icon-hover {
-             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-         }
-         
-         .tech-icon-hover:hover {
-             transform: translateY(-8px) rotate(5deg);
-             box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
-         }
-         
-         /* Floating Animation */
-         @keyframes float {
-             0%, 100% {
-                 transform: translateY(0px);
-             }
-             50% {
-                 transform: translateY(-10px);
-             }
-         }
-         
-         .float {
-             animation: float 6s ease-in-out infinite;
-         }
-         
-         /* Gradient Text Enhancement */
-         .gold-gradient-text {
-             background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
-             background-size: 200% 100%;
-             background-clip: text;
-             -webkit-background-clip: text;
-             -webkit-text-fill-color: transparent;
-             animation: gradientShift 8s ease infinite;
-         }
-         
-         @keyframes gradientShift {
-             0% {
-                 background-position: 0% 50%;
-             }
-             50% {
-                 background-position: 100% 50%;
-             }
-             100% {
-                 background-position: 0% 50%;
-             }
-         }
-         
-         /* Particle Background */
-         .particles-container {
-             position: fixed;
-             inset: 0;
-             pointer-events: none;
-             z-index: -2;
-             overflow: hidden;
-         }
-         
-         .particle {
-             position: absolute;
-             background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
-             border-radius: 50%;
-             pointer-events: none;
-         }
+        /* Spotlight Effect */
+        .spotlight-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Enhanced Spotlight with Depth */
+        .spotlight-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Parallax Background Layers */
+        .parallax-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .parallax-layer:nth-child(1) {
+            transform: translateZ(0) scale(1);
+        }
+
+        .parallax-layer:nth-child(2) {
+            transform: translateZ(-100px) scale(2);
+        }
+
+        .parallax-layer:nth-child(3) {
+            transform: translateZ(-200px) scale(3);
+        }
+
+        /* Micro-interaction Enhancements */
+        .tech-icon-hover {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .tech-icon-hover:hover {
+            transform: translateY(-8px) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Gradient Text Enhancement */
+        .gold-gradient-text {
+            background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
+            background-size: 200% 100%;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Particle Background */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
 
         .spotlight-card::before {
             content: '';
@@ -230,18 +235,20 @@ body {
             transform: translateY(30px);
             transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .reveal.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
         /* Stagger Children */
-        .stagger > * {
+        .stagger>* {
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .stagger.visible > * {
+
+        .stagger.visible>* {
             opacity: 1;
             transform: translateY(0);
         }
@@ -253,24 +260,41 @@ body {
 
         /* Star Twinkle */
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         /* Accessibility: Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
-            .reveal, .stagger > * {
+
+            .reveal,
+            .stagger>* {
                 transition: none !important;
                 opacity: 1 !important;
                 transform: none !important;
             }
-            .shimmer-effect::after { animation: none !important; }
+
+            .shimmer-effect::after {
+                animation: none !important;
+            }
         }
     </style>
-<style>
-.font-noto { font-family: 'Noto Sans SC', sans-serif; }
-.font-inter { font-family: 'Inter', sans-serif; }
-</style>
+    <style>
+        .font-noto {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
 
 <body class="antialiased selection:bg-gold/20 selection:text-gold font-noto">
@@ -284,7 +308,7 @@ body {
             <!-- Logo -->
             <a href="#" class="group flex items-center gap-3">
                 <div
-                    class="w-8 h-8 rounded bg-surface border border-gold/20 flex items-center justify-center font-mono font-bold text-white group-hover:border-gold/50 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all whitespace-nowrap">
+                    class="w-10 h-8 rounded bg-surface border border-gold/20 flex items-center justify-center font-mono font-bold text-white group-hover:border-gold/50 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all whitespace-nowrap">
                     <span class="text-gold">&lt;</span>X<span class="text-gold">/&gt;</span>
                 </div>
                 <span
@@ -334,8 +358,7 @@ body {
         <!-- Hero Section -->
         <section class="mb-32 relative">
             <!-- Glow Effect -->
-            <div
-                class="absolute -top-20 -left-20 w-96 h-96 bg-gold/5 rounded-full blur-[100px] pointer-events-none">
+            <div class="absolute -top-20 -left-20 w-96 h-96 bg-gold/5 rounded-full blur-[100px] pointer-events-none">
             </div>
 
             <!-- Constellation Background for Hero -->
@@ -366,34 +389,34 @@ body {
                 </svg>
             </div>
 
-<div class="relative z-10">
-                 <div
-                     class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/20 text-xs font-medium text-gold mb-8 animate-fade-in">
-                     <span class="relative flex h-2 w-2">
-                         <span
-                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
-                         <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
-                     </span>
-                     可接受新机会 / Open to Work
-                 </div>
+            <div class="relative z-10">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/20 text-xs font-medium text-gold mb-8 animate-fade-in">
+                    <span class="relative flex h-2 w-2">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+                    </span>
+                    可接受新机会 / Open to Work
+                </div>
 
-                 <h1 class="font-bold tracking-tight text-white mb-8">
-                     <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
-                         <span class="text-5xl md:text-7xl font-noto">徐俊飞</span>
-                         <span class="text-2xl md:text-4xl text-muted font-light font-inter italic">Mason Xu</span>
-                         <span class="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
-                     </div>
-                     <div
-                         class="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">
-                         后端技术负责人 · 分布式系统架构师
-                     </div>
-                 </h1>
+                <h1 class="font-bold tracking-tight text-white mb-8">
+                    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
+                        <span class="text-5xl md:text-7xl font-noto">徐俊飞</span>
+                        <span class="text-2xl md:text-4xl text-muted font-light font-inter italic">Mason Xu</span>
+                        <span class="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
+                    </div>
+                    <div class="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">
+                        后端技术负责人 · 分布式系统架构师
+                    </div>
+                </h1>
 
-                 <p class="text-lg md:text-xl text-muted max-w-3xl leading-relaxed mb-10">
-                     5 年专注<strong class="text-pearl">分布式系统架构</strong>与<strong class="text-pearl">规模化落地</strong>，积累 Go 微服务架构设计与<strong class="text-pearl">企业级系统交付</strong>双重经验。<br>
-                     主导 Python 单体到 Go 微服务的<strong class="text-pearl">整体架构转型</strong>，独立完成核心分布式数据管理平台从0到1的架构设计与落地交付；<br>
-                     主导<strong class="text-pearl">众多生产环境</strong>部署，系统可用性 <strong class="text-pearl">99.9%</strong>。
-                 </p>
+                <p class="text-lg md:text-xl text-muted max-w-3xl leading-relaxed mb-10">
+                    5 年专注<strong class="text-pearl">分布式系统架构</strong>与<strong class="text-pearl">规模化落地</strong>，积累 Go
+                    微服务架构设计与<strong class="text-pearl">企业级系统交付</strong>双重经验。<br>
+                    主导 Python 单体到 Go 微服务的<strong class="text-pearl">整体架构转型</strong>，独立完成核心分布式数据管理平台从0到1的架构设计与落地交付；<br>
+                    主导<strong class="text-pearl">众多生产环境</strong>部署，系统可用性 <strong class="text-pearl">99.9%</strong>。
+                </p>
 
                 <div class="flex flex-wrap gap-4">
                     <a href="#projects"
@@ -412,7 +435,8 @@ body {
                     <a href="resume.pdf" target="_blank"
                         class="px-8 py-3 border border-border text-muted font-bold uppercase tracking-wider text-xs rounded hover:text-white hover:border-white/30 transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
                         下载简历 / Resume
                     </a>
@@ -451,21 +475,24 @@ body {
                                     <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
                                     <span class="text-sm font-bold text-white">架构落地能力</span>
                                 </div>
-                                <p class="text-sm text-muted leading-relaxed pl-4">以业务能力为边界划分服务，独立完成从技术选型到系统落地的全链路设计与交付。具备在不确定性中做出正确架构决策的能力</p>
+                                <p class="text-sm text-muted leading-relaxed pl-4">
+                                    以业务能力为边界划分服务，独立完成从技术选型到系统落地的全链路设计与交付。具备在不确定性中做出正确架构决策的能力</p>
                             </div>
-<div>
-                                 <div class="flex items-center gap-2 mb-2">
-                                     <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
-                                     <span class="text-sm font-bold text-white">可靠性与安全</span>
-                                 </div>
-                                 <p class="text-sm text-muted leading-relaxed pl-4">对数据准确性零容忍，在数据校验、异常处理、重传机制、权限隔离等环节建立系统性保障，并经大规模生产环境持续验证</p>
-                             </div>
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                    <span class="text-sm font-bold text-white">可靠性与安全</span>
+                                </div>
+                                <p class="text-sm text-muted leading-relaxed pl-4">
+                                    对数据准确性零容忍，在数据校验、异常处理、重传机制、权限隔离等环节建立系统性保障，并经大规模生产环境持续验证</p>
+                            </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
                                     <span class="text-sm font-bold text-white">工程与 AI 效能</span>
                                 </div>
-                                <p class="text-sm text-muted leading-relaxed pl-4">建立 IDL-First 开发流程与工程规范，系统性落地 AI 辅助开发（Vibe Coding），将架构决策与工程规范编码为 AI 可执行知识，构建自动化开发与 DevOps 工作流；CloudWeGo 生态贡献者</p>
+                                <p class="text-sm text-muted leading-relaxed pl-4">建立 IDL-First 开发流程与工程规范，系统性落地 AI
+                                    辅助开发（Vibe Coding），将架构决策与工程规范编码为 AI 可执行知识，构建自动化开发与 DevOps 工作流；CloudWeGo 生态贡献者</p>
                             </div>
                         </div>
                     </div>
@@ -535,7 +562,8 @@ body {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 stagger">
 
                 <!-- Skill Group 1: Go 微服务架构 -->
-                <div class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
+                <div
+                    class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
                     <div class="flex items-center gap-3 mb-5">
                         <div class="w-2 h-2 rounded-full bg-primary"></div>
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider">Go 微服务架构（核心主线）</h3>
@@ -547,21 +575,25 @@ body {
                         </div>
                         <div class="text-sm">
                             <span class="text-primary font-medium">微服务框架：</span>
-                            <span class="text-muted">CloudWeGo（Kitex RPC + Hertz HTTP）、gRPC、etcd 服务注册/发现/配置热更新、负载均衡</span>
+                            <span class="text-muted">CloudWeGo（Kitex RPC + Hertz HTTP）、gRPC、etcd
+                                服务注册/发现/配置热更新、负载均衡</span>
                         </div>
                         <div class="text-sm">
                             <span class="text-primary font-medium">架构设计：</span>
-                            <span class="text-muted">DDD 四层架构（Handler→Logic→DAL→Converter）、IDL-First 开发（Thrift）、API 网关设计、Google Wire 编译期依赖注入</span>
+                            <span class="text-muted">DDD 四层架构（Handler→Logic→DAL→Converter）、IDL-First 开发（Thrift）、API
+                                网关设计、Google Wire 编译期依赖注入</span>
                         </div>
                         <div class="text-sm">
                             <span class="text-primary font-medium">存储：</span>
-                            <span class="text-muted">PostgreSQL / MySQL / MongoDB 事务与索引优化；Redis 缓存设计与分布式锁；S3 兼容对象存储</span>
+                            <span class="text-muted">PostgreSQL / MySQL / MongoDB 事务与索引优化；Redis 缓存设计与分布式锁；S3
+                                兼容对象存储</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Skill Group 2: 分布式治理与可观测性 -->
-                <div class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
+                <div
+                    class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
                     <div class="flex items-center gap-3 mb-5">
                         <div class="w-2 h-2 rounded-full bg-primary"></div>
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider">分布式治理与可观测性</h3>
@@ -573,7 +605,8 @@ body {
                         </div>
                         <div class="text-sm">
                             <span class="text-primary font-medium">可观测性：</span>
-                            <span class="text-muted">OpenTelemetry 全链路追踪（request_id / trace_id 透传）、统一 6 位错误码体系、分层错误转换、监控告警</span>
+                            <span class="text-muted">OpenTelemetry 全链路追踪（request_id / trace_id 透传）、统一 6
+                                位错误码体系、分层错误转换、监控告警</span>
                         </div>
                         <div class="text-sm">
                             <span class="text-primary font-medium">权限安全：</span>
@@ -583,7 +616,8 @@ body {
                 </div>
 
                 <!-- Skill Group 3: 工程化与生产落地 -->
-                <div class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
+                <div
+                    class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
                     <div class="flex items-center gap-3 mb-5">
                         <div class="w-2 h-2 rounded-full bg-primary"></div>
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider">工程化与生产落地</h3>
@@ -601,21 +635,23 @@ body {
                 </div>
 
                 <!-- Skill Group 4: 差异化领域能力 -->
-                <div class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
+                <div
+                    class="bg-surface border border-border rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
                     <div class="flex items-center gap-3 mb-5">
                         <div class="w-2 h-2 rounded-full bg-primary"></div>
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider">差异化领域能力</h3>
                     </div>
-<div class="space-y-3">
-                         <div class="text-sm">
-                             <span class="text-primary font-medium">数据库优化：</span>
-                             <span class="text-muted">查询性能分析、索引策略、读写分离、分库分表方案</span>
-                         </div>
-                         <div class="text-sm">
-                             <span class="text-primary font-medium">Python 工程化：</span>
-                             <span class="text-muted">Asyncio 高性能异步、Flask、Pydantic / SQLAlchemy、大规模数据处理（Pandas / Polars / PyArrow）、自动化迁移与容器化改造</span>
-                         </div>
-                     </div>
+                    <div class="space-y-3">
+                        <div class="text-sm">
+                            <span class="text-primary font-medium">数据库优化：</span>
+                            <span class="text-muted">查询性能分析、索引策略、读写分离、分库分表方案</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="text-primary font-medium">Python 工程化：</span>
+                            <span class="text-muted">Asyncio 高性能异步、Flask、Pydantic / SQLAlchemy、大规模数据处理（Pandas / Polars /
+                                PyArrow）、自动化迁移与容器化改造</span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -641,13 +677,13 @@ body {
                                         class="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-mono font-bold">ENTERPRISE</span>
                                     <span class="text-muted text-xs font-mono">2025.03 - 至今</span>
                                 </div>
-<h3
-                                     class="text-2xl font-bold text-white mb-3 group-hover:text-accent transition-colors">
-                                     核心分布式数据管理平台 — 微服务架构从 0 到 1
-                                 </h3>
-                                 <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
-                                     对原有 Python 单体系统进行整体重架构，构建公司新一代企业级数字化基础设施，解决服务扩展性瓶颈，支持众多生产环境规模化部署。
-                                 </p>
+                                <h3
+                                    class="text-2xl font-bold text-white mb-3 group-hover:text-accent transition-colors">
+                                    核心分布式数据管理平台 — 微服务架构从 0 到 1
+                                </h3>
+                                <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
+                                    对原有 Python 单体系统进行整体重架构，构建公司新一代企业级数字化基础设施，解决服务扩展性瓶颈，支持众多生产环境规模化部署。
+                                </p>
                                 <div class="space-y-2 mb-8">
                                     <div class="flex items-start gap-3 text-sm text-text">
                                         <span class="text-accent mt-1">▹</span>
@@ -700,40 +736,45 @@ body {
                             <div>
                                 <div class="flex items-center gap-3 mb-4">
                                     <span
-                                        class="px-2 py-0.5 rounded-full bg-zincMuted/10 text-zincMuted text-xs font-mono font-bold uppercase tracking-wider">Python Era</span>
+                                        class="px-2 py-0.5 rounded-full bg-zincMuted/10 text-zincMuted text-xs font-mono font-bold uppercase tracking-wider">Python
+                                        Era</span>
                                     <span class="text-muted text-xs font-mono">2021.06 - 2025.03</span>
                                 </div>
-<h3
-                                     class="text-2xl font-bold text-white mb-3 group-hover:text-gold transition-colors font-serif">
-                                     遗留系统性能优化与容器化转型
-                                 </h3>
-                                 <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
-                                     诊断并解决遗留系统的并发瓶颈与部署效率问题。主导从 Shell 脚本到 Docker 容器化的架构转型，
-                                     完成众多生产环境的规模化交付。
-                                 </p>
-                                 <div class="space-y-2 mb-8">
-                                     <div class="flex items-start gap-3 text-sm text-text">
-                                         <span class="text-gold mt-1">▹</span>
-                                         <span>基于 <strong class="text-pearl">Asyncio</strong> 重写核心查询链路，接口响应时间降低 50%</span>
-                                     </div>
-                                     <div class="flex items-start gap-3 text-sm text-text">
-                                         <span class="text-gold mt-1">▹</span>
-                                         <span>优化核心数据处理算法，响应时间缩短 35%</span>
-                                     </div>
-                                     <div class="flex items-start gap-3 text-sm text-text">
-                                         <span class="text-gold mt-1">▹</span>
-                                         <span>设计多环境 <strong class="text-pearl">Docker</strong> 镜像构建策略，部署时间 4h→30min，故障率降低 45%</span>
-                                     </div>
-                                 </div>
+                                <h3
+                                    class="text-2xl font-bold text-white mb-3 group-hover:text-gold transition-colors font-serif">
+                                    遗留系统性能优化与容器化转型
+                                </h3>
+                                <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
+                                    诊断并解决遗留系统的并发瓶颈与部署效率问题。主导从 Shell 脚本到 Docker 容器化的架构转型，
+                                    完成众多生产环境的规模化交付。
+                                </p>
+                                <div class="space-y-2 mb-8">
+                                    <div class="flex items-start gap-3 text-sm text-text">
+                                        <span class="text-gold mt-1">▹</span>
+                                        <span>基于 <strong class="text-pearl">Asyncio</strong> 重写核心查询链路，接口响应时间降低
+                                            50%</span>
+                                    </div>
+                                    <div class="flex items-start gap-3 text-sm text-text">
+                                        <span class="text-gold mt-1">▹</span>
+                                        <span>优化核心数据处理算法，响应时间缩短 35%</span>
+                                    </div>
+                                    <div class="flex items-start gap-3 text-sm text-text">
+                                        <span class="text-gold mt-1">▹</span>
+                                        <span>设计多环境 <strong class="text-pearl">Docker</strong> 镜像构建策略，部署时间
+                                            4h→30min，故障率降低 45%</span>
+                                    </div>
+                                </div>
                                 <!-- Incident Handling -->
                                 <div class="mt-6 border-t border-gold/10 pt-5">
-                                    <div class="text-xs font-bold text-muted uppercase tracking-widest mb-3">典型线上事故处理 / Incident Handling</div>
+                                    <div class="text-xs font-bold text-muted uppercase tracking-widest mb-3">典型线上事故处理 /
+                                        Incident Handling</div>
                                     <div class="space-y-3">
                                         <div class="flex items-start gap-3 text-sm">
                                             <span class="text-gold/60 mt-0.5 shrink-0">01</span>
                                             <div>
                                                 <span class="text-white font-medium">服务器死机恢复：</span>
-                                                <span class="text-muted">Redis 升级时 gcc 源码编译污染内核，服务器重启失败——交叉编译 Redis 二进制包传送，系统当日恢复</span>
+                                                <span class="text-muted">Redis 升级时 gcc 源码编译污染内核，服务器重启失败——交叉编译 Redis
+                                                    二进制包传送，系统当日恢复</span>
                                             </div>
                                         </div>
                                         <div class="flex items-start gap-3 text-sm">
@@ -747,7 +788,8 @@ body {
                                             <span class="text-gold/60 mt-0.5 shrink-0">03</span>
                                             <div>
                                                 <span class="text-white font-medium">语音合成卡顿根治：</span>
-                                                <span class="text-muted">Python ctypes 内嵌 C 模块引发卡顿——改用 subprocess 进程隔离调用</span>
+                                                <span class="text-muted">Python ctypes 内嵌 C 模块引发卡顿——改用 subprocess
+                                                    进程隔离调用</span>
                                             </div>
                                         </div>
                                     </div>
@@ -757,27 +799,27 @@ body {
 
                         <div
                             class="md:col-span-4 bg-surfaceLight/30 border-l border-border p-8 flex flex-col justify-center space-y-6">
-<div>
-                                     <div class="text-xs text-muted font-mono uppercase mb-2">Scale & Impact</div>
-                                     <div class="grid grid-cols-2 gap-4">
-                                         <div>
-                                             <div class="text-xl font-bold text-white font-mono">众多</div>
-                                             <div class="text-[10px] text-muted">Prod Envs</div>
-                                         </div>
-                                         <div>
-                                             <div class="text-xl font-bold text-white font-mono">-87%</div>
-                                             <div class="text-[10px] text-muted">Deploy Time</div>
-                                         </div>
-                                         <div>
-                                             <div class="text-xl font-bold text-white font-mono">-50%</div>
-                                             <div class="text-[10px] text-muted">Response Time</div>
-                                         </div>
-                                         <div>
-                                             <div class="text-xl font-bold text-white font-mono">99.9%</div>
-                                             <div class="text-[10px] text-muted">System Availability</div>
-                                         </div>
-                                     </div>
-                                 </div>
+                            <div>
+                                <div class="text-xs text-muted font-mono uppercase mb-2">Scale & Impact</div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <div class="text-xl font-bold text-white font-mono">众多</div>
+                                        <div class="text-[10px] text-muted">Prod Envs</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xl font-bold text-white font-mono">-87%</div>
+                                        <div class="text-[10px] text-muted">Deploy Time</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xl font-bold text-white font-mono">-50%</div>
+                                        <div class="text-[10px] text-muted">Response Time</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xl font-bold text-white font-mono">99.9%</div>
+                                        <div class="text-[10px] text-muted">System Availability</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -821,7 +863,8 @@ body {
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-primary mt-1.5 w-1 h-1 rounded-full bg-primary"></span>
-                                <span>带领 8 人跨职能团队（3 后端 + 2 前端 + 2 测试 + 1 产品），建立代码评审、技术分享、IDL 优先开发等工程化机制，推动团队从「个人驱动」转向「系统驱动」</span>
+                                <span>带领 8 人跨职能团队（3 后端 + 2 前端 + 2 测试 + 1 产品），建立代码评审、技术分享、IDL
+                                    优先开发等工程化机制，推动团队从「个人驱动」转向「系统驱动」</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-primary mt-1.5 w-1 h-1 rounded-full bg-primary"></span>
@@ -909,7 +952,8 @@ body {
                                 </svg>
                             </div>
                             <div>
-                                <div class="text-sm text-white font-medium group-hover:text-gold transition-colors font-serif">
+                                <div
+                                    class="text-sm text-white font-medium group-hover:text-gold transition-colors font-serif">
                                     河南省优秀学位论文</div>
                                 <div class="text-xs text-muted">2021 · 省级荣誉 (Top 0.5%-1%)</div>
                             </div>
@@ -922,7 +966,8 @@ body {
                                 </svg>
                             </div>
                             <div>
-                                <div class="text-sm text-white font-medium group-hover:text-gold transition-colors font-serif">
+                                <div
+                                    class="text-sm text-white font-medium group-hover:text-gold transition-colors font-serif">
                                     省级单项奖学金</div>
                                 <div class="text-xs text-muted">2020 · 省级</div>
                             </div>
@@ -946,7 +991,8 @@ body {
                         设计与架构的<br><span class="gold-gradient-text italic">华丽交响</span>
                     </h3>
                     <p class="text-zincMuted leading-relaxed md:text-lg">
-                        我认为，一段优雅的代码应当如顶级奢侈品般，在隐秘处追求极致的细节。<strong>Midnight Pearl</strong> 不仅仅是一套配色方案，它代表了我对系统架构的追求：深邃、稳定且散发着理性的光芒。
+                        我认为，一段优雅的代码应当如顶级奢侈品般，在隐秘处追求极致的细节。<strong>Midnight Pearl</strong>
+                        不仅仅是一套配色方案，它代表了我对系统架构的追求：深邃、稳定且散发着理性的光芒。
                     </p>
                     <div class="flex gap-8 py-4 border-y border-gold/10">
                         <div>
@@ -966,8 +1012,11 @@ body {
 
                 <!-- Zodiac Card (Integrated) -->
                 <div class="relative group">
-                    <div class="absolute -inset-4 bg-gold/5 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                    <div class="relative bg-surface border border-gold/20 rounded-[1.5rem] p-6 md:p-8 spotlight-card overflow-hidden">
+                    <div
+                        class="absolute -inset-4 bg-gold/5 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    </div>
+                    <div
+                        class="relative bg-surface border border-gold/20 rounded-[1.5rem] p-6 md:p-8 spotlight-card overflow-hidden">
                         <!-- Constellation SVG -->
                         <div class="absolute inset-0 pointer-events-none opacity-30">
                             <svg viewBox="0 0 400 400" class="w-full h-full animate-float">
@@ -984,10 +1033,14 @@ body {
                                     <path d="M180,180 L250,220 L320,240" />
                                 </g>
                                 <g fill="#D4AF37">
-                                    <circle cx="100" cy="120" r="3" style="animation: twinkle 4s ease-in-out infinite" />
-                                    <circle cx="180" cy="180" r="4" style="animation: twinkle 3s ease-in-out 0.7s infinite" />
-                                    <circle cx="200" cy="320" r="3" style="animation: twinkle 3.5s ease-in-out 1.4s infinite" />
-                                    <circle cx="320" cy="240" r="3" style="animation: twinkle 5s ease-in-out 2s infinite" />
+                                    <circle cx="100" cy="120" r="3"
+                                        style="animation: twinkle 4s ease-in-out infinite" />
+                                    <circle cx="180" cy="180" r="4"
+                                        style="animation: twinkle 3s ease-in-out 0.7s infinite" />
+                                    <circle cx="200" cy="320" r="3"
+                                        style="animation: twinkle 3.5s ease-in-out 1.4s infinite" />
+                                    <circle cx="320" cy="240" r="3"
+                                        style="animation: twinkle 5s ease-in-out 2s infinite" />
                                 </g>
                             </svg>
                         </div>
@@ -995,13 +1048,17 @@ body {
                         <div class="relative z-10">
                             <div class="flex justify-between items-start mb-8">
                                 <div>
-                                    <span class="text-gold text-[10px] uppercase tracking-[0.3em] font-bold block mb-1">Constellation</span>
+                                    <span
+                                        class="text-gold text-[10px] uppercase tracking-[0.3em] font-bold block mb-1">Constellation</span>
                                     <h4 class="text-pearl text-3xl font-serif font-bold">Taurus</h4>
                                     <div class="text-zincMuted text-sm font-light">金牛座 / 4.20 - 5.20</div>
                                 </div>
-                                <div class="w-8 h-8 border border-gold/30 rounded-full flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" />
+                                <div
+                                    class="w-8 h-8 border border-gold/30 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" />
                                     </svg>
                                 </div>
                             </div>
@@ -1009,10 +1066,13 @@ body {
                                 "Luxury is the balance of design and function, much like the steady heart of the Bull."
                             </p>
                             <div class="flex flex-wrap gap-2 mb-8">
-                                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] text-zincMuted uppercase tracking-wider">Reliable</span>
-                                <span class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] text-zincMuted uppercase tracking-wider">Artistic</span>
+                                <span
+                                    class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] text-zincMuted uppercase tracking-wider">Reliable</span>
+                                <span
+                                    class="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] text-zincMuted uppercase tracking-wider">Artistic</span>
                             </div>
-                            <button class="w-full py-3 bg-midnightIndigo border border-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest rounded shimmer-effect hover:border-gold/50 transition-all">
+                            <button
+                                class="w-full py-3 bg-midnightIndigo border border-gold/20 text-gold text-[10px] font-bold uppercase tracking-widest rounded shimmer-effect hover:border-gold/50 transition-all">
                                 Energy / 探索星能
                             </button>
                         </div>
@@ -1029,15 +1089,19 @@ body {
             </div>
 
             <!-- Featured Project: Architecture Template -->
-            <div class="mb-8 group relative bg-surface border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors reveal">
+            <div
+                class="mb-8 group relative bg-surface border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors reveal">
                 <div class="p-8">
                     <div class="flex flex-wrap items-center gap-3 mb-4">
-                        <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-mono font-bold">OPEN SOURCE</span>
+                        <span
+                            class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-mono font-bold">OPEN
+                            SOURCE</span>
                         <span class="text-muted text-xs font-mono">2025</span>
                         <a href="https://github.com/masonsxu/cloudwego-microservice-demo" target="_blank"
                             class="ml-auto text-muted hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors">
                             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                <path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                             </svg>
                             cloudwego-microservice-demo
                         </a>
@@ -1046,32 +1110,46 @@ body {
                         CloudWeGo 微服务架构模板 · AI 辅助开发实践
                     </h3>
                     <p class="text-muted text-sm leading-relaxed mb-5 max-w-3xl">
-                        基于生产级 Go 微服务实践，提炼并开源 CloudWeGo 标准架构模板；同时系统性落地 AI 辅助开发（Vibe Coding），将架构规范编码为 AI 可执行知识，构建从编码到 DevOps 的全流程人机协作体系。
+                        基于生产级 Go 微服务实践，提炼并开源 CloudWeGo 标准架构模板；同时系统性落地 AI 辅助开发（Vibe Coding），将架构规范编码为 AI 可执行知识，构建从编码到
+                        DevOps 的全流程人机协作体系。
                     </p>
                     <div class="space-y-2 mb-6">
                         <div class="flex items-start gap-3 text-sm text-text">
                             <span class="text-primary mt-1">▹</span>
-                            <span>编写 <strong class="text-white">330+ 行 AGENTS.md</strong>，将架构规范、分层约束、错误处理模式等领域知识编码为 AI 可理解的结构化上下文</span>
+                            <span>编写 <strong class="text-white">330+ 行 AGENTS.md</strong>，将架构规范、分层约束、错误处理模式等领域知识编码为 AI
+                                可理解的结构化上下文</span>
                         </div>
                         <div class="flex items-start gap-3 text-sm text-text">
                             <span class="text-primary mt-1">▹</span>
-                            <span>设计 <strong class="text-white">8 个 Custom Skills</strong> 封装端到端开发流程（如 /add-rpc-method 一键完成 IDL→DAL→Converter→Logic→Handler 全层实现 + 测试编写）</span>
+                            <span>设计 <strong class="text-white">8 个 Custom Skills</strong> 封装端到端开发流程（如 /add-rpc-method
+                                一键完成 IDL→DAL→Converter→Logic→Handler 全层实现 + 测试编写）</span>
                         </div>
                         <div class="flex items-start gap-3 text-sm text-text">
                             <span class="text-primary mt-1">▹</span>
-                            <span>部署 <strong class="text-white">3 个 AI 驱动 GitHub Actions</strong>（Issue 自动实现 / PR 自动 Review / Issue 自动分类），实现 DevOps 自动化</span>
+                            <span>部署 <strong class="text-white">3 个 AI 驱动 GitHub Actions</strong>（Issue 自动实现 / PR 自动
+                                Review / Issue 自动分类），实现 DevOps 自动化</span>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <span class="text-xs px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary">Kitex RPC</span>
-                        <span class="text-xs px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary">Hertz HTTP</span>
-                        <span class="text-xs px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary">Vibe Coding</span>
+                        <span
+                            class="text-xs px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary">Kitex
+                            RPC</span>
+                        <span
+                            class="text-xs px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary">Hertz
+                            HTTP</span>
+                        <span class="text-xs px-2 py-1 bg-primary/10 border border-primary/20 rounded text-primary">Vibe
+                            Coding</span>
                         <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">Etcd</span>
-                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">Wire DI</span>
-                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">Casbin</span>
-                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">OpenTelemetry</span>
-                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">AGENTS.md</span>
-                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">GitHub Actions</span>
+                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">Wire
+                            DI</span>
+                        <span
+                            class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">Casbin</span>
+                        <span
+                            class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">OpenTelemetry</span>
+                        <span
+                            class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">AGENTS.md</span>
+                        <span class="text-xs px-2 py-1 bg-white/5 border border-white/10 rounded text-text">GitHub
+                            Actions</span>
                     </div>
                 </div>
             </div>
@@ -1089,7 +1167,8 @@ body {
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">hertz-contrib/jwt
+                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">
+                        hertz-contrib/jwt
                     </h3>
                     <p class="text-xs text-muted">定位并修复 RefreshToken 中 orig_iat 被意外重置导致 MaxRefresh 窗口失效的 Bug</p>
                 </a>
@@ -1104,7 +1183,8 @@ body {
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">obs-opentelemetry
+                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">
+                        obs-opentelemetry
                     </h3>
                     <p class="text-xs text-muted">优化可观测性组件，提升链路追踪稳定性与准确性</p>
                 </a>
@@ -1119,7 +1199,8 @@ body {
                                 d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">cloudwego/abcoder
+                    <h3 class="font-bold text-white mb-1 group-hover:text-gold transition-colors font-serif">
+                        cloudwego/abcoder
                     </h3>
                     <p class="text-xs text-muted">修复 Go 1.25+ 环境下 sonic 依赖版本导致的安装编译错误</p>
                 </a>
@@ -1132,7 +1213,8 @@ body {
                 &copy; 2026 徐俊飞. All rights reserved.
             </div>
             <div class="flex items-center gap-6 text-sm">
-                <a href="https://github.com/masonsxu" target="_blank" class="text-muted hover:text-white transition-colors">GitHub</a>
+                <a href="https://github.com/masonsxu" target="_blank"
+                    class="text-muted hover:text-white transition-colors">GitHub</a>
                 <a href="mailto:masonsxu@foxmail.com" class="text-muted hover:text-white transition-colors">Email</a>
                 <a href="resume.pdf" target="_blank" class="text-muted hover:text-white transition-colors">Resume</a>
             </div>

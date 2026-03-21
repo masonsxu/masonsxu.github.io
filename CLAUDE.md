@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a personal portfolio website (single-page static HTML) for Mason Xu, a senior backend engineer. The site features:
+This is a personal portfolio website (single-page static HTML) for Mason Xu, a backend technical lead and distributed systems architect. The site features:
 - Pure HTML with no build process or bundler
 - Tailwind CSS for styling (loaded from CDN: `cdn.tailwindcss.com`)
 - Mobile-responsive design with Tailwind's responsive utilities
@@ -25,7 +25,7 @@ The site is a single HTML file (~55KB) with:
 ## Key Design Decisions
 
 **Color Scheme** (defined in tailwind.config, black-gold theme):
-- bg: `#0C0C0E` (Obsidian)
+- bg: `#0B0E14` (Obsidian)
 - surface: `#121214`
 - surfaceLight: `#1E1E21`
 - border: `rgba(212, 175, 55, 0.2)` (Gold border)
