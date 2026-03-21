@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback } from 'react'
 import { Player, type PlayerRef } from '@remotion/player'
-import { Play, Pause, RotateCcw, Clapperboard, Activity } from 'lucide-react'
+import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch } from 'lucide-react'
 import { TechCardVideo } from '../remotion/TechCardVideo'
 import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
+import { ArchitectureEvolution } from '../remotion/ArchitectureEvolution'
 import VideoModal from './VideoModal'
 import SectionHeader from './SectionHeader'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
@@ -55,6 +56,18 @@ const VIDEOS: VideoEntry[] = [
     tags: ['Env Driven', 'SVG Topology', 'Ring Chart', '20s'],
     component: OpenSourceDashboard as React.ComponentType<Record<string, never>> | React.ComponentType<{ data: ProjectData }>,
     inputProps: { data: PROJECT_DATA },
+  },
+  {
+    id: 'arch-evolution',
+    title: '架构演进历程',
+    subtitle: 'Architecture Evolution',
+    description:
+      '从 Python 单体到 Go 微服务的架构演进叙事。展示 Monolith 裂变、DDD 分层设计、请求链路追踪与性能指标跳变，诠释架构即设计与功能的平衡。',
+    duration: 25,
+    fps: 30,
+    icon: <GitBranch size={20} className="text-primary" />,
+    tags: ['Series', 'DDD', 'Fission', 'spring()', '25s'],
+    component: ArchitectureEvolution,
   },
 ]
 
