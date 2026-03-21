@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a personal portfolio website for Mason Xu, a backend technical lead and distributed systems architect. The site features:
+This is a personal portfolio website for Masons Xu, a backend technical lead and distributed systems architect. The site features:
 - **React 19** + **TypeScript** with Vite as the build tool
 - **Tailwind CSS v4** for styling (CSS-based theme configuration via `@theme`)
 - **Remotion** (`@remotion/player`) for timeline-based SVG animations (constellation effects)

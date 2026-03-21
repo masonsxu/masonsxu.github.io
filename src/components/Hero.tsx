@@ -36,7 +36,7 @@ export default function Hero() {
         <h1 className="font-bold tracking-tight text-white mb-8">
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
             <span className="text-5xl md:text-7xl font-sans">徐俊飞</span>
-            <span className="text-2xl md:text-4xl text-muted font-light font-sans italic">Mason Xu</span>
+            <span className="text-2xl md:text-4xl text-muted font-light font-sans italic">Masons Xu</span>
             <span className="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
           </div>
           <div className="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">

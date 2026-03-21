@@ -1,6 +1,6 @@
 # masonsxu.github.io
 
-徐俊飞（Mason Xu）的个人作品集网站，托管于 Cloudflare Pages。
+徐俊飞（Masons Xu）的个人作品集网站，托管于 Cloudflare Pages。
 
 **线上地址：** [masonsxu-github-io.pages.dev](https://masonsxu-github-io.pages.dev)
 
