@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback } from 'react'
 import { Player, type PlayerRef } from '@remotion/player'
-import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch } from 'lucide-react'
+import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch, Flame } from 'lucide-react'
 import { TechCardVideo } from '../remotion/TechCardVideo'
 import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
 import { ArchitectureEvolution } from '../remotion/ArchitectureEvolution'
+import { GitHubHeatmap } from '../remotion/GitHubHeatmap'
 import VideoModal from './VideoModal'
 import SectionHeader from './SectionHeader'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
@@ -68,6 +69,18 @@ const VIDEOS: VideoEntry[] = [
     icon: <GitBranch size={20} className="text-primary" />,
     tags: ['Series', 'DDD', 'Fission', 'spring()', '25s'],
     component: ArchitectureEvolution,
+  },
+  {
+    id: 'github-heatmap',
+    title: 'GitHub 贡献热力图',
+    subtitle: 'Contribution Heatmap',
+    description:
+      'GitHub 贡献热力图动态生长动画。星空粒子漂浮入场、流星击中方格涟漪扩散、成就标签数据叠加、最终定格全景贡献墙，诠释持续构建的力量。',
+    duration: 20,
+    fps: 30,
+    icon: <Flame size={20} className="text-primary" />,
+    tags: ['Heatmap', 'Ripple', 'spring()', 'SVG Grid', '20s'],
+    component: GitHubHeatmap,
   },
 ]
 
