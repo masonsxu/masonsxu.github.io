@@ -34,7 +34,7 @@ export default function Navbar() {
     { href: '#skills', label: '专业技能' },
     { href: '#projects', label: '核心项目' },
     { href: '#experience', label: '职业经历' },
-    { href: '#showreel', label: '动态名片' },
+    { href: '#showreel', label: '动态影集' },
     { href: '#opensource', label: '开源贡献' },
   ]
 

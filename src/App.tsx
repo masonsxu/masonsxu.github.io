@@ -7,7 +7,7 @@ import Projects from './components/Projects'
 import Experience from './components/Experience'
 import Education from './components/Education'
 import Essence from './components/Essence'
-import TechCardShowcase from './components/TechCardShowcase'
+import ShowreelGallery from './components/ShowreelGallery'
 import OpenSource from './components/OpenSource'
 import Footer from './components/Footer'
 
@@ -52,7 +52,7 @@ export default function App() {
         <Experience />
         <Education />
         <Essence />
-        <TechCardShowcase />
+        <ShowreelGallery />
         <OpenSource />
         <Footer />
       </main>

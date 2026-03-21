@@ -1,0 +1,227 @@
+import { useState, useRef, useCallback } from 'react'
+import { Player, type PlayerRef } from '@remotion/player'
+import { Play, Pause, RotateCcw, Clapperboard, Activity } from 'lucide-react'
+import { TechCardVideo } from '../remotion/TechCardVideo'
+import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
+import VideoModal from './VideoModal'
+import SectionHeader from './SectionHeader'
+import ScrollReveal, { StaggerChild } from './ScrollReveal'
+
+// ─── 从环境变量读取仓库数据（Cloudflare Pages 每日更新）─────────
+const PROJECT_DATA: ProjectData = {
+  repoName: 'cloudwego-microservice-demo',
+  stars: Number(import.meta.env.VITE_OSS_STARS) || 3,
+  prs: Number(import.meta.env.VITE_OSS_PRS) || 0,
+  merged: Number(import.meta.env.VITE_OSS_MERGED) || 0,
+  agentsMdLines: Number(import.meta.env.VITE_OSS_AGENTS_LINES) || 331,
+}
+
+// ─── 视频注册表（新增视频只需在这里追加一项）──────────────────
+interface VideoEntry {
+  id: string
+  title: string
+  subtitle: string
+  description: string
+  duration: number
+  fps: number
+  icon: React.ReactNode
+  tags: string[]
+  component: React.ComponentType<Record<string, never>> | React.ComponentType<{ data: ProjectData }>
+  inputProps?: { data: ProjectData }
+}
+
+const VIDEOS: VideoEntry[] = [
+  {
+    id: 'tech-card',
+    title: '动态技术名片',
+    subtitle: 'Tech Card',
+    description:
+      '使用 Remotion 构建的个人动态名片。通过 spring() 与 interpolate() 呈现名字入场、核心技术栈标签轮播与域名收尾。',
+    duration: 15,
+    fps: 30,
+    icon: <Clapperboard size={20} className="text-primary" />,
+    tags: ['spring()', 'interpolate()', 'Sequence', '15s'],
+    component: TechCardVideo,
+  },
+  {
+    id: 'oss-dashboard',
+    title: '开源项目看板',
+    subtitle: 'Open Source Dashboard',
+    description:
+      '数据驱动的开源看板动画。终端打字机入场、指标数字滚动、环形进度条、Kitex/Hertz 微服务拓扑图，数据来源于 Cloudflare 环境变量每日更新。',
+    duration: 20,
+    fps: 30,
+    icon: <Activity size={20} className="text-primary" />,
+    tags: ['Env Driven', 'SVG Topology', 'Ring Chart', '20s'],
+    component: OpenSourceDashboard as React.ComponentType<Record<string, never>> | React.ComponentType<{ data: ProjectData }>,
+    inputProps: { data: PROJECT_DATA },
+  },
+]
+
+// ─── 主组件 ─────────────────────────────────────────────────────
+export default function ShowreelGallery() {
+  const [activeVideo, setActiveVideo] = useState<VideoEntry | null>(null)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const playerRef = useRef<PlayerRef>(null)
+
+  const handleOpen = useCallback((video: VideoEntry) => {
+    setActiveVideo(video)
+    setIsPlaying(true)
+  }, [])
+
+  const handleClose = useCallback(() => {
+    setActiveVideo(null)
+    setIsPlaying(true)
+  }, [])
+
+  const handleTogglePlay = () => {
+    const player = playerRef.current
+    if (!player) return
+    if (isPlaying) player.pause()
+    else player.play()
+    setIsPlaying(!isPlaying)
+  }
+
+  const handleRestart = () => {
+    const player = playerRef.current
+    if (!player) return
+    player.seekTo(0)
+    player.play()
+    setIsPlaying(true)
+  }
+
+  return (
+    <section id="showreel" className="mb-32 relative">
+      <SectionHeader title="动态影集 / Showreel" className="mb-12" />
+
+      <ScrollReveal stagger>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {VIDEOS.map((video) => (
+            <StaggerChild key={video.id}>
+              <VideoCard video={video} onPlay={handleOpen} />
+            </StaggerChild>
+          ))}
+        </div>
+      </ScrollReveal>
+
+      {/* 弹层播放器 */}
+      <VideoModal
+        isOpen={!!activeVideo}
+        onClose={handleClose}
+        title={activeVideo?.title}
+        subtitle={`${activeVideo?.duration}s · ${activeVideo?.fps}fps`}
+      >
+        {activeVideo && (
+          <div className="relative w-full h-full">
+            <Player
+              ref={playerRef}
+              component={activeVideo.component}
+              inputProps={activeVideo.inputProps ?? {}}
+              compositionWidth={1920}
+              compositionHeight={1080}
+              durationInFrames={activeVideo.duration * activeVideo.fps}
+              fps={activeVideo.fps}
+              style={{ width: '100%', height: '100%' }}
+              loop
+              autoPlay
+              controls={false}
+              acknowledgeRemotionLicense
+              numberOfSharedAudioTags={0}
+            />
+
+            {/* 悬浮控制按钮 */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
+              <button
+                onClick={handleTogglePlay}
+                className="w-9 h-9 rounded-full border border-border/30 bg-bg/70 backdrop-blur-sm flex items-center justify-center text-muted hover:text-primary hover:border-primary/50 transition-all"
+              >
+                {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+              </button>
+              <button
+                onClick={handleRestart}
+                className="w-9 h-9 rounded-full border border-border/30 bg-bg/70 backdrop-blur-sm flex items-center justify-center text-muted hover:text-primary hover:border-primary/50 transition-all"
+              >
+                <RotateCcw size={14} />
+              </button>
+            </div>
+          </div>
+        )}
+      </VideoModal>
+    </section>
+  )
+}
+
+// ─── 视频卡片 ───────────────────────────────────────────────────
+function VideoCard({
+  video,
+  onPlay,
+}: {
+  video: VideoEntry
+  onPlay: (v: VideoEntry) => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onPlay(video)}
+      className="group relative w-full text-left bg-surface border border-border/20 rounded-lg overflow-hidden spotlight-card transition-all hover:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+    >
+      {/* 预览区域 */}
+      <div className="relative aspect-video bg-[#0a0a0a] overflow-hidden">
+        {/* 静态缩略：用深色网格 + 标题模拟 */}
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            backgroundImage:
+              'radial-gradient(rgba(212, 175, 55, 0.12) 1px, transparent 1px)',
+            backgroundSize: '24px 24px',
+          }}
+        />
+        {/* 中心大播放按钮 */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-bg/50 backdrop-blur-sm group-hover:border-primary/70 group-hover:bg-bg/70 group-hover:scale-110 transition-all duration-300">
+            <Play
+              size={24}
+              className="text-primary/60 group-hover:text-primary transition-colors ml-1"
+            />
+          </div>
+        </div>
+        {/* 右上角时长标签 */}
+        <div className="absolute top-3 right-3 px-2 py-0.5 bg-bg/70 backdrop-blur-sm border border-border/20 rounded text-[10px] text-muted font-mono">
+          {video.duration}s
+        </div>
+        {/* 底部渐变 */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-surface to-transparent" />
+      </div>
+
+      {/* 信息区 */}
+      <div className="p-5">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-9 h-9 border border-border/20 rounded-lg flex items-center justify-center shrink-0">
+            {video.icon}
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-white font-bold text-sm truncate">
+              {video.title}
+            </h3>
+            <p className="text-muted text-[11px] font-mono">{video.subtitle}</p>
+          </div>
+        </div>
+
+        <p className="text-muted text-xs leading-relaxed mb-4 line-clamp-2">
+          {video.description}
+        </p>
+
+        <div className="flex flex-wrap gap-1.5">
+          {video.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-1.5 py-0.5 bg-surface-light/30 border border-border/15 rounded text-[9px] text-muted uppercase tracking-wider font-mono"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </button>
+  )
+}
