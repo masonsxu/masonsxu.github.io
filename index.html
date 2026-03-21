@@ -7,17 +7,17 @@
     <link rel="canonical" href="https://masonsxu-github-io.pages.dev/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <title>徐俊飞 | 资深后端工程师 · Go 微服务</title>
-    <meta name="description" content="徐俊飞 - 5年专注医疗信息化后端研发，Go微服务架构工程师，主导数十家医院生产部署，数据传输准确率99.9%">
+    <title>徐俊飞 | 后端技术负责人 · 分布式系统架构师</title>
+    <meta name="description" content="徐俊飞 - 5年专注分布式系统架构与规模化落地，Go微服务架构师，主导众多生产环境部署，系统可用性99.9%">
     <meta name="author" content="徐俊飞 Mason Xu">
-    <meta name="keywords" content="徐俊飞, Mason Xu, Go工程师, Go微服务, 后端工程师, 医疗信息化, 微服务架构, Golang, 后端开发, 软件工程师">
+    <meta name="keywords" content="徐俊飞, Mason Xu, Go工程师, Go微服务, 后端工程师, 分布式系统, 微服务架构, Golang, 后端开发, 软件工程师, 云原生, 架构师">
     <meta name="robots" content="index, follow">
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="profile">
     <meta property="og:url" content="https://masonsxu-github-io.pages.dev/">
-    <meta property="og:title" content="徐俊飞 | 资深后端工程师 · Go 微服务">
-    <meta property="og:description" content="徐俊飞 - 5年专注医疗信息化后端研发，Go微服务架构工程师，主导数十家医院生产部署，数据传输准确率99.9%">
+    <meta property="og:title" content="徐俊飞 | 后端技术负责人 · 分布式系统架构师">
+    <meta property="og:description" content="徐俊飞 - 5年专注分布式系统架构与规模化落地，Go微服务架构师，主导众多生产环境部署，系统可用性99.9%">
     <meta property="og:image" content="https://masonsxu-github-io.pages.dev/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -30,24 +30,24 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://masonsxu-github-io.pages.dev/">
-    <meta name="twitter:title" content="徐俊飞 | 资深后端工程师 · Go 微服务">
-    <meta name="twitter:description" content="徐俊飞 - 5年专注医疗信息化后端研发，Go微服务架构工程师，主导数十家医院生产部署，数据传输准确率99.9%">
+    <meta name="twitter:title" content="徐俊飞 | 后端技术负责人 · 分布式系统架构师">
+    <meta name="twitter:description" content="徐俊飞 - 5年专注分布式系统架构与规模化落地，Go微服务架构师，主导众多生产环境部署，系统可用性99.9%">
     <meta name="twitter:image" content="https://masonsxu-github-io.pages.dev/og-image.png">
 
     <!-- Fonts (Using loli.net mirror for China access) -->
     <link rel="preconnect" href="https://fonts.loli.net">
     <link rel="preconnect" href="https://gstatic.loli.net" crossorigin>
-    <link
-        href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
+<link
+         href="https://fonts.loli.net/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+         rel="stylesheet">
 
     <!-- Tailwind CSS (production build) -->
     <link rel="stylesheet" href="tailwind.css">
     <style>
-        body {
-            background-color: #0C0C0E;
-            color: #FCFCFC;
-        }
+body {
+             background-color: #0B0E14;
+             color: #FCFCFC;
+         }
 
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
@@ -67,18 +67,106 @@
             background: #D4AF37;
         }
 
-        .glass {
-            background: rgba(12, 12, 14, 0.7);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-        }
+.glass {
+             background: rgba(11, 14, 20, 0.7);
+             backdrop-filter: blur(12px);
+             border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+         }
 
-        /* Spotlight Effect */
-        .spotlight-card {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+/* Spotlight Effect */
+         .spotlight-card {
+             position: relative;
+             overflow: hidden;
+             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+         }
+         
+         /* Enhanced Spotlight with Depth */
+         .spotlight-card:hover {
+             transform: translateY(-4px);
+             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+         }
+         
+         /* Parallax Background Layers */
+         .parallax-layer {
+             position: absolute;
+             inset: 0;
+             pointer-events: none;
+             overflow: hidden;
+         }
+         
+         .parallax-layer:nth-child(1) {
+             transform: translateZ(0) scale(1);
+         }
+         
+         .parallax-layer:nth-child(2) {
+             transform: translateZ(-100px) scale(2);
+         }
+         
+         .parallax-layer:nth-child(3) {
+             transform: translateZ(-200px) scale(3);
+         }
+         
+         /* Micro-interaction Enhancements */
+         .tech-icon-hover {
+             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+         }
+         
+         .tech-icon-hover:hover {
+             transform: translateY(-8px) rotate(5deg);
+             box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+         }
+         
+         /* Floating Animation */
+         @keyframes float {
+             0%, 100% {
+                 transform: translateY(0px);
+             }
+             50% {
+                 transform: translateY(-10px);
+             }
+         }
+         
+         .float {
+             animation: float 6s ease-in-out infinite;
+         }
+         
+         /* Gradient Text Enhancement */
+         .gold-gradient-text {
+             background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
+             background-size: 200% 100%;
+             background-clip: text;
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+             animation: gradientShift 8s ease infinite;
+         }
+         
+         @keyframes gradientShift {
+             0% {
+                 background-position: 0% 50%;
+             }
+             50% {
+                 background-position: 100% 50%;
+             }
+             100% {
+                 background-position: 0% 50%;
+             }
+         }
+         
+         /* Particle Background */
+         .particles-container {
+             position: fixed;
+             inset: 0;
+             pointer-events: none;
+             z-index: -2;
+             overflow: hidden;
+         }
+         
+         .particle {
+             position: absolute;
+             background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+             border-radius: 50%;
+             pointer-events: none;
+         }
 
         .spotlight-card::before {
             content: '';
@@ -179,9 +267,13 @@
             .shimmer-effect::after { animation: none !important; }
         }
     </style>
+<style>
+.font-noto { font-family: 'Noto Sans SC', sans-serif; }
+.font-inter { font-family: 'Inter', sans-serif; }
+</style>
 </head>
 
-<body class="antialiased selection:bg-gold/20 selection:text-gold">
+<body class="antialiased selection:bg-gold/20 selection:text-gold font-noto">
 
     <!-- Background Grid -->
     <div class="fixed inset-0 tech-bg z-[-1] pointer-events-none opacity-40"></div>
@@ -192,7 +284,7 @@
             <!-- Logo -->
             <a href="#" class="group flex items-center gap-3">
                 <div
-                    class="w-8 h-8 rounded bg-surface border border-gold/20 flex items-center justify-center font-mono font-bold text-white group-hover:border-gold/50 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all">
+                    class="w-8 h-8 rounded bg-surface border border-gold/20 flex items-center justify-center font-mono font-bold text-white group-hover:border-gold/50 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all whitespace-nowrap">
                     <span class="text-gold">&lt;</span>X<span class="text-gold">/&gt;</span>
                 </div>
                 <span
@@ -274,34 +366,34 @@
                 </svg>
             </div>
 
-            <div class="relative z-10">
-                <div
-                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/20 text-xs font-medium text-gold mb-8 animate-fade-in">
-                    <span class="relative flex h-2 w-2">
-                        <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
-                    </span>
-                    可接受新机会 / Open to Work
-                </div>
+<div class="relative z-10">
+                 <div
+                     class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-gold/20 text-xs font-medium text-gold mb-8 animate-fade-in">
+                     <span class="relative flex h-2 w-2">
+                         <span
+                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75"></span>
+                         <span class="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+                     </span>
+                     可接受新机会 / Open to Work
+                 </div>
 
-                <h1 class="font-bold tracking-tight text-white mb-8">
-                    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
-                        <span class="text-5xl md:text-7xl font-serif">徐俊飞</span>
-                        <span class="text-2xl md:text-4xl text-muted font-light font-serif italic">Mason Xu</span>
-                        <span class="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
-                    </div>
-                    <div
-                        class="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">
-                        Go 微服务架构工程师
-                    </div>
-                </h1>
+                 <h1 class="font-bold tracking-tight text-white mb-8">
+                     <div class="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
+                         <span class="text-5xl md:text-7xl font-noto">徐俊飞</span>
+                         <span class="text-2xl md:text-4xl text-muted font-light font-inter italic">Mason Xu</span>
+                         <span class="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
+                     </div>
+                     <div
+                         class="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">
+                         后端技术负责人 · 分布式系统架构师
+                     </div>
+                 </h1>
 
-                <p class="text-lg md:text-xl text-muted max-w-3xl leading-relaxed mb-10">
-                    5 年专注<strong class="text-pearl">医疗信息化</strong>后端研发，积累 Go 微服务架构设计与<strong class="text-pearl">医疗系统规模化落地</strong>双重经验。<br>
-                    主导 Python 单体到 Go 微服务的<strong class="text-pearl">整体架构转型</strong>，独立完成核心医疗数据管理平台从0到1的架构设计与落地交付；<br>
-                    主导<strong class="text-pearl">数十家医院</strong>生产部署，数据传输准确率 <strong class="text-pearl">99.9%</strong>。
-                </p>
+                 <p class="text-lg md:text-xl text-muted max-w-3xl leading-relaxed mb-10">
+                     5 年专注<strong class="text-pearl">分布式系统架构</strong>与<strong class="text-pearl">规模化落地</strong>，积累 Go 微服务架构设计与<strong class="text-pearl">企业级系统交付</strong>双重经验。<br>
+                     主导 Python 单体到 Go 微服务的<strong class="text-pearl">整体架构转型</strong>，独立完成核心分布式数据管理平台从0到1的架构设计与落地交付；<br>
+                     主导<strong class="text-pearl">众多生产环境</strong>部署，系统可用性 <strong class="text-pearl">99.9%</strong>。
+                 </p>
 
                 <div class="flex flex-wrap gap-4">
                     <a href="#projects"
@@ -361,13 +453,13 @@
                                 </div>
                                 <p class="text-sm text-muted leading-relaxed pl-4">以业务能力为边界划分服务，独立完成从技术选型到系统落地的全链路设计与交付。具备在不确定性中做出正确架构决策的能力</p>
                             </div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
-                                    <span class="text-sm font-bold text-white">可靠性与安全</span>
-                                </div>
-                                <p class="text-sm text-muted leading-relaxed pl-4">医疗场景对数据准确性零容忍，在数据校验、异常处理、重传机制、权限隔离等环节建立系统性保障，并经大规模生产环境持续验证</p>
-                            </div>
+<div>
+                                 <div class="flex items-center gap-2 mb-2">
+                                     <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
+                                     <span class="text-sm font-bold text-white">可靠性与安全</span>
+                                 </div>
+                                 <p class="text-sm text-muted leading-relaxed pl-4">对数据准确性零容忍，在数据校验、异常处理、重传机制、权限隔离等环节建立系统性保障，并经大规模生产环境持续验证</p>
+                             </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></span>
@@ -514,16 +606,16 @@
                         <div class="w-2 h-2 rounded-full bg-primary"></div>
                         <h3 class="text-sm font-bold text-white uppercase tracking-wider">差异化领域能力</h3>
                     </div>
-                    <div class="space-y-3">
-                        <div class="text-sm">
-                            <span class="text-primary font-medium">医疗域：</span>
-                            <span class="text-muted">DICOM 影像解析、窗宽窗位算法优化、医疗系统集成实战、数据湖方案</span>
-                        </div>
-                        <div class="text-sm">
-                            <span class="text-primary font-medium">Python 工程化：</span>
-                            <span class="text-muted">Asyncio 高性能异步、Flask、Pydantic / SQLAlchemy、大规模数据处理（Pandas / Polars / PyArrow）、自动化迁移与容器化改造</span>
-                        </div>
-                    </div>
+<div class="space-y-3">
+                         <div class="text-sm">
+                             <span class="text-primary font-medium">数据库优化：</span>
+                             <span class="text-muted">查询性能分析、索引策略、读写分离、分库分表方案</span>
+                         </div>
+                         <div class="text-sm">
+                             <span class="text-primary font-medium">Python 工程化：</span>
+                             <span class="text-muted">Asyncio 高性能异步、Flask、Pydantic / SQLAlchemy、大规模数据处理（Pandas / Polars / PyArrow）、自动化迁移与容器化改造</span>
+                         </div>
+                     </div>
                 </div>
 
             </div>
@@ -549,13 +641,13 @@
                                         class="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-mono font-bold">ENTERPRISE</span>
                                     <span class="text-muted text-xs font-mono">2025.03 - 至今</span>
                                 </div>
-                                <h3
-                                    class="text-2xl font-bold text-white mb-3 group-hover:text-accent transition-colors">
-                                    核心医疗数据管理平台 — 微服务架构从 0 到 1
-                                </h3>
-                                <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
-                                    对原有 Python 单体系统进行整体重架构，构建公司新一代医疗数字化基础设施，解决服务扩展性瓶颈，支持数十家医院规模化部署。
-                                </p>
+<h3
+                                     class="text-2xl font-bold text-white mb-3 group-hover:text-accent transition-colors">
+                                     核心分布式数据管理平台 — 微服务架构从 0 到 1
+                                 </h3>
+                                 <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
+                                     对原有 Python 单体系统进行整体重架构，构建公司新一代企业级数字化基础设施，解决服务扩展性瓶颈，支持众多生产环境规模化部署。
+                                 </p>
                                 <div class="space-y-2 mb-8">
                                     <div class="flex items-start gap-3 text-sm text-text">
                                         <span class="text-accent mt-1">▹</span>
@@ -611,28 +703,28 @@
                                         class="px-2 py-0.5 rounded-full bg-zincMuted/10 text-zincMuted text-xs font-mono font-bold uppercase tracking-wider">Python Era</span>
                                     <span class="text-muted text-xs font-mono">2021.06 - 2025.03</span>
                                 </div>
-                                <h3
-                                    class="text-2xl font-bold text-white mb-3 group-hover:text-gold transition-colors font-serif">
-                                    Mria 信息管理系统 — 性能优化与容器化转型
-                                </h3>
-                                <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
-                                    诊断并解决遗留系统的并发瓶颈与部署效率问题。主导从 Shell 脚本到 Docker 容器化的架构转型，
-                                    完成数十家医院的规模化交付。
-                                </p>
-                                <div class="space-y-2 mb-8">
-                                    <div class="flex items-start gap-3 text-sm text-text">
-                                        <span class="text-gold mt-1">▹</span>
-                                        <span>基于 <strong class="text-pearl">Asyncio</strong> 重写核心查询链路，接口响应时间降低 50%</span>
-                                    </div>
-                                    <div class="flex items-start gap-3 text-sm text-text">
-                                        <span class="text-gold mt-1">▹</span>
-                                        <span>优化 <strong class="text-pearl">DICOM 影像</strong>算法，响应时间缩短 35%</span>
-                                    </div>
-                                    <div class="flex items-start gap-3 text-sm text-text">
-                                        <span class="text-gold mt-1">▹</span>
-                                        <span>设计多环境 <strong class="text-pearl">Docker</strong> 镜像构建策略，部署时间 4h→30min，故障率降低 45%</span>
-                                    </div>
-                                </div>
+<h3
+                                     class="text-2xl font-bold text-white mb-3 group-hover:text-gold transition-colors font-serif">
+                                     遗留系统性能优化与容器化转型
+                                 </h3>
+                                 <p class="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
+                                     诊断并解决遗留系统的并发瓶颈与部署效率问题。主导从 Shell 脚本到 Docker 容器化的架构转型，
+                                     完成众多生产环境的规模化交付。
+                                 </p>
+                                 <div class="space-y-2 mb-8">
+                                     <div class="flex items-start gap-3 text-sm text-text">
+                                         <span class="text-gold mt-1">▹</span>
+                                         <span>基于 <strong class="text-pearl">Asyncio</strong> 重写核心查询链路，接口响应时间降低 50%</span>
+                                     </div>
+                                     <div class="flex items-start gap-3 text-sm text-text">
+                                         <span class="text-gold mt-1">▹</span>
+                                         <span>优化核心数据处理算法，响应时间缩短 35%</span>
+                                     </div>
+                                     <div class="flex items-start gap-3 text-sm text-text">
+                                         <span class="text-gold mt-1">▹</span>
+                                         <span>设计多环境 <strong class="text-pearl">Docker</strong> 镜像构建策略，部署时间 4h→30min，故障率降低 45%</span>
+                                     </div>
+                                 </div>
                                 <!-- Incident Handling -->
                                 <div class="mt-6 border-t border-gold/10 pt-5">
                                     <div class="text-xs font-bold text-muted uppercase tracking-widest mb-3">典型线上事故处理 / Incident Handling</div>
@@ -665,27 +757,27 @@
 
                         <div
                             class="md:col-span-4 bg-surfaceLight/30 border-l border-border p-8 flex flex-col justify-center space-y-6">
-                            <div>
-                                <div class="text-xs text-muted font-mono uppercase mb-2">Scale & Impact</div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <div class="text-xl font-bold text-white font-mono">数十家</div>
-                                        <div class="text-[10px] text-muted">Prod Envs</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-xl font-bold text-white font-mono">-87%</div>
-                                        <div class="text-[10px] text-muted">Deploy Time</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-xl font-bold text-white font-mono">-50%</div>
-                                        <div class="text-[10px] text-muted">Response Time</div>
-                                    </div>
-                                    <div>
-                                        <div class="text-xl font-bold text-white font-mono">99.9%</div>
-                                        <div class="text-[10px] text-muted">Data Accuracy</div>
-                                    </div>
-                                </div>
-                            </div>
+<div>
+                                     <div class="text-xs text-muted font-mono uppercase mb-2">Scale & Impact</div>
+                                     <div class="grid grid-cols-2 gap-4">
+                                         <div>
+                                             <div class="text-xl font-bold text-white font-mono">众多</div>
+                                             <div class="text-[10px] text-muted">Prod Envs</div>
+                                         </div>
+                                         <div>
+                                             <div class="text-xl font-bold text-white font-mono">-87%</div>
+                                             <div class="text-[10px] text-muted">Deploy Time</div>
+                                         </div>
+                                         <div>
+                                             <div class="text-xl font-bold text-white font-mono">-50%</div>
+                                             <div class="text-[10px] text-muted">Response Time</div>
+                                         </div>
+                                         <div>
+                                             <div class="text-xl font-bold text-white font-mono">99.9%</div>
+                                             <div class="text-[10px] text-muted">System Availability</div>
+                                         </div>
+                                     </div>
+                                 </div>
                         </div>
                     </div>
                 </div>
@@ -733,7 +825,7 @@
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-primary mt-1.5 w-1 h-1 rounded-full bg-primary"></span>
-                                <span>在医疗级生产环境中承担最终架构决策与核心模块攻坚，设计完整的安全合规体系，保障多院区数据隔离与异常全链路可追踪</span>
+                                <span>在大规模生产环境中承担最终架构决策与核心模块攻坚，设计完整的安全合规体系，保障多租户数据隔离与异常全链路可追踪</span>
                             </li>
                         </ul>
                     </div>
@@ -759,11 +851,11 @@
                         <ul class="space-y-2 text-sm text-muted">
                             <li class="flex items-start gap-2">
                                 <span class="text-muted mt-1.5 w-1 h-1 rounded-full bg-muted"></span>
-                                <span>以应届生身份加入医疗信息化初创团队，在没有前人经验可参考的场景下独立成长，逐步成为 Mria 核心系统的实际负责人，主导性能重构与容器化改造（详见「架构实践」）</span>
+                                <span>以应届生身份加入技术初创团队，在没有前人经验可参考的场景下独立成长，逐步成为核心系统的实际负责人，主导性能重构与容器化改造（详见「架构实践」）</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-muted mt-1.5 w-1 h-1 rounded-full bg-muted"></span>
-                                <span>长期主导医院现场部署与技术对接，在受限的生产环境中积累了大量排障与应急处理经验——这段经历也是后来驱动架构转型的直接动力</span>
+                                <span>长期主导生产环境部署与技术对接，在受限的生产环境中积累了大量排障与应急处理经验——这段经历也是后来驱动架构转型的直接动力</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-muted mt-1.5 w-1 h-1 rounded-full bg-muted"></span>
@@ -1138,15 +1230,15 @@
         "url": "https://masonsxu-github-io.pages.dev/",
         "image": "https://masonsxu-github-io.pages.dev/og-image.png",
         "email": "masonsxu@foxmail.com",
-        "jobTitle": "资深后端工程师 · Go 微服务架构工程师",
-        "description": "5年专注医疗信息化后端研发，Go微服务架构工程师，主导数十家医院生产部署，数据传输准确率99.9%",
+        "jobTitle": "后端技术负责人 · 分布式系统架构师",
+        "description": "5年专注分布式系统架构与规模化落地，Go微服务架构师，主导众多生产环境部署，系统可用性99.9%",
         "sameAs": [
             "https://github.com/masonsxu"
         ],
-        "knowsAbout": ["Go (Golang)", "微服务架构", "医疗信息化", "后端开发"],
+        "knowsAbout": ["Go (Golang)", "微服务架构", "分布式系统", "云原生技术", "架构设计"],
         "worksFor": {
             "@type": "Organization",
-            "name": "医疗信息化行业"
+            "name": "技术架构与分布式系统"
         }
     }
     </script>

@@ -129,9 +129,9 @@
   <!-- Vertical separator 1 -->
   <line x1="230" y1="400" x2="230" y2="468" stroke="#D4AF37" stroke-opacity="0.2" stroke-width="1"/>
 
-  <!-- Stat 2: 52家 -->
+  <!-- Stat 2: 数十家 -->
   <g transform="translate(250, 390)">
-    <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">52家</text>
+    <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">数十家</text>
     <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">医院生产部署</text>
   </g>
 
@@ -150,7 +150,7 @@
   <text x="80" y="583" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="#A1A1AA" letter-spacing="0.5">资深后端工程师</text>
   <!-- Dot separator -->
   <circle cx="230" cy="578" r="2" fill="#A1A1AA" fill-opacity="0.4"/>
-  <text x="242" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · gRPC · Kubernetes · MySQL</text>
+  <text x="242" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · CloudWeGo · gRPC · PostgreSQL</text>
 
   <!-- Bottom-right: URL -->
   <text x="1144" y="583" text-anchor="end" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.55" letter-spacing="0.5">masonsxu-github-io.pages.dev</text>
