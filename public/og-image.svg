@@ -148,9 +148,9 @@
   <!-- Bottom-left: status -->
   <circle cx="66" cy="578" r="5" fill="#22C55E"/>
   <text x="80" y="583" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="#A1A1AA" letter-spacing="0.5">后端技术负责人 · 分布式系统架构师</text>
-  <!-- Dot separator -->
-  <circle cx="230" cy="578" r="2" fill="#A1A1AA" fill-opacity="0.4"/>
-  <text x="242" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · CloudWeGo · gRPC · PostgreSQL</text>
+  <!-- Bottom-center: tech stack (moved right to avoid overlap) -->
+  <circle cx="640" cy="578" r="2" fill="#A1A1AA" fill-opacity="0.4"/>
+  <text x="652" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · CloudWeGo · gRPC · PostgreSQL</text>
 
   <!-- Bottom-right: URL -->
   <text x="1144" y="583" text-anchor="end" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.55" letter-spacing="0.5">masonsxu-github-io.pages.dev</text>
