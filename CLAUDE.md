@@ -40,14 +40,18 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 │   │   ├── Experience.tsx  # Career timeline
 │   │   ├── Education.tsx   # Education & awards
 │   │   ├── Essence.tsx     # Philosophy + Zodiac card with Remotion
-│   │   ├── TechCardShowcase.tsx # Showreel section with Remotion Player
+│   │   ├── ShowreelGallery.tsx  # Video gallery with modal playback
+│   │   ├── VideoModal.tsx       # Reusable video modal (framer-motion AnimatePresence)
+│   │   ├── TechCardShowcase.tsx # (Legacy) Inline showreel player
+│   │   ├── OpenSourceDashboardShowcase.tsx # (Legacy) Inline dashboard player
 │   │   ├── OpenSource.tsx  # Open source contributions & PRs
 │   │   ├── Footer.tsx
 │   │   ├── SectionHeader.tsx  # Reusable section header
 │   │   └── ScrollReveal.tsx   # framer-motion scroll animations
 │   └── remotion/
 │       ├── ConstellationAnimation.tsx  # Remotion composition (spring + interpolate)
-│       └── TechCardVideo.tsx           # 15s tech card video (1920x1080, 30fps)
+│       ├── TechCardVideo.tsx           # 15s tech card (4 phases: entrance, stack, highlights, outro)
+│       └── OpenSourceDashboard.tsx     # 20s data-driven dashboard (terminal, metrics, topology, outro)
 ```
 
 ## Key Design Decisions
@@ -106,10 +110,30 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - Use `AbsoluteFill` for layout composition
 
 **Modifying TechCardVideo**: Edit `src/remotion/TechCardVideo.tsx`
-- Configurable constants at file top: `NAME_CN`, `NAME_EN`, `TAGS`, `DOMAIN`, `COLORS`
-- Modular sub-components: `BackgroundGrid`, `NameEntrance`, `TagCarousel`, `Outro`
+- Configurable constants at file top: `NAME_CN`, `NAME_EN`, `ROLE`, `SUBTITLE`, `TECH_STACKS`, `HIGHLIGHTS`
+- 4 phases: `NameEntrance` (0-4s), `TechStackShowcase` (4-9s), `CoreHighlights` (9-12s), `Outro` (12-15s)
 - 1920x1080 @ 30fps, 15s duration (450 frames)
-- Embedded via `@remotion/player` in `TechCardShowcase.tsx` with playback controls
+
+**Modifying OpenSourceDashboard**: Edit `src/remotion/OpenSourceDashboard.tsx`
+- Props-driven via `ProjectData` interface (stars, prs, merged, agentsMdLines)
+- 4 phases: `TerminalTyping` (0-5s), `DataGrowth` (5-12s), `TopologyAnimation` (12-18s), `Outro` (18-20s)
+- Topology reflects real architecture: Client → Hertz Gateway → Identity Service (Kitex) → Storage layer
+- 1920x1080 @ 30fps, 20s duration (600 frames)
+
+**Adding a new Remotion video**:
+1. Create `src/remotion/NewVideo.tsx` with Remotion composition
+2. Add entry to `VIDEOS` array in `src/components/ShowreelGallery.tsx`
+3. No other changes needed — gallery and modal handle the rest
+
+**Showreel architecture** (VideoModal + ShowreelGallery):
+- `VideoModal.tsx`: Reusable overlay with `AnimatePresence` spring animation, ESC/backdrop close
+- `ShowreelGallery.tsx`: Video registry pattern — all videos defined in `VIDEOS` array
+- Click card → modal opens with `@remotion/player` → click outside to close
+
+**Environment variables for data-driven Remotion**:
+- `VITE_OSS_STARS`, `VITE_OSS_PRS`, `VITE_OSS_MERGED`, `VITE_OSS_AGENTS_LINES`
+- Read via `import.meta.env.VITE_*` at build time in `ShowreelGallery.tsx`
+- Configured in Cloudflare Pages env vars, updated daily via scheduled rebuild
 
 ## Deployment Notes
 
