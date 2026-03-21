@@ -51,7 +51,8 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 │   └── remotion/
 │       ├── ConstellationAnimation.tsx  # Remotion composition (spring + interpolate)
 │       ├── TechCardVideo.tsx           # 15s tech card (4 phases: entrance, stack, highlights, outro)
-│       └── OpenSourceDashboard.tsx     # 20s data-driven dashboard (terminal, metrics, topology, outro)
+│       ├── OpenSourceDashboard.tsx     # 20s data-driven dashboard (terminal, metrics, topology, outro)
+│       └── ArchitectureEvolution.tsx   # 25s architecture narrative (probe-driven request tracing)
 ```
 
 ## Key Design Decisions
@@ -119,6 +120,28 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - 4 phases: `TerminalTyping` (0-5s), `DataGrowth` (5-12s), `TopologyAnimation` (12-18s), `Outro` (18-20s)
 - Topology reflects real architecture: Client → Hertz Gateway → Identity Service (Kitex) → Storage layer
 - 1920x1080 @ 30fps, 20s duration (600 frames)
+
+**Modifying ArchitectureEvolution**: Edit `src/remotion/ArchitectureEvolution.tsx`
+- 25s narrative video (750 frames @ 30fps) with 4 phases via `Sequence`
+- Phase 1 `PythonEra` (0-5s): Monolith block with shake + red warning blink
+- Phase 2 `Transformation` (5-10s): Go/CloudWeGo core + fission into `SERVICES` array (spring `damping:12` for bounce)
+- Phase 3 `NewArchitecture` (10-20s): **Probe-driven request tracing** — a single gold light probe travels through the system, activating components on contact
+  - 0-1s: Ghost containers appear at opacity 0.2, SVG `strokeDashoffset` flowing borders
+  - 1-3s: Probe enters Gateway, middleware pills highlight sequentially via timeline math
+  - 3-4.5s: Thrift RPC transit via cubic bezier with `Easing.in(Easing.quad)` acceleration
+  - 4.5-7s: Probe descends RPC DDD layers, description text slides in on activation
+  - 7-10s: Probe fades, metric cards spring in with value flip animation
+- Phase 4 `Essence` (20-25s): Slogan + domain fade in/out
+- Key architecture data constants at file top: `DDD_LAYERS`, `GATEWAY_LAYERS`, `MIDDLEWARE_CHAIN`, `SUB_CONVERTERS`
+- `CL` shorthand for `{ extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }` used throughout
+
+**Remotion animation patterns** (established conventions across all video compositions):
+- **Probe-driven narrative**: Compute a master object position `{x, y}` via multi-segment `interpolate`, then derive each component's highlight state from timeline thresholds (not from physical distance). See `NewArchitecture` probe pattern.
+- **SVG flow effects**: Use `strokeDasharray` + animated `strokeDashoffset` (driven by `frame`) for flowing/marching borders and connection paths. Never use CSS animation.
+- **Ghost → Activate pattern**: Render containers at low opacity first, then raise opacity when the narrative focus reaches them. Provides visual context before activation.
+- **Restrained springs**: Use `{ damping: 200 }` for luxury/smooth feel (no bounce). Reserve `{ damping: 12 }` only for intentionally playful fission effects.
+- **Multi-segment probe position**: Use `if/else` chains with per-segment `interpolate` (each with its own easing) rather than single multi-keyframe interpolate, to allow different easing per segment (e.g., `Easing.in(Easing.quad)` for acceleration on transit segments).
+- **Highlight activation**: `interpolate(frame, [activateAt, activateAt + N], [0, 1], CL)` returns a 0→1 progress used to drive opacity, scale, and translateX for slide-in descriptions.
 
 **Adding a new Remotion video**:
 1. Create `src/remotion/NewVideo.tsx` with Remotion composition
