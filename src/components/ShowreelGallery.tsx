@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { Player, type PlayerRef } from '@remotion/player'
 import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch, Flame, Film } from 'lucide-react'
 import { TechCardVideo } from '../remotion/TechCardVideo'
@@ -134,10 +134,27 @@ export default function ShowreelGallery() {
       <SectionHeader title="动态影集 / Showreel" className="mb-12" />
 
       <ScrollReveal stagger>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {VIDEOS.map((video) => (
+        {/* 第一行：3 列 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {VIDEOS.slice(0, 3).map((video) => (
             <StaggerChild key={video.id}>
-              <VideoCard video={video} onPlay={handleOpen} />
+              <VideoCard
+                video={video}
+                onPlay={handleOpen}
+                className="min-h-[200px] lg:min-h-[240px] h-full"
+              />
+            </StaggerChild>
+          ))}
+        </div>
+        {/* 第二行：2 列居中 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-[calc(66.666%+0.75rem)] mx-auto">
+          {VIDEOS.slice(3, 5).map((video) => (
+            <StaggerChild key={video.id}>
+              <VideoCard
+                video={video}
+                onPlay={handleOpen}
+                className="min-h-[200px] lg:min-h-[240px] h-full"
+              />
             </StaggerChild>
           ))}
         </div>
@@ -196,27 +213,36 @@ export default function ShowreelGallery() {
 function VideoCard({
   video,
   onPlay,
+  className = '',
 }: {
   video: VideoEntry
   onPlay: (v: VideoEntry) => void
+  className?: string
 }) {
   return (
     <button
       type="button"
       onClick={() => onPlay(video)}
-      className="group relative w-full text-left bg-surface border border-border/20 rounded-lg overflow-hidden spotlight-card transition-all hover:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+      className={`group relative w-full text-left bg-surface border border-border/20 rounded-lg overflow-hidden spotlight-card transition-all hover:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/40 ${className}`}
     >
       {/* 预览区域 */}
-      <div className="relative aspect-video bg-[#0a0a0a] overflow-hidden">
-        {/* 静态缩略：用深色网格 + 标题模拟 */}
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              'radial-gradient(rgba(212, 175, 55, 0.12) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
+      <div className="relative aspect-video overflow-hidden">
+        {/* 预览图片 */}
+        <img
+          src={`/previews/${video.id}-preview.png`}
+          alt={video.title}
+          className="absolute inset-0 w-full h-full object-cover"
         />
+        {/* 深色遮罩 */}
+        <div className="absolute inset-0 bg-black/40" />
+        {/* 内容覆盖层 */}
+        <div className="absolute inset-0 flex flex-col items-center justify-end p-6 pointer-events-none">
+          <div className="text-primary mb-4">
+            {video.icon}
+          </div>
+          <h3 className="text-white font-bold text-center">{video.title}</h3>
+        </div>
+
         {/* 中心大播放按钮 */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center bg-bg/50 backdrop-blur-sm group-hover:border-primary/70 group-hover:bg-bg/70 group-hover:scale-110 transition-all duration-300">
@@ -226,12 +252,14 @@ function VideoCard({
             />
           </div>
         </div>
+        
         {/* 右上角时长标签 */}
         <div className="absolute top-3 right-3 px-2 py-0.5 bg-bg/70 backdrop-blur-sm border border-border/20 rounded text-[10px] text-muted font-mono">
           {video.duration}s
         </div>
+        
         {/* 底部渐变 */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-surface to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-surface/0 to-surface/80" />
       </div>
 
       {/* 信息区 */}
