@@ -1,6 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react'
-import { Player, type PlayerRef } from '@remotion/player'
-import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch, Flame, Film } from 'lucide-react'
+import React, { useState, useCallback, useRef } from 'react'
+import { Player } from '@remotion/player'
+import { Play, Clapperboard, Activity, GitBranch, Flame, Film } from 'lucide-react'
 import { TechCardVideo } from '../remotion/TechCardVideo'
 import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
 import { ArchitectureEvolution } from '../remotion/ArchitectureEvolution'
@@ -101,7 +101,7 @@ const VIDEOS: VideoEntry[] = [
 export default function ShowreelGallery() {
   const [activeVideo, setActiveVideo] = useState<VideoEntry | null>(null)
   const [isPlaying, setIsPlaying] = useState(true)
-  const playerRef = useRef<PlayerRef>(null)
+  const playerRef = useRef<any>(null)
 
   const handleOpen = useCallback((video: VideoEntry) => {
     setActiveVideo(video)
@@ -113,21 +113,13 @@ export default function ShowreelGallery() {
     setIsPlaying(true)
   }, [])
 
-  const handleTogglePlay = () => {
+  const handleTogglePlay = useCallback(() => {
     const player = playerRef.current
     if (!player) return
     if (isPlaying) player.pause()
     else player.play()
     setIsPlaying(!isPlaying)
-  }
-
-  const handleRestart = () => {
-    const player = playerRef.current
-    if (!player) return
-    player.seekTo(0)
-    player.play()
-    setIsPlaying(true)
-  }
+  }, [isPlaying])
 
   return (
     <section id="showreel" className="mb-32 relative">
@@ -166,7 +158,9 @@ export default function ShowreelGallery() {
         onClose={handleClose}
         title={activeVideo?.title}
         subtitle={`${activeVideo?.duration}s · ${activeVideo?.fps}fps`}
-        fullscreen
+        playerRef={playerRef}
+        isPlaying={isPlaying}
+        togglePlay={handleTogglePlay}
       >
         {activeVideo && (
           <div className="relative w-full h-full">
@@ -186,22 +180,6 @@ export default function ShowreelGallery() {
               numberOfSharedAudioTags={0}
               initiallyMuted
             />
-
-            {/* 悬浮控制按钮 */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
-              <button
-                onClick={handleTogglePlay}
-                className="w-9 h-9 rounded-full border border-border/30 bg-bg/70 backdrop-blur-sm flex items-center justify-center text-muted hover:text-primary hover:border-primary/50 transition-all"
-              >
-                {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-              </button>
-              <button
-                onClick={handleRestart}
-                className="w-9 h-9 rounded-full border border-border/30 bg-bg/70 backdrop-blur-sm flex items-center justify-center text-muted hover:text-primary hover:border-primary/50 transition-all"
-              >
-                <RotateCcw size={14} />
-              </button>
-            </div>
           </div>
         )}
       </VideoModal>
