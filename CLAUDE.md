@@ -40,8 +40,8 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 │   │   ├── Experience.tsx  # Career timeline
 │   │   ├── Education.tsx   # Education & awards
 │   │   ├── Essence.tsx     # Philosophy + Zodiac card with Remotion
-│   │   ├── ShowreelGallery.tsx  # Video gallery with modal playback
-│   │   ├── VideoModal.tsx       # Reusable video modal (framer-motion AnimatePresence)
+│   │   ├── ShowreelGallery.tsx  # Video gallery with fullscreen modal playback
+│   │   ├── VideoModal.tsx       # Reusable video modal (fullscreen + normal modes, AnimatePresence)
 │   │   ├── TechCardShowcase.tsx # (Legacy) Inline showreel player
 │   │   ├── OpenSourceDashboardShowcase.tsx # (Legacy) Inline dashboard player
 │   │   ├── OpenSource.tsx  # Open source contributions & PRs
@@ -52,7 +52,9 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 │       ├── ConstellationAnimation.tsx  # Remotion composition (spring + interpolate)
 │       ├── TechCardVideo.tsx           # 15s tech card (4 phases: entrance, stack, highlights, outro)
 │       ├── OpenSourceDashboard.tsx     # 20s data-driven dashboard (terminal, metrics, topology, outro)
-│       └── ArchitectureEvolution.tsx   # 25s architecture narrative (probe-driven request tracing)
+│       ├── ArchitectureEvolution.tsx   # 25s architecture narrative (probe-driven request tracing)
+│       ├── GitHubHeatmap.tsx           # 20s contribution heatmap (particle converge + milestone cards)
+│       └── PortfolioTrailer.tsx        # 60s main composition (TransitionSeries wipe, embeds all above)
 ```
 
 ## Key Design Decisions
@@ -101,7 +103,26 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 2. Import and add to `src/App.tsx` within `<main>`
 3. Add nav link in `src/components/Navbar.tsx` (both desktop and mobile)
 
+**Adding video background**:
+1. Render Remotion composition to video using `@remotion/cli render`
+2. Create `VideoBackground.tsx` component with proper video playback handling
+3. Import and place `<VideoBackground />` in `App.tsx` behind other content
+4. Ensure video file exists in `public/` directory
+5. Handle autoplay restrictions with user interaction fallbacks
+6. Use transparent overlays to maintain text readability over video
+7. Consider creating separate header and content hero sections when combining video with other animations
+8. Test video performance across devices and optimize file size appropriately
+
 **Modifying theme colors**: Edit `@theme {}` block in `src/index.css`
+
+**Working with Remotion compositions**:
+- All animations must use `useCurrentFrame()` + `useVideoConfig().fps`
+- CSS animations are forbidden inside Remotion components
+- Use `spring()` for natural motion, `interpolate()` for mapped values
+- Use `Sequence` with `premountFor` for timeline sequencing
+- Use `AbsoluteFill` for layout composition
+- When rendering videos for background use, export as WebM VP9 for broad browser support
+- For performance, keep background videos under 60s and optimize file size
 
 **Modifying Remotion animation**: Edit `src/remotion/ConstellationAnimation.tsx`
 - All animations must use `useCurrentFrame()` + `useVideoConfig().fps`
@@ -135,6 +156,19 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - Key architecture data constants at file top: `DDD_LAYERS`, `GATEWAY_LAYERS`, `MIDDLEWARE_CHAIN`, `SUB_CONVERTERS`
 - `CL` shorthand for `{ extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }` used throughout
 
+**Modifying GitHubHeatmap**: Edit `src/remotion/GitHubHeatmap.tsx`
+- 20s heatmap video (600 frames @ 30fps) with 4 phases via `Sequence`
+- Phase 1 `CosmosPhase` (0-4s): Midnight Pearl background, faint gold grid lines fade in, contribution cells as distant star-dust with perspective zoom
+- Phase 2 `ConvergePhase` (4-12s): **Particle convergence** — gold particles fly from random screen positions (pre-computed via `computeParticleOrigins`) along `Easing.bezier` S-curves, landing on corresponding grid cells; each hit triggers a `radialGradient` ripple pulse + white flash; real-time `0→356` rolling counter in bottom-right
+- Phase 3 `MilestonePhase` (12-17s): Full heatmap displayed; achievement cards spring in (`damping:12, stiffness:180` for visible wobble) with SVG cubic bezier connection lines to target cells; pulsing gold glow on milestone cells; 3-metric stats panel (TOTAL / ACTIVE DAYS / HIGH INTENSITY)
+- Phase 4 `FinalePhase` (17-20s): Zoom out to full-year panorama, radial glow, slogan "Architecture is a long-term commitment." fade in/out
+- Data-driven via `HeatmapProps`: `contributions` (ContributionDay[]) + `achievements` (Achievement[])
+- Real GitHub data: `RAW_COUNTS` array (371 integers from GitHub GraphQL API), `countToIntensity()` maps count → 0-4
+- Heat color scale: `#161618` → `#2a2a2e` → `#5c5c64` → `#b8b8c0` → `#d4af37` (dark gray → pearl white → gold)
+- Grid constants: `WEEKS=53`, `CELL=14`, `GAP=3`, `MONTH_LABELS`/`MONTH_WEEKS` for real calendar alignment (2025-03 start)
+- Performance: `React.memo` on `ConvergePhase` + `AmbientParticles`, `useMemo` for particle origins pre-computation
+- Deterministic pseudo-random via `hash()` (sin-based) ensures frame-to-frame consistency
+
 **Remotion animation patterns** (established conventions across all video compositions):
 - **Probe-driven narrative**: Compute a master object position `{x, y}` via multi-segment `interpolate`, then derive each component's highlight state from timeline thresholds (not from physical distance). See `NewArchitecture` probe pattern.
 - **SVG flow effects**: Use `strokeDasharray` + animated `strokeDashoffset` (driven by `frame`) for flowing/marching borders and connection paths. Never use CSS animation.
@@ -142,16 +176,42 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - **Restrained springs**: Use `{ damping: 200 }` for luxury/smooth feel (no bounce). Reserve `{ damping: 12 }` only for intentionally playful fission effects.
 - **Multi-segment probe position**: Use `if/else` chains with per-segment `interpolate` (each with its own easing) rather than single multi-keyframe interpolate, to allow different easing per segment (e.g., `Easing.in(Easing.quad)` for acceleration on transit segments).
 - **Highlight activation**: `interpolate(frame, [activateAt, activateAt + N], [0, 1], CL)` returns a 0→1 progress used to drive opacity, scale, and translateX for slide-in descriptions.
+- **Particle convergence pattern**: Pre-compute random origins outside render loop (`useMemo`), use `Easing.bezier` for smooth S-curve flight paths, trigger ripple + flash on arrival. See `ConvergePhase` in GitHubHeatmap.
+- **TransitionSeries for multi-composition trailers**: Use `@remotion/transitions` (`TransitionSeries`, `linearTiming`, `wipe`/`fade`) to chain sub-compositions with cross-dissolve or wipe cuts. Duration math: total = sum(scene frames) - sum(transition frames). Keep `FADE_DUR` ≤ 4 frames for shutter-style cuts.
+- **Embedding sub-compositions**: Render existing composition components (e.g., `<TechCardVideo />`) directly inside `TransitionSeries.Sequence`. `useCurrentFrame()` returns local frame (0-based) within the Sequence. Sub-compositions only use `fps` from `useVideoConfig()`, never `durationInFrames`, so they render correctly when clipped shorter than their native duration.
+- **Sequential cell activation**: For large grids (371+ cells), compute `activateAt = baseDelay + (index / total) * duration` per cell to create a wave-growth effect without individual `Sequence` wrappers.
+- **Deterministic randomness**: Use `hash(n) = fract(sin(n * 127.1 + 311.7) * 43758.5453)` for stable pseudo-random values across frames. Never use `Math.random()` in Remotion.
+- **React.memo for heavy phases**: Wrap phases with 300+ SVG elements in `React.memo` to prevent unnecessary re-renders from parent prop changes. Pre-compute static data with `useMemo`.
 
 **Adding a new Remotion video**:
 1. Create `src/remotion/NewVideo.tsx` with Remotion composition
 2. Add entry to `VIDEOS` array in `src/components/ShowreelGallery.tsx`
-3. No other changes needed — gallery and modal handle the rest
+3. Add watermark to main composition: `<div style={{ position: 'absolute', bottom: 24, right: 32, pointerEvents: 'none', opacity: 0.18 }}><span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: '#a1a1aa', fontWeight: 400, letterSpacing: 2 }}>Masons.Xu | 2026</span></div>`
+4. No other changes needed — gallery and modal handle the rest
+
+**Modifying PortfolioTrailer**: Edit `src/remotion/PortfolioTrailer.tsx`
+- 60s main composition (1800 frames @ 30fps) using `TransitionSeries` from `@remotion/transitions`
+- Embeds existing components: `TechCardVideo` (0-10s), `ArchitectureEvolution` (10-25s), `GitHubHeatmap` (25-45s as dimmed background with stats overlay), custom `FinalOutro` (45-60s)
+- Transitions: `wipe({ direction: 'from-left' })` + `linearTiming({ durationInFrames: 4 })` = 0.13s shutter cuts
+- Duration math: scene frames sum = 1812, minus 3×4 overlap = 1800 frames exact
+- `SCENE = { intro: 304, evolution: 454, impact: 604, outro: 450 }` — adjust when changing `FADE_DUR`
+- Global layers: `GlobalBackground` (60s grid+particles) → `TransitionSeries` → watermark → `CinematicOverlay` (vignette + film grain)
+- ImpactPhase: left gradient overlay + stats cards (env-driven) over dimmed GitHubHeatmap background
+- FinalOutro: converging gold dots → diamond → name → slogan → domain → fade to black
 
 **Showreel architecture** (VideoModal + ShowreelGallery):
-- `VideoModal.tsx`: Reusable overlay with `AnimatePresence` spring animation, ESC/backdrop close
+- `VideoModal.tsx`: Fullscreen overlay (100vw×100vh, `#0a0a0a` bg) with `AnimatePresence`, ESC/backdrop close, minimal close button
+  - Two keyed branches: `key="modal-fullscreen"` (default, all videos) and `key="modal-normal"` (unused, reserved)
+  - Keys are required for AnimatePresence to correctly track mount/unmount of different layout branches
 - `ShowreelGallery.tsx`: Video registry pattern — all videos defined in `VIDEOS` array
-- Click card → modal opens with `@remotion/player` → click outside to close
+- Player: `initiallyMuted` (all audio disabled), `numberOfSharedAudioTags={0}`, `loop`, `autoPlay`
+- Click card → fullscreen modal opens with `@remotion/player` → ESC or click close button to dismiss
+
+**Remotion brand watermark** (all compositions):
+- Every Remotion composition includes a persistent watermark in the main export component
+- Position: `absolute bottom-24 right-32`, opacity 0.18, `pointerEvents: 'none'`
+- Text: `Masons.Xu | 2026`, 11px JetBrains Mono, color `#a1a1aa`, letterSpacing 2
+- Layer order: above all Sequences/TransitionSeries content, below CinematicOverlay (if present)
 
 **Environment variables for data-driven Remotion**:
 - `VITE_OSS_STARS`, `VITE_OSS_PRS`, `VITE_OSS_MERGED`, `VITE_OSS_AGENTS_LINES`
