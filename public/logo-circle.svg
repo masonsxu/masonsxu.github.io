@@ -1,0 +1,99 @@
+<svg width="512" height="512" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg { fill: #0C0C0E; }
+      .dark { fill: #1E1E21; }
+      .gold { fill: #D4AF37; }
+      .accent { fill: #F2D288; }
+      .pearl { fill: #FCFCFC; }
+      rect { shape-rendering: crispEdges; }
+    </style>
+    <clipPath id="c">
+      <circle cx="16" cy="16" r="15.5" />
+    </clipPath>
+  </defs>
+
+  <!-- Circular background -->
+  <circle cx="16" cy="16" r="15.5" fill="#0C0C0E" />
+
+  <!-- Subtle gold ring -->
+  <circle cx="16" cy="16" r="15" fill="none" stroke="#D4AF37" stroke-width="0.5" opacity="0.15" />
+
+  <!-- Content clipped to circle -->
+  <g clip-path="url(#c)">
+
+    <!-- Constellation dots -->
+    <rect x="7" y="5" width="1" height="1" class="accent" opacity="0.3" />
+    <rect x="24" y="5" width="1" height="1" class="accent" opacity="0.3" />
+    <rect x="3" y="16" width="1" height="1" class="pearl" opacity="0.2" />
+    <rect x="28" y="16" width="1" height="1" class="pearl" opacity="0.2" />
+    <rect x="8" y="26" width="1" height="1" class="accent" opacity="0.35" />
+    <rect x="23" y="26" width="1" height="1" class="accent" opacity="0.35" />
+
+    <!-- ═══ TAURUS (shifted +2px for circle safe area) ═══ -->
+
+    <!-- Left Horn -->
+    <rect x="4" y="6" width="2" height="1" class="accent" />
+    <rect x="3" y="7" width="1" height="2" class="accent" />
+    <rect x="4" y="7" width="1" height="2" class="gold" />
+    <rect x="4" y="9" width="2" height="1" class="gold" />
+    <rect x="5" y="10" width="2" height="1" class="gold" />
+    <rect x="6" y="11" width="3" height="1" class="gold" />
+
+    <!-- Right Horn -->
+    <rect x="26" y="6" width="2" height="1" class="accent" />
+    <rect x="28" y="7" width="1" height="2" class="accent" />
+    <rect x="27" y="7" width="1" height="2" class="gold" />
+    <rect x="26" y="9" width="2" height="1" class="gold" />
+    <rect x="25" y="10" width="2" height="1" class="gold" />
+    <rect x="23" y="11" width="3" height="1" class="gold" />
+
+    <!-- Head -->
+    <g class="gold">
+      <rect x="9" y="11" width="14" height="1" />
+      <rect x="7" y="12" width="18" height="2" />
+      <rect x="8" y="14" width="16" height="4" />
+      <rect x="9" y="18" width="14" height="1" />
+      <rect x="10" y="19" width="12" height="1" />
+      <rect x="11" y="20" width="10" height="1" />
+      <rect x="12" y="21" width="8" height="1" />
+      <rect x="13" y="22" width="6" height="1" />
+      <rect x="14" y="23" width="4" height="1" />
+    </g>
+
+    <!-- Ears -->
+    <rect x="5" y="12" width="1" height="1" class="accent" />
+    <rect x="6" y="12" width="1" height="2" class="gold" />
+    <rect x="26" y="12" width="1" height="1" class="accent" />
+    <rect x="25" y="12" width="1" height="2" class="gold" />
+
+    <!-- Forehead mark -->
+    <rect x="15" y="13" width="2" height="1" class="accent" opacity="0.6" />
+
+    <!-- Eye sockets -->
+    <rect x="10" y="15" width="3" height="2" class="dark" />
+    <rect x="19" y="15" width="3" height="2" class="dark" />
+
+    <!-- Eyes -->
+    <rect x="10" y="15" width="2" height="2" class="pearl" />
+    <rect x="20" y="15" width="2" height="2" class="pearl" />
+
+    <!-- Eye glints -->
+    <rect x="10" y="15" width="1" height="1" class="accent" />
+    <rect x="21" y="15" width="1" height="1" class="accent" />
+
+    <!-- Pupils -->
+    <rect x="11" y="16" width="1" height="1" class="bg" />
+    <rect x="20" y="16" width="1" height="1" class="bg" />
+
+    <!-- Nostrils -->
+    <rect x="13" y="19" width="1" height="1" class="dark" />
+    <rect x="18" y="19" width="1" height="1" class="dark" />
+
+    <!-- Nose ring -->
+    <rect x="14" y="20" width="1" height="1" class="pearl" />
+    <rect x="17" y="20" width="1" height="1" class="pearl" />
+    <rect x="15" y="21" width="2" height="1" class="pearl" />
+
+  </g>
+</svg>
