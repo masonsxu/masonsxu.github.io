@@ -8,6 +8,7 @@ interface VideoModalProps {
   children: ReactNode
   title?: string
   subtitle?: string
+  fullscreen?: boolean
 }
 
 export default function VideoModal({
@@ -16,6 +17,7 @@ export default function VideoModal({
   children,
   title,
   subtitle,
+  fullscreen,
 }: VideoModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
 
@@ -43,8 +45,35 @@ export default function VideoModal({
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && fullscreen && (
         <motion.div
+          key="modal-fullscreen"
+          ref={overlayRef}
+          onClick={handleOverlayClick}
+          className="fixed inset-0 z-[100]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          style={{ backgroundColor: '#0a0a0a' }}
+        >
+          <div
+            className="w-[100vw] h-[100vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {children}
+          </div>
+          <button
+            onClick={onClose}
+            className="absolute top-5 right-5 w-9 h-9 rounded-full border border-white/10 bg-black/50 backdrop-blur-sm flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-all z-10"
+          >
+            <X size={16} />
+          </button>
+        </motion.div>
+      )}
+      {isOpen && !fullscreen && (
+        <motion.div
+          key="modal-normal"
           ref={overlayRef}
           onClick={handleOverlayClick}
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8"

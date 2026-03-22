@@ -1,10 +1,11 @@
 import { useState, useRef, useCallback } from 'react'
 import { Player, type PlayerRef } from '@remotion/player'
-import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch, Flame } from 'lucide-react'
+import { Play, Pause, RotateCcw, Clapperboard, Activity, GitBranch, Flame, Film } from 'lucide-react'
 import { TechCardVideo } from '../remotion/TechCardVideo'
 import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
 import { ArchitectureEvolution } from '../remotion/ArchitectureEvolution'
 import { GitHubHeatmap } from '../remotion/GitHubHeatmap'
+import { PortfolioTrailer } from '../remotion/PortfolioTrailer'
 import VideoModal from './VideoModal'
 import SectionHeader from './SectionHeader'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
@@ -28,7 +29,7 @@ interface VideoEntry {
   fps: number
   icon: React.ReactNode
   tags: string[]
-  component: React.ComponentType<Record<string, never>> | React.ComponentType<{ data: ProjectData }>
+  component: React.ComponentType<Record<string, never>> | React.ComponentType<{ data?: ProjectData }>
   inputProps?: { data: ProjectData }
 }
 
@@ -55,7 +56,7 @@ const VIDEOS: VideoEntry[] = [
     fps: 30,
     icon: <Activity size={20} className="text-primary" />,
     tags: ['Env Driven', 'SVG Topology', 'Ring Chart', '20s'],
-    component: OpenSourceDashboard as React.ComponentType<Record<string, never>> | React.ComponentType<{ data: ProjectData }>,
+    component: OpenSourceDashboard as any,
     inputProps: { data: PROJECT_DATA },
   },
   {
@@ -81,6 +82,18 @@ const VIDEOS: VideoEntry[] = [
     icon: <Flame size={20} className="text-primary" />,
     tags: ['Heatmap', 'Ripple', 'spring()', 'SVG Grid', '20s'],
     component: GitHubHeatmap,
+  },
+  {
+    id: 'portfolio-trailer',
+    title: '作品集预告片',
+    subtitle: 'Portfolio Trailer',
+    description:
+      '60 秒完整预告片。通过 TransitionSeries + fade 交叉溶解串联技术名片、架构演进、贡献热力图与域名定格，附带全局暗角与胶片噪点后期。',
+    duration: 60,
+    fps: 30,
+    icon: <Film size={20} className="text-primary" />,
+    tags: ['TransitionSeries', 'fade()', 'Vignette', 'Grain', '60s'],
+    component: PortfolioTrailer,
   },
 ]
 
@@ -136,12 +149,13 @@ export default function ShowreelGallery() {
         onClose={handleClose}
         title={activeVideo?.title}
         subtitle={`${activeVideo?.duration}s · ${activeVideo?.fps}fps`}
+        fullscreen
       >
         {activeVideo && (
           <div className="relative w-full h-full">
             <Player
               ref={playerRef}
-              component={activeVideo.component}
+              component={activeVideo.component as any}
               inputProps={activeVideo.inputProps ?? {}}
               compositionWidth={1920}
               compositionHeight={1080}
@@ -153,6 +167,7 @@ export default function ShowreelGallery() {
               controls={false}
               acknowledgeRemotionLicense
               numberOfSharedAudioTags={0}
+              initiallyMuted
             />
 
             {/* 悬浮控制按钮 */}
