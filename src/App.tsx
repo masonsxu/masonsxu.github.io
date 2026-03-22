@@ -10,7 +10,7 @@ import OpenSource from './components/OpenSource'
 import Projects from './components/Projects'
 import ShowreelGallery from './components/ShowreelGallery'
 import Skills from './components/Skills'
-import VideoBackground from './components/VideoBackground'
+import ThreeBackground from './components/ThreeBackground'
 
 export default function App() {
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function App() {
   return (
     <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
       <div className="fixed inset-0 tech-bg z-[-1] pointer-events-none opacity-40" />
-      <VideoBackground />
+      <ThreeBackground />
       <Navbar />
       <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
         <ContentHero />
