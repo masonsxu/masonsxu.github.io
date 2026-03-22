@@ -997,6 +997,10 @@ export const OpenSourceDashboard: React.FC<{ data?: ProjectData }> = ({
       >
         <Outro />
       </Sequence>
+
+      <div style={{ position: 'absolute', bottom: 24, right: 32, pointerEvents: 'none', opacity: 0.18 }}>
+        <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: '#a1a1aa', fontWeight: 400, letterSpacing: 2 }}>Masons.Xu | 2026</span>
+      </div>
     </AbsoluteFill>
   )
 }

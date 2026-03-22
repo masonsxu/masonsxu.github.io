@@ -824,6 +824,10 @@ export const GitHubHeatmap: React.FC<HeatmapProps> = ({
       <Sequence from={Math.round(17 * fps)} durationInFrames={Math.round(3 * fps)} premountFor={fps}>
         <FinalePhase contributions={contributions} />
       </Sequence>
+
+      <div style={{ position: 'absolute', bottom: 24, right: 32, pointerEvents: 'none', opacity: 0.18 }}>
+        <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono', monospace", color: '#a1a1aa', fontWeight: 400, letterSpacing: 2 }}>Masons.Xu | 2026</span>
+      </div>
     </AbsoluteFill>
   )
 }
