@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a personal portfolio website for Masons Xu, a backend technical lead and distributed systems architect. The site features:
 - **React 19** + **TypeScript** with Vite as the build tool
 - **Tailwind CSS v4** for styling (CSS-based theme configuration via `@theme`)
-- **Remotion** (`@remotion/player`) for timeline-based SVG animations (constellation effects)
+- **Three.js** for 3D dynamic background (Obsidian Neural Network multi-layer effect)
+- **Remotion** (`@remotion/player`) for timeline-based SVG animations (constellation effects, video showcases)
 - **framer-motion** for scroll-triggered reveal animations
 - **lucide-react** for consistent icon system (no inline SVG)
 - Mobile-responsive design with Tailwind's responsive utilities
@@ -32,6 +33,7 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 │   ├── App.tsx             # Root component (spotlight effect, layout)
 │   ├── index.css           # Tailwind v4 @theme + global CSS
 │   ├── components/
+│   │   ├── ThreeBackground.tsx # Three.js dynamic background (nebula, flow particles, network topology, wireframe geometry)
 │   │   ├── Navbar.tsx      # Fixed glass-morphism nav with scroll highlight
 │   │   ├── Hero.tsx        # Hero section with Remotion constellation
 │   │   ├── Architecture.tsx # Core competency bento grid
@@ -103,17 +105,18 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 2. Import and add to `src/App.tsx` within `<main>`
 3. Add nav link in `src/components/Navbar.tsx` (both desktop and mobile)
 
-**Adding video background**:
-1. Render Remotion composition to video using `@remotion/cli render`
-2. Create `VideoBackground.tsx` component with proper video playback handling
-3. Import and place `<VideoBackground />` in `App.tsx` behind other content
-4. Ensure video file exists in `public/` directory
-5. Handle autoplay restrictions with user interaction fallbacks
-6. Use transparent overlays to maintain text readability over video
-7. Consider creating separate header and content hero sections when combining video with other animations
-8. Test video performance across devices and optimize file size appropriately
-
 **Modifying theme colors**: Edit `@theme {}` block in `src/index.css`
+
+**Modifying ThreeBackground**: Edit `src/components/ThreeBackground.tsx`
+- 5-layer "Obsidian Neural Network" design: nebula sprites → flow particles → network topology → dust → wireframe geometry
+- Layer 1 星河层: 5 golden glow sprites with breathing opacity animation
+- Layer 2 流场粒子: 4000 particles following sin/cos flow field
+- Layer 3 动态网络: 100 orbital nodes + proximity-based connection lines with energy pulse
+- Layer 4 大气尘埃: 2000 dim particles for depth
+- Layer 5 线框几何体: Ghost octahedron/icosahedron/torus with slow rotation
+- Interaction: mouse parallax camera movement, exponential fog, cinematic CSS vignette
+- Accessibility: respects `prefers-reduced-motion`, scales to 10%
+- Resources: unified `disposables` array for GPU cleanup
 
 **Working with Remotion compositions**:
 - All animations must use `useCurrentFrame()` + `useVideoConfig().fps`

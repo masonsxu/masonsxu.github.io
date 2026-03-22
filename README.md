@@ -9,7 +9,8 @@
 - **React 19** + **TypeScript** — 函数式组件
 - **Vite** — 构建工具，支持 HMR
 - **Tailwind CSS v4** — 样式（CSS `@theme` 配置，无 `tailwind.config.js`）
-- **Remotion** — 时间线 SVG 动画（星座效果）
+- **Three.js** — 3D 动态背景（Obsidian Neural Network 多层效果）
+- **Remotion** — 时间线 SVG 动画（星座效果、视频作品）
 - **framer-motion** — 滚动触发动画
 - **lucide-react** — 图标库
 - 字体：Noto Sans SC（中文）、Playfair Display（衬线）、JetBrains Mono（代码）（通过 `fonts.loli.net` 加载）
@@ -32,6 +33,7 @@
 │   ├── App.tsx             # 根组件（聚光灯效果、布局）
 │   ├── index.css           # Tailwind v4 @theme + 全局 CSS
 │   ├── components/
+│   │   ├── ThreeBackground.tsx # Three.js 动态背景（星云、流场粒子、网络拓扑、线框几何）
 │   │   ├── Navbar.tsx      # 固定毛玻璃导航栏
 │   │   ├── Hero.tsx        # Hero 区（Remotion 星座动画）
 │   │   ├── Architecture.tsx # 架构能力（Bento Box 网格）
