@@ -1,37 +1,39 @@
 <svg width="512" height="512" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MXW circular logo">
   <defs>
-    <linearGradient id="gold" x1="11" y1="14" x2="54" y2="50" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#F2D288" />
-      <stop offset="54%" stop-color="#D4AF37" />
-      <stop offset="100%" stop-color="#A67C1A" />
+    <linearGradient id="mxwGoldCircle" x1="10" y1="12" x2="54" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F6E0A3" />
+      <stop offset="56%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#8D6815" />
     </linearGradient>
-    <clipPath id="safe">
+    <clipPath id="mxwSafeCircle">
       <circle cx="32" cy="32" r="29.3" />
     </clipPath>
-    <filter id="softGlow" x="-25%" y="-25%" width="150%" height="150%">
-      <feGaussianBlur stdDeviation="1" result="b" />
+    <filter id="mxwGlowCircle" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="1" result="blur" />
       <feMerge>
-        <feMergeNode in="b" />
+        <feMergeNode in="blur" />
         <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
   </defs>
 
   <circle cx="32" cy="32" r="31" fill="#0C0C0E" />
-  <circle cx="32" cy="32" r="30.3" fill="none" stroke="#1E1E21" stroke-width="1.5" />
+  <circle cx="32" cy="32" r="30.3" fill="none" stroke="#1E1E21" stroke-width="1.4" />
   <circle cx="32" cy="32" r="29.6" fill="none" stroke="#D4AF37" stroke-opacity="0.24" stroke-width="0.8" />
 
-  <g clip-path="url(#safe)">
-    <g fill="none" stroke="url(#gold)" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round" filter="url(#softGlow)">
-      <path d="M11 48V15L21 33L32 19L43 33L53 15V48" />
-      <path d="M11 17L20 49L32 30L44 49L53 17" />
+  <g clip-path="url(#mxwSafeCircle)">
+    <line x1="32" y1="14" x2="32" y2="49" stroke="#1E1E21" stroke-width="1.2" stroke-linecap="round" opacity="0.85" />
+
+    <g fill="none" stroke="url(#mxwGoldCircle)" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round" filter="url(#mxwGlowCircle)">
+      <path d="M11 49V14L21 32L32 19L43 32L53 14V49" />
+      <path d="M11 18L22 50L32 31L42 50L53 18" />
     </g>
 
     <g fill="none" stroke-linecap="round">
-      <path d="M26 25L38 39M38 25L26 39" stroke="#0C0C0E" stroke-width="3.3" />
-      <path d="M26 25L38 39M38 25L26 39" stroke="#F2D288" stroke-opacity="0.62" stroke-width="1.1" />
+      <path d="M26 24L38 38M38 24L26 38" stroke="#0C0C0E" stroke-width="3.2" />
+      <path d="M26 24L38 38M38 24L26 38" stroke="#F6E0A3" stroke-opacity="0.74" stroke-width="1.1" />
     </g>
 
-    <circle cx="32" cy="32" r="1.2" fill="#FCFCFC" />
+    <circle cx="32" cy="31" r="1.2" fill="#FCFCFC" />
   </g>
 </svg>
