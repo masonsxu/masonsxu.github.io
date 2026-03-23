@@ -9,6 +9,7 @@ export default defineConfig({
     tailwindcss(),
     vitePluginSitemap({
       hostname: 'https://masonsxu-github-io.pages.dev/',
+      exclude: ['/404'],
     }),
   ],
   build: {
