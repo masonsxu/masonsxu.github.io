@@ -229,8 +229,12 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - **GitHub Actions Maintenance**: Regularly check and update action versions to avoid deprecation warnings. Currently using:
   - actions/checkout@v6
   - actions/setup-node@v6
-  - cloudflare/pages-action@v1.5.0
+  - cloudflare/pages-action@v1.5.0 (deprecated, use Wrangler CLI instead)
   - peter-evans/create-pull-request@v6
+- **Cloudflare API Token**: Required for deployment. Set these secrets in GitHub repository settings:
+  - `CLOUDFLARE_API_TOKEN`: Cloudflare API token with Pages write permission
+  - `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID
+  - Generate at: https://dash.cloudflare.com/profile/api-tokens
 
 ## Commit Message Style
 
