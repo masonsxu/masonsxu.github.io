@@ -226,6 +226,11 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 - **Cloudflare Pages**: Builds from `main` branch, build command: `npm run build`, output dir: `dist`
 - Custom domain: `masonsxu-github-io.pages.dev`
 - `public/CNAME` and `public/404.html` are deployed as-is
+- **GitHub Actions Maintenance**: Regularly check and update action versions to avoid deprecation warnings. Currently using:
+  - actions/checkout@v6
+  - actions/setup-node@v6
+  - cloudflare/pages-action@v1.5.0
+  - peter-evans/create-pull-request@v6
 
 ## Commit Message Style
 
