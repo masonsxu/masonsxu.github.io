@@ -1,0 +1,148 @@
+name: sync-brand-assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要同步的品牌资产版本（例如 v1.2.3）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      BRAND_REPO: masonsxu/mxw-brand-assets
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate input tag
+        id: validate
+        shell: bash
+        run: |
+          tag="${{ inputs.tag }}"
+
+          if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "tag 格式必须为 v*.*.*，当前: ${tag}"
+            exit 1
+          fi
+
+          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+
+      - name: Download release archive
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BRAND_ASSETS_TOKEN: ${{ secrets.BRAND_ASSETS_TOKEN }}
+        run: |
+          if [[ -n "${BRAND_ASSETS_TOKEN}" ]]; then
+            export GH_TOKEN="${BRAND_ASSETS_TOKEN}"
+          else
+            export GH_TOKEN="${GITHUB_TOKEN}"
+          fi
+
+          tag="${{ steps.validate.outputs.tag }}"
+          archive="brand-assets-${tag}.tar.gz"
+
+          gh release download "${tag}" \
+            --repo "${BRAND_REPO}" \
+            --pattern "${archive}" \
+            --clobber
+
+      - name: Extract and sync brand assets
+        shell: bash
+        run: |
+          tag="${{ steps.validate.outputs.tag }}"
+          archive="brand-assets-${tag}.tar.gz"
+          tmp_dir="$(mktemp -d)"
+          tar -xzf "${archive}" -C "${tmp_dir}"
+
+          files=(
+            "public/favicon.svg"
+            "public/logo.svg"
+            "public/logo-circle.svg"
+            "public/logo-options/logo-favicon-16.svg"
+            "public/logo-options/logo-primary-dark.svg"
+            "public/logo-options/logo-primary-light.svg"
+            "public/logo-options/logo-secondary-square.svg"
+            "public/logo-options/logo-mono-black.svg"
+            "public/logo-options/logo-mono-white.svg"
+            "public/logo-options/MXW-BRAND-GUIDELINES.md"
+          )
+
+          for file in "${files[@]}"; do
+            src="${tmp_dir}/${file}"
+            if [[ ! -s "${src}" ]]; then
+              echo "发布包缺少关键文件或文件为空: ${file}"
+              exit 1
+            fi
+
+            mkdir -p "$(dirname "${file}")"
+            cp -f "${src}" "${file}"
+          done
+
+      - name: Detect changes
+        id: changes
+        shell: bash
+        run: |
+          changed="$(git status --porcelain -- \
+            public/favicon.svg \
+            public/logo.svg \
+            public/logo-circle.svg \
+            public/logo-options/logo-favicon-16.svg \
+            public/logo-options/logo-primary-dark.svg \
+            public/logo-options/logo-primary-light.svg \
+            public/logo-options/logo-secondary-square.svg \
+            public/logo-options/logo-mono-black.svg \
+            public/logo-options/logo-mono-white.svg \
+            public/logo-options/MXW-BRAND-GUIDELINES.md)"
+
+          if [[ -n "${changed}" ]]; then
+            echo "has_changes=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "has_changes=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Create pull request
+        if: steps.changes.outputs.has_changes == 'true'
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ github.token }}
+          branch: chore/sync-brand-assets-${{ steps.validate.outputs.tag }}-${{ github.run_id }}
+          commit-message: "feat: 同步品牌资产 ${{ steps.validate.outputs.tag }}"
+          title: "feat: 同步品牌资产 ${{ steps.validate.outputs.tag }}"
+          body: |
+            ## Summary
+            - 从 `masonsxu/mxw-brand-assets` 的 `${{ steps.validate.outputs.tag }}` Release 同步品牌资产
+            - 覆盖更新 `public/` 下约定的 SSOT 资产路径
+
+            ## Test plan
+            - [ ] npm run build
+            - [ ] 人工检查 favicon/logo 渲染
+          add-paths: |
+            public/favicon.svg
+            public/logo.svg
+            public/logo-circle.svg
+            public/logo-options/logo-favicon-16.svg
+            public/logo-options/logo-primary-dark.svg
+            public/logo-options/logo-primary-light.svg
+            public/logo-options/logo-secondary-square.svg
+            public/logo-options/logo-mono-black.svg
+            public/logo-options/logo-mono-white.svg
+            public/logo-options/MXW-BRAND-GUIDELINES.md
+
+      - name: Print result
+        if: always()
+        shell: bash
+        run: |
+          if [[ "${{ steps.changes.outputs.has_changes }}" == "true" ]]; then
+            echo "已创建或更新同步 PR: ${{ steps.cpr.outputs.pull-request-url }}"
+          else
+            echo "品牌资产无变更，无需创建 PR"
+          fi
