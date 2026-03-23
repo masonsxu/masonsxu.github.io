@@ -1,11 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import vitePluginSitemap from 'vite-plugin-sitemap'
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    vitePluginSitemap({
+      hostname: 'https://masonsxu-github-io.pages.dev/',
+    }),
   ],
   build: {
     rollupOptions: {
