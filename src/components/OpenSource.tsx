@@ -1,8 +1,8 @@
 import { ExternalLink } from 'lucide-react'
 import { memo, useMemo } from 'react'
+import { GitHubIcon } from './GitHubIcon'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
 import SectionHeader from './SectionHeader'
-import { GitHubIcon } from './GitHubIcon'
 
 // Hoist static data to module level
 const PR_CONTRIBUTIONS = [
@@ -52,7 +52,7 @@ const PRCard = memo(({ pr }: { pr: typeof PR_CONTRIBUTIONS[number] }) => (
     href={pr.href}
     target="_blank"
     rel="noopener noreferrer"
-    className="block h-full p-5 bg-surface border border-border/20 rounded-lg hover:border-primary/50 hover:bg-surface-light/30 transition-all group flex flex-col"
+    className="h-full p-5 bg-surface border border-border/20 rounded-lg hover:border-primary/50 hover:bg-surface-light/30 transition-all group flex flex-col"
   >
     <div className="flex items-center justify-between mb-3">
       <div className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">PR {pr.prNum}</div>
