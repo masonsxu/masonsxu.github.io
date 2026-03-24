@@ -1,9 +1,9 @@
 import { Composition } from 'remotion'
-import { TechCardVideo } from './TechCardVideo'
-import { OpenSourceDashboard } from './OpenSourceDashboard'
 import { ArchitectureEvolution } from './ArchitectureEvolution'
 import { GitHubHeatmap } from './GitHubHeatmap'
+import { OpenSourceDashboard } from './OpenSourceDashboard'
 import { PortfolioTrailer } from './PortfolioTrailer'
+import { TechCardVideo } from './TechCardVideo'
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -23,10 +23,12 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         fps={30}
         durationInFrames={600}
-        defaultProps={{ data: {
-          repoName: 'cloudwego-microservice-demo',
-          stars: 3, prs: 4, merged: 3, agentsMdLines: 331,
-        }}}
+        defaultProps={{
+          data: {
+            repoName: 'cloudwego-microservice-demo',
+            stars: 3, prs: 4, merged: 3, agentsMdLines: 331,
+          }
+        }}
       />
       <Composition
         id="arch-evolution"

@@ -1,6 +1,6 @@
-import { useEffect, useCallback, useRef, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X, Play } from 'lucide-react'
+import { Play, X } from 'lucide-react'
+import { useCallback, useEffect, useRef, type ReactNode } from 'react'
 
 interface VideoModalProps {
   isOpen: boolean
@@ -90,7 +90,7 @@ export default function VideoModal({
             >
               {/* Outer glow */}
               <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-primary/20 via-primary/5 to-transparent pointer-events-none" />
-              
+
               {/* Main container */}
               <div
                 className="relative rounded-2xl overflow-hidden"
@@ -131,7 +131,7 @@ export default function VideoModal({
                   </button>
                 </div>
 
-                 {/* Video content - maintains 16:9 aspect ratio */}
+                {/* Video content - maintains 16:9 aspect ratio */}
                 <div className="relative aspect-video bg-[#0a0a0a]">
                   {children}
 
@@ -151,7 +151,7 @@ export default function VideoModal({
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Corner decorations */}
                   <div className="absolute top-3 left-3 w-5 h-5 border-l border-t border-primary/25 pointer-events-none" />
                   <div className="absolute top-3 right-3 w-5 h-5 border-r border-t border-primary/25 pointer-events-none" />

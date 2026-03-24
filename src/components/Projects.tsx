@@ -1,5 +1,5 @@
-import SectionHeader from './SectionHeader'
-import ScrollReveal, { StaggerChild } from './ScrollReveal'
+import ScrollReveal, { StaggerChild } from './ScrollReveal';
+import SectionHeader from './SectionHeader';
 
 export default function Projects() {
   return (

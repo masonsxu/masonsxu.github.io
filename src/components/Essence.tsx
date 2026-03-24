@@ -1,8 +1,8 @@
 import { Player } from '@remotion/player'
-import { ConstellationAnimation } from '../remotion/ConstellationAnimation'
 import { Sun } from 'lucide-react'
-import SectionHeader from './SectionHeader'
+import { ConstellationAnimation } from '../remotion/ConstellationAnimation'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
+import SectionHeader from './SectionHeader'
 
 export default function Essence() {
   return (

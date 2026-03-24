@@ -1,3 +1,5 @@
+import { TransitionSeries, linearTiming } from '@remotion/transitions'
+import { wipe } from '@remotion/transitions/wipe'
 import React from 'react'
 import {
   AbsoluteFill,
@@ -7,11 +9,9 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion'
-import { TransitionSeries, linearTiming } from '@remotion/transitions'
-import { wipe } from '@remotion/transitions/wipe'
-import { TechCardVideo } from './TechCardVideo'
 import { ArchitectureEvolution } from './ArchitectureEvolution'
 import { GitHubHeatmap } from './GitHubHeatmap'
+import { TechCardVideo } from './TechCardVideo'
 
 // ════════════════════════════════════════════════════════════════
 // PortfolioTrailer — 60s / 1800 帧 / 30fps / 1920x1080

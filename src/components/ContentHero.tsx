@@ -1,6 +1,7 @@
-import { Player } from '@remotion/player'
-import { ConstellationAnimation } from '../remotion/ConstellationAnimation'
 import { ChevronDown, Download } from 'lucide-react'
+import { lazy, Suspense } from 'react'
+
+const HeroConstellation = lazy(() => import('./HeroConstellation'))
 
 export default function ContentHero() {
   return (
@@ -9,19 +10,9 @@ export default function ContentHero() {
 
       {/* Remotion Constellation Animation */}
       <div className="absolute right-0 top-0 w-full md:w-1/2 h-full pointer-events-none opacity-30 md:block">
-        <Player
-          component={ConstellationAnimation}
-          compositionWidth={400}
-          compositionHeight={400}
-          durationInFrames={300}
-          fps={30}
-          style={{ width: '100%', height: '100%' }}
-          loop
-          autoPlay
-          controls={false}
-          acknowledgeRemotionLicense
-          numberOfSharedAudioTags={0}
-        />
+        <Suspense fallback={null}>
+          <HeroConstellation />
+        </Suspense>
       </div>
 
       <div className="relative z-10">

@@ -1,6 +1,6 @@
-import { Code2, Network, Container, Brain } from 'lucide-react'
-import SectionHeader from './SectionHeader'
+import { Brain, Code2, Container, Network } from 'lucide-react'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
+import SectionHeader from './SectionHeader'
 
 const skillGroups = [
   {

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import { Github, Menu } from 'lucide-react'
+import { Menu } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { GitHubIcon } from './GitHubIcon'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -68,7 +69,7 @@ export default function Navbar() {
             rel="noopener noreferrer"
             className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-surface border border-border/20 text-xs font-mono text-muted hover:text-white hover:border-primary/50 transition-all"
           >
-            <Github size={16} />
+            <GitHubIcon size={16} />
             GitHub
           </a>
           <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-muted hover:text-white">

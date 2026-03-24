@@ -1,6 +1,6 @@
-import { FlaskConical, Network, Zap, Shield } from 'lucide-react'
-import SectionHeader from './SectionHeader'
-import ScrollReveal, { StaggerChild } from './ScrollReveal'
+import { FlaskConical, Network, Shield, Zap } from 'lucide-react';
+import ScrollReveal, { StaggerChild } from './ScrollReveal';
+import SectionHeader from './SectionHeader';
 
 export default function Architecture() {
   return (

@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useRef } from 'react'
 import { Player } from '@remotion/player'
-import { Play, Clapperboard, Activity, GitBranch, Flame, Film } from 'lucide-react'
-import { TechCardVideo } from '../remotion/TechCardVideo'
-import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
+import { Activity, Clapperboard, Film, Flame, GitBranch, Play } from 'lucide-react'
+import React, { useCallback, useRef, useState } from 'react'
 import { ArchitectureEvolution } from '../remotion/ArchitectureEvolution'
 import { GitHubHeatmap } from '../remotion/GitHubHeatmap'
+import { OpenSourceDashboard, type ProjectData } from '../remotion/OpenSourceDashboard'
 import { PortfolioTrailer } from '../remotion/PortfolioTrailer'
-import VideoModal from './VideoModal'
-import SectionHeader from './SectionHeader'
+import { TechCardVideo } from '../remotion/TechCardVideo'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
+import SectionHeader from './SectionHeader'
+import VideoModal from './VideoModal'
 
 // ─── 从环境变量读取仓库数据（Cloudflare Pages 每日更新）─────────
 const PROJECT_DATA: ProjectData = {
@@ -230,12 +230,12 @@ function VideoCard({
             />
           </div>
         </div>
-        
+
         {/* 右上角时长标签 */}
         <div className="absolute top-3 right-3 px-2 py-0.5 bg-bg/70 backdrop-blur-sm border border-border/20 rounded text-[10px] text-muted font-mono">
           {video.duration}s
         </div>
-        
+
         {/* 底部渐变 */}
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-surface/0 to-surface/80" />
       </div>

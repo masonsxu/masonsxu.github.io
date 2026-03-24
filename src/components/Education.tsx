@@ -1,6 +1,6 @@
-import { Star, GraduationCap } from 'lucide-react'
-import SectionHeader from './SectionHeader'
-import ScrollReveal from './ScrollReveal'
+import { GraduationCap, Star } from 'lucide-react';
+import ScrollReveal from './ScrollReveal';
+import SectionHeader from './SectionHeader';
 
 export default function Education() {
   return (

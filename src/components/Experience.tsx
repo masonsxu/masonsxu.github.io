@@ -1,5 +1,5 @@
-import SectionHeader from './SectionHeader'
 import ScrollReveal from './ScrollReveal'
+import SectionHeader from './SectionHeader'
 
 export default function Experience() {
   return (

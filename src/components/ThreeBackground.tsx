@@ -8,8 +8,12 @@ function hash(n: number): number {
   return ((Math.sin(n * 127.1 + 311.7) * 43758.5453) % 1 + 1) % 1
 }
 
-/** Soft circular glow texture generated from canvas */
-function createGlowTexture(size = 128): THREE.CanvasTexture {
+/**
+ * Soft circular glow texture generated from canvas
+ * Cache at module level to avoid recreation (hoist-static-io)
+ */
+const GLOW_TEXTURE = (() => {
+  const size = 64
   const canvas = document.createElement('canvas')
   canvas.width = size
   canvas.height = size
@@ -24,7 +28,7 @@ function createGlowTexture(size = 128): THREE.CanvasTexture {
   ctx.fillStyle = grad
   ctx.fillRect(0, 0, size, size)
   return new THREE.CanvasTexture(canvas)
-}
+})()
 
 /** Sin/cos flow field — cheap organic divergence-free motion */
 function flowVelocity(
@@ -49,14 +53,20 @@ const CLR = {
   muted: new THREE.Color(0xa1a1aa),
 }
 
-// ─── Configuration ───────────────────────────────────────────────
+// ─── Configuration (lazy eval to avoid SSR issues) ───────────────
 
-const FLOW_COUNT = 4000
-const NODE_COUNT = 100
-const DUST_COUNT = 2000
-const BOUNDS = 120
-const CONNECT_DIST = 20
-const MAX_LINES = 400
+function getConfig() {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  return {
+    flowCount: isMobile ? 1500 : 3000,
+    nodeCount: isMobile ? 40 : 80,
+    dustCount: isMobile ? 800 : 1500,
+    maxLines: isMobile ? 150 : 300,
+    bounds: 120,
+    connectDist: 20,
+    fpsBudget: 33, // ~30fps cap
+  }
+}
 
 // ─── Component ───────────────────────────────────────────────────
 
@@ -68,8 +78,11 @@ export default function ThreeBackground() {
     const canvas = canvasRef.current
     if (!canvas) return
 
+    const config = getConfig()
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const motionScale = reducedMotion ? 0.1 : 1
+
+    performance.mark('three-init-start')
 
     // ── Core Setup ───────────────────────────────────────────────
 
@@ -86,8 +99,7 @@ export default function ThreeBackground() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setClearColor(CLR.bg, 1)
 
-    const glowTex = createGlowTexture()
-    const disposables: { dispose(): void }[] = [glowTex, renderer]
+    const disposables: { dispose(): void }[] = [GLOW_TEXTURE, renderer]
 
     // Helper: create a Points system
     function makePoints(
@@ -104,7 +116,7 @@ export default function ThreeBackground() {
       geom.setAttribute('color', new THREE.BufferAttribute(col, 3))
       const mat = new THREE.PointsMaterial({
         size,
-        map: glowTex,
+        map: GLOW_TEXTURE,
         vertexColors: true,
         transparent: true,
         opacity,
@@ -132,7 +144,7 @@ export default function ThreeBackground() {
     ]
     nebulaConfigs.forEach(({ pos, scale }, i) => {
       const mat = new THREE.SpriteMaterial({
-        map: glowTex,
+        map: GLOW_TEXTURE,
         color: i % 2 === 0 ? CLR.gold : CLR.warmGold,
         transparent: true,
         opacity: 0.025,
@@ -152,11 +164,11 @@ export default function ThreeBackground() {
     // ═══════════════════════════════════════════════════════════════
 
     const flow = makePoints(
-      FLOW_COUNT,
+      config.flowCount,
       (i, pos, col) => {
-        pos[i * 3] = (hash(i * 3) - 0.5) * BOUNDS * 2
-        pos[i * 3 + 1] = (hash(i * 3 + 1) - 0.5) * BOUNDS * 2
-        pos[i * 3 + 2] = (hash(i * 3 + 2) - 0.5) * BOUNDS * 2
+        pos[i * 3] = (hash(i * 3) - 0.5) * config.bounds * 2
+        pos[i * 3 + 1] = (hash(i * 3 + 1) - 0.5) * config.bounds * 2
+        pos[i * 3 + 2] = (hash(i * 3 + 2) - 0.5) * config.bounds * 2
         const r = hash(i * 7 + 13)
         const c = r < 0.45 ? CLR.gold : r < 0.7 ? CLR.lightGold : r < 0.88 ? CLR.warmGold : CLR.pearl
         col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
@@ -176,7 +188,7 @@ export default function ThreeBackground() {
     const orbits: NodeOrbit[] = []
 
     const nodes = makePoints(
-      NODE_COUNT,
+      config.nodeCount,
       (i, pos, col) => {
         orbits.push({
           radius: 12 + hash(i * 31) * 50,
@@ -195,8 +207,8 @@ export default function ThreeBackground() {
     )
 
     // Dynamic golden connection lines
-    const linePos = new Float32Array(MAX_LINES * 6)
-    const lineCol = new Float32Array(MAX_LINES * 6)
+    const linePos = new Float32Array(config.maxLines * 6)
+    const lineCol = new Float32Array(config.maxLines * 6)
     const lineGeom = new THREE.BufferGeometry()
     lineGeom.setAttribute('position', new THREE.BufferAttribute(linePos, 3))
     lineGeom.setAttribute('color', new THREE.BufferAttribute(lineCol, 3))
@@ -217,11 +229,11 @@ export default function ThreeBackground() {
     // ═══════════════════════════════════════════════════════════════
 
     const dust = makePoints(
-      DUST_COUNT,
+      config.dustCount,
       (i, pos, col) => {
-        pos[i * 3] = (hash(i * 67 + 100) - 0.5) * BOUNDS * 2.5
-        pos[i * 3 + 1] = (hash(i * 71 + 200) - 0.5) * BOUNDS * 2.5
-        pos[i * 3 + 2] = (hash(i * 73 + 300) - 0.5) * BOUNDS * 2.5
+        pos[i * 3] = (hash(i * 67 + 100) - 0.5) * config.bounds * 2.5
+        pos[i * 3 + 1] = (hash(i * 71 + 200) - 0.5) * config.bounds * 2.5
+        pos[i * 3 + 2] = (hash(i * 73 + 300) - 0.5) * config.bounds * 2.5
         const dim = 0.25 + hash(i * 79) * 0.3
         col[i * 3] = CLR.muted.r * dim
         col[i * 3 + 1] = CLR.muted.g * dim
@@ -266,15 +278,21 @@ export default function ThreeBackground() {
     )
 
     // ═══════════════════════════════════════════════════════════════
-    //  ANIMATION LOOP
+    //  ANIMATION LOOP (fps-capped)
     // ═══════════════════════════════════════════════════════════════
 
     let raf = 0
     let prev = performance.now()
     let time = 0
+    let lastFrame = 0
 
     const animate = (now: number) => {
       raf = requestAnimationFrame(animate)
+
+      // Frame-rate cap: skip frame if too soon
+      if (now - lastFrame < config.fpsBudget) return
+      lastFrame = now
+
       const dt = Math.min((now - prev) / 1000, 0.1)
       prev = now
       time += dt * motionScale
@@ -286,25 +304,23 @@ export default function ThreeBackground() {
 
       // ── Flow particles: follow flow field ──
       const fp = flow.pos
-      for (let i = 0; i < FLOW_COUNT; i++) {
+      for (let i = 0; i < config.flowCount; i++) {
         const ix = i * 3
         const [vx, vy, vz] = flowVelocity(fp[ix], fp[ix + 1], fp[ix + 2], time)
         fp[ix] += vx * dt * 4 * motionScale
         fp[ix + 1] += vy * dt * 4 * motionScale
         fp[ix + 2] += vz * dt * 4 * motionScale
-        // Wrap around bounds
         for (let a = 0; a < 3; a++) {
-          if (fp[ix + a] > BOUNDS) fp[ix + a] -= BOUNDS * 2
-          if (fp[ix + a] < -BOUNDS) fp[ix + a] += BOUNDS * 2
+          if (fp[ix + a] > config.bounds) fp[ix + a] -= config.bounds * 2
+          if (fp[ix + a] < -config.bounds) fp[ix + a] += config.bounds * 2
         }
       }
       flow.geom.attributes.position.needsUpdate = true
-      // Gentle global rotation for added drift
       flow.points.rotation.y += dt * 0.006 * motionScale
 
       // ── Network nodes: orbital motion ──
       const np = nodes.pos
-      for (let i = 0; i < NODE_COUNT; i++) {
+      for (let i = 0; i < config.nodeCount; i++) {
         const o = orbits[i]
         const angle = o.phase + time * o.speed
         o.x = Math.cos(angle) * o.radius
@@ -316,24 +332,24 @@ export default function ThreeBackground() {
       }
       nodes.geom.attributes.position.needsUpdate = true
 
-      // ── Dynamic connections with energy pulse ──
+      // ── Dynamic connections (O(n²) but reduced N) ──
       let li = 0
       const pulse = time * 0.4
-      for (let i = 0; i < NODE_COUNT && li < MAX_LINES; i++) {
-        for (let j = i + 1; j < NODE_COUNT && li < MAX_LINES; j++) {
+      for (let i = 0; i < config.nodeCount && li < config.maxLines; i++) {
+        for (let j = i + 1; j < config.nodeCount && li < config.maxLines; j++) {
           const dx = orbits[i].x - orbits[j].x
           const dy = orbits[i].y - orbits[j].y
           const dz = orbits[i].z - orbits[j].z
           const d = Math.sqrt(dx * dx + dy * dy + dz * dz)
-          if (d < CONNECT_DIST) {
-            const fade = 1 - d / CONNECT_DIST
+          if (d < config.connectDist) {
+            const fade = 1 - d / config.connectDist
             const p = Math.sin(pulse + (i + j) * 0.37) * 0.5 + 0.5
             const b = fade * (0.3 + p * 0.7)
             const ci = li * 6
-            linePos[ci] = orbits[i].x;     linePos[ci + 1] = orbits[i].y; linePos[ci + 2] = orbits[i].z
+            linePos[ci] = orbits[i].x; linePos[ci + 1] = orbits[i].y; linePos[ci + 2] = orbits[i].z
             linePos[ci + 3] = orbits[j].x; linePos[ci + 4] = orbits[j].y; linePos[ci + 5] = orbits[j].z
             const gr = CLR.gold.r * b, gg = CLR.gold.g * b, gb = CLR.gold.b * b
-            lineCol[ci] = gr;     lineCol[ci + 1] = gg; lineCol[ci + 2] = gb
+            lineCol[ci] = gr; lineCol[ci + 1] = gg; lineCol[ci + 2] = gb
             lineCol[ci + 3] = gr; lineCol[ci + 4] = gg; lineCol[ci + 5] = gb
             li++
           }
@@ -348,10 +364,10 @@ export default function ThreeBackground() {
       dust.points.rotation.x += dt * 0.001 * motionScale
 
       // ── Nebula: breathing opacity ──
-      nebulaSprites.forEach((s, i) => {
-        ;(s.material as THREE.SpriteMaterial).opacity =
+      for (let i = 0; i < nebulaSprites.length; i++) {
+        ; (nebulaSprites[i].material as THREE.SpriteMaterial).opacity =
           0.02 + Math.sin(time * 0.15 + i * 1.8) * 0.015
-      })
+      }
 
       // ── Wireframes: slow rotation ──
       octa.rotation.x += dt * 0.06 * motionScale
@@ -378,16 +394,20 @@ export default function ThreeBackground() {
       mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
     }
     window.addEventListener('resize', onResize)
-    window.addEventListener('mousemove', onMouse)
+    window.addEventListener('mousemove', onMouse, { passive: true })
 
     // ── Cleanup ──────────────────────────────────────────────────
 
+    performance.mark('three-init-end')
+
     return () => {
+      performance.mark('three-cleanup-start')
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMouse)
       disposables.forEach(d => d.dispose())
       scene.clear()
+      performance.mark('three-cleanup-end')
     }
   }, [])
 

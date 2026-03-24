@@ -1,5 +1,38 @@
 @import "tailwindcss";
 
+/* Self-hosted fonts (latin subset only, variable weight) */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/inter-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/playfair-display-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/playfair-display-latin-italic.woff2') format('woff2');
+}
+
 @theme {
   --color-bg: #0C0C0E;
   --color-surface: #121214;
@@ -15,7 +48,7 @@
   --color-midnight-indigo: #1E1B4B;
   --color-zinc-muted: #A1A1AA;
 
-  --font-sans: 'Noto Sans SC', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --font-serif: 'Playfair Display', serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -24,30 +57,65 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .animate-gradient {
@@ -61,10 +129,22 @@ body {
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #0C0C0E; }
-::-webkit-scrollbar-thumb { background: #1E1E21; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0C0C0E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E1E21;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
 
 .glass {
   background: rgba(11, 14, 20, 0.7);
@@ -86,7 +166,10 @@ body {
 .spotlight-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(212, 175, 55, 0.08), transparent 40%);
   opacity: 0;
   transition: opacity 0.3s;
@@ -115,15 +198,19 @@ body {
 .shimmer-effect::after {
   content: "";
   position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
   background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.15), transparent);
   transform: skewX(-25deg);
   animation: shimmer-anim 4s infinite;
 }
 
 @keyframes shimmer-anim {
-  100% { left: 200%; }
+  100% {
+    left: 200%;
+  }
 }
 
 .tech-bg {
@@ -137,8 +224,91 @@ body {
   color: #FCFCFC !important;
 }
 
+/* Scroll Reveal (IntersectionObserver-based, no framer-motion) */
+.reveal {
+  opacity: 0 !important;
+  transform: translateY(30px) !important;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.reveal.reveal-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.reveal-stagger {
+  opacity: 0 !important;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.reveal-stagger.reveal-visible {
+  opacity: 1 !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child {
+  animation: reveal-child-in 0.6s cubic-bezier(0.4, 0, 0.2, 1) both !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(1) {
+  animation-delay: 0ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(2) {
+  animation-delay: 120ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(3) {
+  animation-delay: 240ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(4) {
+  animation-delay: 360ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(5) {
+  animation-delay: 480ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(6) {
+  animation-delay: 600ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(7) {
+  animation-delay: 720ms !important;
+}
+
+.reveal-stagger.reveal-visible .reveal-child:nth-child(8) {
+  animation-delay: 840ms !important;
+}
+
+.reveal-child {
+  opacity: 0 !important;
+  transform: translateY(20px) !important;
+}
+
+@keyframes reveal-child-in {
+  from {
+    opacity: 0 !important;
+    transform: translateY(20px) !important;
+  }
+
+  to {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shimmer-effect::after {
     animation: none !important;
+  }
+
+  .reveal,
+  .reveal-stagger,
+  .reveal-child {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
