@@ -1,325 +1,693 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
-  WebGPURenderer,
-  PerspectiveCamera,
-  Scene,
-  FogExp2,
-  Color,
-  Points,
-  BufferGeometry,
-  BufferAttribute,
-  PointsNodeMaterial,
-  StorageBufferAttribute,
   AdditiveBlending,
+  BufferAttribute,
+  BufferGeometry,
   CanvasTexture,
-  RenderPipeline,
-} from 'three/webgpu'
-import {
-  Fn,
-  storage,
-  instanceIndex,
-  uniform,
-  float,
-  vec3,
-  vec4,
-  sin,
-  cos,
-  If,
-  screenUV,
-  pass,
-  time,
-} from 'three/tsl'
-import { bloom as bloomFn } from 'three/examples/jsm/tsl/display/BloomNode.js'
-
-// ─── Theme ───────────────────────────────────────────────────────
+  CatmullRomCurve3,
+  Color,
+  DynamicDrawUsage,
+  FogExp2,
+  Group,
+  PerspectiveCamera,
+  Points,
+  PointsMaterial,
+  Scene,
+  Vector3,
+  WebGLRenderer,
+} from 'three'
 
 const BG = 0x0a0a0c
+const WORLD_UP = new Vector3(0, 1, 0)
+const ALT_UP = new Vector3(0, 0, 1)
 
 const PALETTE = {
-  gold:      new Color(0xd4af37),
+  gold: new Color(0xd4af37),
   lightGold: new Color(0xf2d288),
-  warmGold:  new Color(0xc9a030),
-  pearl:     new Color(0xfcfcfc),
-  dim:       new Color(0x3a3a40),
+  pearl: new Color(0xfcfcfc),
+  shadow: new Color(0x101115),
 }
 
-// ─── Configuration ───────────────────────────────────────────────
-
-function getConfig() {
-  const mobile = typeof window !== 'undefined' && window.innerWidth < 768
-  return {
-    count: mobile ? 30000 : 60000,
-    bounds: 140,
-  }
+type ViewportState = {
+  width: number
+  height: number
+  mobile: boolean
+  pixelRatio: number
 }
 
-// ─── Soft glow sprite ────────────────────────────────────────────
-
-function makeGlow() {
-  const s = 64, canvas = document.createElement('canvas')
-  canvas.width = s; canvas.height = s
-  const ctx = canvas.getContext('2d')!
-  const c = s / 2
-  const g = ctx.createRadialGradient(c, c, 0, c, c, c)
-  g.addColorStop(0,    'rgba(255,255,255,1)')
-  g.addColorStop(0.1,  'rgba(255,255,255,0.7)')
-  g.addColorStop(0.4,  'rgba(255,255,255,0.1)')
-  g.addColorStop(0.75, 'rgba(255,255,255,0.02)')
-  g.addColorStop(1,    'rgba(255,255,255,0)')
-  ctx.fillStyle = g
-  ctx.fillRect(0, 0, s, s)
-  return new CanvasTexture(canvas)
+type SceneConfig = {
+  mobile: boolean
+  reduced: boolean
+  dustCount: number
+  veilCount: number
+  emberCount: number
+  spineCount: number
+  motion: number
 }
 
-// ─── Deterministic hash ─────────────────────────────────────────
+type PointLayer = {
+  positions: Float32Array
+  colors: Float32Array
+  positionAttr: BufferAttribute
+  colorAttr: BufferAttribute
+  geometry: BufferGeometry
+  material: PointsMaterial
+  points: Points
+}
+
+type VeilParticle = {
+  pathIndex: number
+  t: number
+  offsetU: number
+  offsetV: number
+  radius: number
+  phase: number
+  speed: number
+  tone: number
+  drift: number
+}
+
+type DustParticle = {
+  base: Vector3
+  phase: number
+  drift: number
+  glow: number
+}
+
+type Ember = {
+  pathIndex: number
+  t: number
+  speed: number
+  phase: number
+  bias: number
+}
+
+type SpineParticle = {
+  pathIndex: number
+  t: number
+  phase: number
+  width: number
+  drift: number
+  brightness: number
+}
+
+type HaloAnchor = {
+  pathIndex: number
+  t: number
+  phase: number
+  spread: number
+}
 
 function h(n: number): number {
   return ((Math.sin(n * 127.1 + 311.7) * 43758.5453) % 1 + 1) % 1
 }
 
-// ─── Component ───────────────────────────────────────────────────
+function makeGlow(coreSharpness = 0.12, softEdge = 0.38, size = 96) {
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+
+  const ctx = canvas.getContext('2d')!
+  const c = size / 2
+  const gradient = ctx.createRadialGradient(c, c, 0, c, c, c)
+  gradient.addColorStop(0, 'rgba(255,255,255,1)')
+  gradient.addColorStop(coreSharpness, 'rgba(255,255,255,0.88)')
+  gradient.addColorStop(softEdge, 'rgba(255,255,255,0.16)')
+  gradient.addColorStop(0.72, 'rgba(255,255,255,0.03)')
+  gradient.addColorStop(1, 'rgba(255,255,255,0)')
+
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, size, size)
+
+  return new CanvasTexture(canvas)
+}
+
+function getViewportState(): ViewportState {
+  const mobile = window.innerWidth < 768
+
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    mobile,
+    pixelRatio: Math.min(window.devicePixelRatio, mobile ? 1.05 : 1.28),
+  }
+}
+
+function getSceneConfig(mobile: boolean, reduced: boolean): SceneConfig {
+  return {
+    mobile,
+    reduced,
+    dustCount: reduced ? (mobile ? 96 : 170) : mobile ? 200 : 320,
+    veilCount: reduced ? (mobile ? 280 : 440) : mobile ? 560 : 960,
+    emberCount: reduced ? (mobile ? 4 : 6) : mobile ? 8 : 14,
+    spineCount: reduced ? (mobile ? 96 : 144) : mobile ? 160 : 228,
+    motion: reduced ? 0.18 : 1,
+  }
+}
+
+function createPointLayer(
+  count: number,
+  materialOptions: ConstructorParameters<typeof PointsMaterial>[0],
+  texture: CanvasTexture,
+): PointLayer {
+  const positions = new Float32Array(count * 3)
+  const colors = new Float32Array(count * 3)
+  const geometry = new BufferGeometry()
+  const positionAttr = new BufferAttribute(positions, 3)
+  const colorAttr = new BufferAttribute(colors, 3)
+
+  positionAttr.setUsage(DynamicDrawUsage)
+  colorAttr.setUsage(DynamicDrawUsage)
+  geometry.setAttribute('position', positionAttr)
+  geometry.setAttribute('color', colorAttr)
+
+  const material = new PointsMaterial({
+    ...materialOptions,
+    map: texture,
+    sizeAttenuation: true,
+    transparent: true,
+    blending: AdditiveBlending,
+    depthWrite: false,
+    vertexColors: true,
+  })
+
+  const points = new Points(geometry, material)
+  points.frustumCulled = false
+
+  return {
+    positions,
+    colors,
+    positionAttr,
+    colorAttr,
+    geometry,
+    material,
+    points,
+  }
+}
+
+function markLayerNeedsUpdate(...layers: PointLayer[]) {
+  for (const layer of layers) {
+    layer.positionAttr.needsUpdate = true
+    layer.colorAttr.needsUpdate = true
+  }
+}
+
+function getSilkPaths(mobile: boolean) {
+  if (mobile) {
+    return [
+      new CatmullRomCurve3([
+        new Vector3(10, 26, -24),
+        new Vector3(18, 18, -10),
+        new Vector3(32, 10, 4),
+        new Vector3(50, -10, 18),
+      ], false, 'catmullrom', 0.4),
+      new CatmullRomCurve3([
+        new Vector3(12, -18, -18),
+        new Vector3(26, -8, -4),
+        new Vector3(40, 6, 10),
+        new Vector3(56, 24, 22),
+      ], false, 'catmullrom', 0.42),
+      new CatmullRomCurve3([
+        new Vector3(20, 30, -8),
+        new Vector3(32, 18, 2),
+        new Vector3(46, -2, 14),
+        new Vector3(62, -22, 26),
+      ], false, 'catmullrom', 0.38),
+    ]
+  }
+
+  return [
+    new CatmullRomCurve3([
+      new Vector3(10, 30, -28),
+      new Vector3(24, 20, -12),
+      new Vector3(46, 10, 4),
+      new Vector3(78, -18, 20),
+    ], false, 'catmullrom', 0.4),
+    new CatmullRomCurve3([
+      new Vector3(16, -24, -22),
+      new Vector3(32, -10, -8),
+      new Vector3(56, 10, 8),
+      new Vector3(88, 30, 24),
+    ], false, 'catmullrom', 0.42),
+    new CatmullRomCurve3([
+      new Vector3(26, 34, -10),
+      new Vector3(42, 18, 0),
+      new Vector3(62, -4, 14),
+      new Vector3(92, -26, 28),
+    ], false, 'catmullrom', 0.38),
+  ]
+}
+
+function sampleFrame(
+  curve: CatmullRomCurve3,
+  t: number,
+  position: Vector3,
+  normal: Vector3,
+  binormal: Vector3,
+  tangent: Vector3,
+) {
+  curve.getPointAt(t, position)
+  curve.getTangentAt(t, tangent).normalize()
+
+  const up = Math.abs(tangent.dot(WORLD_UP)) > 0.94 ? ALT_UP : WORLD_UP
+  normal.copy(up).cross(tangent).normalize()
+
+  if (normal.lengthSq() < 1e-4) {
+    normal.set(1, 0, 0).cross(tangent).normalize()
+  }
+
+  binormal.copy(tangent).cross(normal).normalize()
+}
 
 export default function ThreeBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const mouseRef  = useRef({ x: 0, y: 0 })
+  const mouseRef = useRef({ x: 0, y: 0 })
+  const [disabled, setDisabled] = useState(false)
 
   useEffect(() => {
+    if (disabled) return
+
     const canvas = canvasRef.current
     if (!canvas) return
 
     let raf = 0
+    let resizeRaf = 0
     let destroyed = false
     const disposables: { dispose(): void }[] = []
 
-    const onMouse = (e: MouseEvent) => {
-      mouseRef.current.x = (e.clientX / window.innerWidth)  * 2 - 1
-      mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
+    const onPointerMove = (event: PointerEvent) => {
+      mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1
+      mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1
     }
-    window.addEventListener('mousemove', onMouse, { passive: true })
 
-    ;(async () => {
-      const cfg = getConfig()
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      const motion  = reduced ? 0.1 : 1
+    const onPointerLeave = () => {
+      mouseRef.current.x = 0
+      mouseRef.current.y = 0
+    }
 
-      // ── Renderer ─────────────────────────────────────────────
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      destroyed = true
+      cancelAnimationFrame(raf)
+      if (resizeRaf !== 0) cancelAnimationFrame(resizeRaf)
+      setDisabled(true)
+    }
 
-      const scene = new Scene()
-      scene.fog = new FogExp2(BG, 0.006)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const viewport = getViewportState()
+    const config = getSceneConfig(viewport.mobile, reduced)
+    const glow = makeGlow(0.12, 0.38, 96)
+    const crispGlow = makeGlow(0.06, 0.24, 96)
+    const silkPaths = getSilkPaths(config.mobile)
+    const haloAnchors: HaloAnchor[] = config.mobile
+      ? [
+          { pathIndex: 0, t: 0.24, phase: 0.2, spread: 1.25 },
+          { pathIndex: 1, t: 0.54, phase: 1.1, spread: 1.45 },
+          { pathIndex: 2, t: 0.76, phase: 1.9, spread: 1.18 },
+          { pathIndex: 0, t: 0.84, phase: 2.5, spread: 0.92 },
+        ]
+      : [
+          { pathIndex: 0, t: 0.22, phase: 0.2, spread: 1.25 },
+          { pathIndex: 1, t: 0.46, phase: 1.1, spread: 1.68 },
+          { pathIndex: 2, t: 0.68, phase: 1.9, spread: 1.4 },
+          { pathIndex: 0, t: 0.82, phase: 2.5, spread: 1.08 },
+          { pathIndex: 1, t: 0.88, phase: 3.1, spread: 0.9 },
+        ]
 
-      const camera = new PerspectiveCamera(
-        55, window.innerWidth / window.innerHeight, 0.1, 400,
-      )
-      camera.position.z = 90
+    disposables.push(glow, crispGlow)
 
-      const renderer = new WebGPURenderer({ canvas, antialias: false })
-      renderer.setSize(window.innerWidth, window.innerHeight)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-      renderer.setClearColor(BG, 1)
+    const scene = new Scene()
+    scene.fog = new FogExp2(BG, config.mobile ? 0.0155 : 0.0115)
 
-      try { await renderer.init() } catch { return }
-      if (destroyed) { renderer.dispose(); return }
+    const camera = new PerspectiveCamera(config.mobile ? 55 : 50, viewport.width / viewport.height, 0.1, 320)
+    camera.position.set(0, 0, 112)
 
-      const glow = makeGlow()
-      disposables.push(glow, renderer)
+    const renderer = new WebGLRenderer({
+      canvas,
+      antialias: false,
+      alpha: false,
+      powerPreference: 'low-power',
+    })
+    renderer.setPixelRatio(viewport.pixelRatio)
+    renderer.setSize(viewport.width, viewport.height)
+    renderer.setClearColor(BG, 1)
 
-      // ── Particles ────────────────────────────────────────────
-      //
-      // Three depth tiers give natural layering:
-      //   - ~10% bright gold "hero" particles (large, close)
-      //   - ~30% medium warm tones (mid-field)
-      //   - ~60% dim dust (far, tiny) — these give atmosphere
-      //
+    if (destroyed) {
+      renderer.dispose()
+      return
+    }
 
-      const N = cfg.count
-      const initPos  = new Float32Array(N * 3)
-      const initCol  = new Float32Array(N * 3)
-      const initSize = new Float32Array(N)
+    disposables.push(renderer)
 
-      for (let i = 0; i < N; i++) {
-        // Spread with slight center bias for natural clustering
-        const r = h(i * 3)
-        const spread = cfg.bounds * (0.6 + r * 0.8)
-        initPos[i * 3]     = (h(i * 3)     - 0.5) * spread * 2
-        initPos[i * 3 + 1] = (h(i * 3 + 1) - 0.5) * spread * 2
-        initPos[i * 3 + 2] = (h(i * 3 + 2) - 0.5) * spread * 2
+    const auraGroup = new Group()
+    auraGroup.position.x = config.mobile ? 1.5 : 5
+    scene.add(auraGroup)
 
-        // Depth tier determines color & brightness
-        const tier = h(i * 11 + 7)
-        let c: Color
-        let brightness: number
-        let size: number
+    const veilData: VeilParticle[] = []
+    for (let i = 0; i < config.veilCount; i++) {
+      const pathIndex = Math.min(silkPaths.length - 1, Math.floor(h(i * 5 + 1) * silkPaths.length))
+      const t = 0.07 + h(i * 7 + 3) * 0.86
+      const compression = 0.6 + (1 - Math.abs(t - 0.56) * 1.4)
+      const spread = (config.mobile ? 4.4 : 7.1) * compression
 
-        if (tier < 0.08) {
-          // Hero: bright gold or pearl — rare, eye-catching
-          c = h(i * 13) < 0.6 ? PALETTE.lightGold : PALETTE.pearl
-          brightness = 0.8 + h(i * 17) * 0.2
-          size = 1.2 + h(i * 19) * 0.8
-        } else if (tier < 0.35) {
-          // Mid: warm gold tones
-          c = h(i * 23) < 0.5 ? PALETTE.gold : PALETTE.warmGold
-          brightness = 0.3 + h(i * 29) * 0.25
-          size = 0.5 + h(i * 31) * 0.4
-        } else {
-          // Dust: dim, monochrome
-          c = PALETTE.dim
-          brightness = 0.08 + h(i * 37) * 0.12
-          size = 0.2 + h(i * 41) * 0.25
-        }
-
-        initCol[i * 3]     = c.r * brightness
-        initCol[i * 3 + 1] = c.g * brightness
-        initCol[i * 3 + 2] = c.b * brightness
-        initSize[i] = size
-      }
-
-      const posBuf  = new StorageBufferAttribute(initPos, 3)
-      const colBuf  = new StorageBufferAttribute(initCol, 3)
-      const sizeBuf = new StorageBufferAttribute(initSize, 1)
-
-      const posStore  = storage(posBuf, 'vec3', N)
-      const colStore  = storage(colBuf, 'vec3', N)
-      const sizeStore = storage(sizeBuf, 'float', N)
-
-      const uMx = uniform(0)
-      const uMy = uniform(0)
-      const uMotion = uniform(motion)
-      const uBounds = uniform(cfg.bounds)
-
-      // ── Compute: gentle curl flow + soft mouse influence ───
-
-      const computeFlow = Fn(() => {
-        const i   = instanceIndex
-        const pos = posStore.element(i)
-        const t   = time.mul(uMotion)
-
-        // Slow, layered curl noise — organic, not mechanical
-        const s = float(0.02)
-        const vx = sin(pos.y.mul(s).mul(1.3).add(t.mul(0.12))).mul(0.3)
-          .add(cos(pos.z.mul(s).mul(0.7).add(t.mul(0.08))).mul(0.15))
-        const vy = cos(pos.z.mul(s).mul(0.9).add(t.mul(0.10))).mul(0.25)
-          .add(sin(pos.x.mul(s).mul(0.5).add(t.mul(0.07))).mul(0.12))
-        const vz = sin(pos.x.mul(s).mul(0.6).add(t.mul(0.06))).mul(0.1)
-          .add(cos(pos.y.mul(s).mul(0.8).add(t.mul(0.05))).mul(0.08))
-
-        // Mouse: gentle breeze, not a magnet
-        const mw   = vec3(uMx.mul(40), uMy.mul(25), float(0))
-        const diff = mw.sub(pos)
-        const dist = diff.length().max(1.0)
-        const push = diff.normalize().mul(float(2.0).div(dist.add(15.0)))
-
-        const speed = float(0.04).mul(uMotion)
-        pos.addAssign(vec3(vx, vy, vz).add(push.mul(0.08)).mul(speed))
-
-        // Soft wrap
-        const b = uBounds
-        If(pos.x.greaterThan(b), () => { pos.x.subAssign(b.mul(2)) })
-        If(pos.x.lessThan(b.negate()), () => { pos.x.addAssign(b.mul(2)) })
-        If(pos.y.greaterThan(b), () => { pos.y.subAssign(b.mul(2)) })
-        If(pos.y.lessThan(b.negate()), () => { pos.y.addAssign(b.mul(2)) })
-        If(pos.z.greaterThan(b), () => { pos.z.subAssign(b.mul(2)) })
-        If(pos.z.lessThan(b.negate()), () => { pos.z.addAssign(b.mul(2)) })
-      })().compute(N)
-
-      // ── Material ─────────────────────────────────────────────
-
-      const mat = new PointsNodeMaterial({
-        transparent: true,
-        blending: AdditiveBlending,
-        depthWrite: false,
-        sizeAttenuation: true,
+      veilData.push({
+        pathIndex,
+        t,
+        offsetU: (h(i * 11 + 5) - 0.5) * spread,
+        offsetV: (h(i * 13 + 7) - 0.5) * spread * 0.72,
+        radius: (0.18 + h(i * 17 + 11) * 1.16) * (config.mobile ? 1.35 : 2),
+        phase: h(i * 19 + 13),
+        speed: 0.07 + h(i * 23 + 17) * 0.14,
+        tone: h(i * 29 + 19),
+        drift: 0.0014 + h(i * 31 + 23) * 0.0052,
       })
-      mat.size = 1
-      mat.map = glow
-      mat.positionNode  = posStore.toAttribute()
-      mat.colorNode     = vec4(colStore.toAttribute(), 0.65)
-      mat.sizeNode      = sizeStore.toAttribute()
+    }
 
-      const geom = new BufferGeometry()
-      geom.setAttribute('position', new BufferAttribute(new Float32Array(N * 3), 3))
-      geom.drawRange.count = N
+    const dustData: DustParticle[] = []
+    for (let i = 0; i < config.dustCount; i++) {
+      dustData.push({
+        base: new Vector3(
+          (h(i * 37 + 1) - 0.18) * (config.mobile ? 112 : 160),
+          (h(i * 41 + 3) - 0.5) * (config.mobile ? 88 : 104),
+          -(56 + h(i * 43 + 5) * 116),
+        ),
+        phase: h(i * 47 + 7),
+        drift: 0.14 + h(i * 53 + 11) * 0.42,
+        glow: h(i * 59 + 13),
+      })
+    }
 
-      const pts = new Points(geom, mat)
-      pts.frustumCulled = false
-      scene.add(pts)
-      disposables.push(geom, mat)
+    const emberData: Ember[] = []
+    for (let i = 0; i < config.emberCount; i++) {
+      emberData.push({
+        pathIndex: i % silkPaths.length,
+        t: h(i * 61 + 17),
+        speed: 0.01 + h(i * 67 + 19) * 0.02,
+        phase: h(i * 71 + 23),
+        bias: h(i * 73 + 29),
+      })
+    }
 
-      // ── Post-processing: soft bloom + deep vignette ──────────
+    const spineData: SpineParticle[] = []
+    for (let i = 0; i < config.spineCount; i++) {
+      const pick = h(i * 79 + 3)
+      const pathIndex = pick < 0.46 ? 0 : pick < 0.8 ? 1 : 2
+      const t = 0.1 + h(i * 83 + 7) * 0.82
+      const focus = 1 - Math.min(1, Math.abs(t - 0.56) * 1.45)
 
-      const pipeline = new RenderPipeline(renderer)
-      const scenePass = pass(scene, camera)
-      scenePass.setMRT(null)
-      const color = scenePass.getTextureNode('output')
+      spineData.push({
+        pathIndex,
+        t,
+        phase: h(i * 89 + 11),
+        width: (0.08 + h(i * 97 + 13) * 0.34) * (0.6 + focus * 0.55) * (config.mobile ? 0.76 : 1),
+        drift: 0.0008 + h(i * 101 + 17) * 0.0016,
+        brightness: 0.9 + h(i * 103 + 19) * 0.55,
+      })
+    }
 
-      // Gentle bloom — just enough to make bright particles glow
-      const glow2 = bloomFn(color, 0.45, 0.6, 0.15)
+    const veilLayer = createPointLayer(
+      config.veilCount,
+      {
+        size: config.mobile ? 2.2 : 3,
+        opacity: config.reduced ? 0.32 : 0.5,
+      },
+      glow,
+    )
+    auraGroup.add(veilLayer.points)
 
-      // Deep vignette — draws the eye inward, adds cinematic depth
-      pipeline.outputNode = Fn(() => {
-        const uv = screenUV
-        const d  = uv.sub(0.5).length()
-        const v  = float(1.0).sub(d.mul(1.6).pow(2.2)).clamp(0, 1)
-        return color.add(glow2).mul(v)
-      })()
+    const spineLayer = createPointLayer(
+      config.spineCount,
+      {
+        size: config.mobile ? 3.4 : 4.6,
+        opacity: config.reduced ? 0.34 : 0.64,
+      },
+      crispGlow,
+    )
+    auraGroup.add(spineLayer.points)
 
-      disposables.push(pipeline)
+    const dustLayer = createPointLayer(
+      config.dustCount,
+      {
+        size: config.mobile ? 1 : 1.25,
+        opacity: config.reduced ? 0.16 : 0.28,
+      },
+      glow,
+    )
+    scene.add(dustLayer.points)
 
+    const emberLayer = createPointLayer(
+      config.emberCount,
+      {
+        size: config.mobile ? 5.2 : 7,
+        opacity: config.reduced ? 0.5 : 0.82,
+      },
+      crispGlow,
+    )
+    auraGroup.add(emberLayer.points)
+
+    const haloLayer = createPointLayer(
+      haloAnchors.length,
+      {
+        size: config.mobile ? 22 : 32,
+        opacity: config.reduced ? 0.08 : 0.16,
+      },
+      glow,
+    )
+    auraGroup.add(haloLayer.points)
+
+    disposables.push(
+      veilLayer.geometry,
+      veilLayer.material,
+      spineLayer.geometry,
+      spineLayer.material,
+      dustLayer.geometry,
+      dustLayer.material,
+      emberLayer.geometry,
+      emberLayer.material,
+      haloLayer.geometry,
+      haloLayer.material,
+    )
+
+    const point = new Vector3()
+    const normal = new Vector3()
+    const binormal = new Vector3()
+    const tangent = new Vector3()
+    const offset = new Vector3()
+    const scratchColorA = new Color()
+    const scratchColorB = new Color()
+    let previous = performance.now()
+
+    const animate = (now: number) => {
       if (destroyed) return
-
-      // ── Animation ────────────────────────────────────────────
-
-      let prev = performance.now()
-
-      const animate = async (now: number) => {
-        if (destroyed) return
-        raf = requestAnimationFrame(animate)
-
-        const dt = Math.min((now - prev) / 1000, 0.1)
-        prev = now
-
-        uMx.value = mouseRef.current.x
-        uMy.value = mouseRef.current.y
-
-        renderer.compute(computeFlow)
-
-        // Very gentle camera drift from mouse — subtle parallax
-        camera.position.x += (mouseRef.current.x * 4 - camera.position.x) * 0.008
-        camera.position.y += (mouseRef.current.y * 3 - camera.position.y) * 0.008
-        camera.lookAt(0, 0, 0)
-
-        // Slow global rotation — gives the scene life without being busy
-        pts.rotation.y += dt * 0.003 * motion
-        pts.rotation.x += dt * 0.001 * motion
-
-        await pipeline.renderAsync()
-      }
-
       raf = requestAnimationFrame(animate)
 
-      const onResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight
-        camera.updateProjectionMatrix()
-        renderer.setSize(window.innerWidth, window.innerHeight)
+      const delta = Math.min((now - previous) / 1000, 0.1)
+      previous = now
+      const time = now * 0.001
+      const mouseX = mouseRef.current.x
+      const mouseY = mouseRef.current.y
+
+      for (let i = 0; i < veilData.length; i++) {
+        const particle = veilData[i]
+        const path = silkPaths[particle.pathIndex]
+        const dynamicT = (particle.t + Math.sin(time * particle.speed + particle.phase * 8) * particle.drift * config.motion + 1) % 1
+
+        sampleFrame(path, dynamicT, point, normal, binormal, tangent)
+
+        const sway = Math.sin(time * (0.22 + particle.speed) + particle.phase * 11) * particle.radius * config.motion
+        const lift = Math.cos(time * (0.18 + particle.speed * 0.8) + particle.phase * 13) * particle.radius * 0.72 * config.motion
+
+        offset.copy(normal).multiplyScalar(particle.offsetU + sway)
+        offset.addScaledVector(binormal, particle.offsetV + lift)
+        point.add(offset)
+
+        const band = 1 - Math.min(1, Math.abs(dynamicT - 0.56) * 1.48)
+        const pulse = (Math.sin(time * (0.34 + particle.speed) + particle.phase * 17) + 1) * 0.5
+        const intensity = 0.072 + band * 0.135 + pulse * 0.04 + particle.tone * 0.05
+
+        scratchColorA.lerpColors(PALETTE.shadow, PALETTE.gold, 0.54 + band * 0.28)
+        scratchColorB.copy(scratchColorA)
+        scratchColorB.lerp(PALETTE.lightGold, 0.24 + band * 0.24)
+        scratchColorB.lerp(PALETTE.pearl, Math.max(0, particle.tone - 0.84) * 1.4)
+        scratchColorB.multiplyScalar(intensity)
+
+        veilLayer.positions[i * 3] = point.x
+        veilLayer.positions[i * 3 + 1] = point.y
+        veilLayer.positions[i * 3 + 2] = point.z
+        veilLayer.colors[i * 3] = scratchColorB.r
+        veilLayer.colors[i * 3 + 1] = scratchColorB.g
+        veilLayer.colors[i * 3 + 2] = scratchColorB.b
       }
-      window.addEventListener('resize', onResize)
-      disposables.push({ dispose: () => window.removeEventListener('resize', onResize) })
-    })()
+
+      for (let i = 0; i < spineData.length; i++) {
+        const particle = spineData[i]
+        const path = silkPaths[particle.pathIndex]
+        const dynamicT = (particle.t + Math.sin(time * 0.12 + particle.phase * 6) * particle.drift * config.motion + 1) % 1
+
+        sampleFrame(path, dynamicT, point, normal, binormal, tangent)
+
+        const focus = 1 - Math.min(1, Math.abs(dynamicT - 0.56) * 1.5)
+        offset.copy(normal).multiplyScalar(Math.sin(time * 0.55 + particle.phase * 14) * particle.width * (0.18 + focus * 0.34))
+        offset.addScaledVector(binormal, Math.cos(time * 0.42 + particle.phase * 16) * particle.width * 0.38)
+        point.add(offset)
+
+        const flare = 0.34 + ((Math.sin(time * 0.9 + particle.phase * 21) + 1) * 0.5) * 0.54
+        scratchColorA.lerpColors(PALETTE.gold, PALETTE.pearl, 0.26 + focus * 0.46)
+        scratchColorA.multiplyScalar((0.12 + focus * 0.16 + flare * 0.16) * particle.brightness)
+
+        spineLayer.positions[i * 3] = point.x
+        spineLayer.positions[i * 3 + 1] = point.y
+        spineLayer.positions[i * 3 + 2] = point.z
+        spineLayer.colors[i * 3] = scratchColorA.r
+        spineLayer.colors[i * 3 + 1] = scratchColorA.g
+        spineLayer.colors[i * 3 + 2] = scratchColorA.b
+      }
+
+      for (let i = 0; i < dustData.length; i++) {
+        const particle = dustData[i]
+        const driftX = Math.sin(time * 0.05 + particle.phase * 11) * particle.drift * config.motion
+        const driftY = Math.cos(time * 0.035 + particle.phase * 13) * particle.drift * 0.7 * config.motion
+        const twinkle = 0.01 + particle.glow * 0.024 + ((Math.sin(time * 0.24 + particle.phase * 19) + 1) * 0.5) * 0.008
+
+        dustLayer.positions[i * 3] = particle.base.x + driftX
+        dustLayer.positions[i * 3 + 1] = particle.base.y + driftY
+        dustLayer.positions[i * 3 + 2] = particle.base.z
+
+        scratchColorA.lerpColors(PALETTE.shadow, PALETTE.lightGold, 0.34)
+        scratchColorA.multiplyScalar(twinkle)
+        dustLayer.colors[i * 3] = scratchColorA.r
+        dustLayer.colors[i * 3 + 1] = scratchColorA.g
+        dustLayer.colors[i * 3 + 2] = scratchColorA.b
+      }
+
+      for (let i = 0; i < emberData.length; i++) {
+        const ember = emberData[i]
+        const path = silkPaths[ember.pathIndex]
+        const travelT = (ember.t + time * ember.speed * config.motion) % 1
+
+        sampleFrame(path, travelT, point, normal, binormal, tangent)
+        point.addScaledVector(normal, Math.sin(time * 0.8 + ember.phase * 9) * (0.22 + ember.bias * 0.76))
+        point.addScaledVector(binormal, Math.cos(time * 0.65 + ember.phase * 7) * (0.16 + ember.bias * 0.56))
+
+        const pulse = 0.42 + ((Math.sin(time * 1.85 + ember.phase * 23) + 1) * 0.5) * 0.52
+        scratchColorA.lerpColors(PALETTE.gold, PALETTE.pearl, 0.46 + ember.bias * 0.2)
+        scratchColorA.multiplyScalar(0.18 + pulse * 0.52)
+
+        emberLayer.positions[i * 3] = point.x
+        emberLayer.positions[i * 3 + 1] = point.y
+        emberLayer.positions[i * 3 + 2] = point.z
+        emberLayer.colors[i * 3] = scratchColorA.r
+        emberLayer.colors[i * 3 + 1] = scratchColorA.g
+        emberLayer.colors[i * 3 + 2] = scratchColorA.b
+      }
+
+      for (let i = 0; i < haloAnchors.length; i++) {
+        const halo = haloAnchors[i]
+        const path = silkPaths[halo.pathIndex]
+
+        sampleFrame(path, halo.t, point, normal, binormal, tangent)
+        point.addScaledVector(binormal, Math.sin(time * 0.18 + halo.phase * 9) * halo.spread)
+        point.addScaledVector(normal, Math.cos(time * 0.14 + halo.phase * 7) * halo.spread * 0.62)
+
+        const breath = 0.038 + ((Math.sin(time * 0.22 + halo.phase * 11) + 1) * 0.5) * 0.095
+        scratchColorA.lerpColors(PALETTE.gold, PALETTE.pearl, 0.12)
+        scratchColorA.multiplyScalar(breath)
+
+        haloLayer.positions[i * 3] = point.x
+        haloLayer.positions[i * 3 + 1] = point.y
+        haloLayer.positions[i * 3 + 2] = point.z
+        haloLayer.colors[i * 3] = scratchColorA.r
+        haloLayer.colors[i * 3 + 1] = scratchColorA.g
+        haloLayer.colors[i * 3 + 2] = scratchColorA.b
+      }
+
+      markLayerNeedsUpdate(veilLayer, spineLayer, dustLayer, emberLayer, haloLayer)
+
+      auraGroup.rotation.y += (mouseX * 0.044 - auraGroup.rotation.y) * 0.03
+      auraGroup.rotation.x += ((mouseY * 0.024 - 0.013) - auraGroup.rotation.x) * 0.026
+      auraGroup.position.y = Math.sin(time * 0.11) * 0.56 * config.motion
+      dustLayer.points.rotation.y += delta * 0.008 * config.motion
+      dustLayer.points.rotation.x = -0.12 + Math.sin(time * 0.08) * 0.018
+
+      camera.position.x += (mouseX * 1.45 - camera.position.x) * 0.016
+      camera.position.y += (mouseY * 0.96 - camera.position.y) * 0.016
+      camera.lookAt(config.mobile ? 18 : 28, 0, 0)
+
+      renderer.render(scene, camera)
+    }
+
+    const applyResize = () => {
+      resizeRaf = 0
+      const nextViewport = getViewportState()
+      camera.aspect = nextViewport.width / nextViewport.height
+      camera.updateProjectionMatrix()
+      renderer.setPixelRatio(nextViewport.pixelRatio)
+      renderer.setSize(nextViewport.width, nextViewport.height)
+    }
+
+    const onResize = () => {
+      if (resizeRaf !== 0) return
+      resizeRaf = requestAnimationFrame(applyResize)
+    }
+
+    canvas.addEventListener('webglcontextlost', onContextLost, false)
+    window.addEventListener('pointermove', onPointerMove, { passive: true })
+    window.addEventListener('pointerleave', onPointerLeave)
+    window.addEventListener('resize', onResize)
+    disposables.push({ dispose: () => window.removeEventListener('resize', onResize) })
+
+    raf = requestAnimationFrame(animate)
 
     return () => {
       destroyed = true
       cancelAnimationFrame(raf)
-      window.removeEventListener('mousemove', onMouse)
-      disposables.forEach(d => d.dispose())
+      if (resizeRaf !== 0) cancelAnimationFrame(resizeRaf)
+      canvas.removeEventListener('webglcontextlost', onContextLost)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerleave', onPointerLeave)
+      window.removeEventListener('resize', onResize)
+      disposables.forEach((item) => item.dispose())
     }
-  }, [])
+  }, [disabled])
 
   return (
-    <div
-      className="fixed inset-0 z-[-2]"
-      aria-hidden="true"
-      style={{ pointerEvents: 'none' }}
-    >
-      <canvas ref={canvasRef} className="block w-full h-full" />
+    <div className="fixed inset-0 z-[-2] overflow-hidden" aria-hidden="true" style={{ pointerEvents: 'none' }}>
+      {!disabled && <canvas ref={canvasRef} className="block h-full w-full" />}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(7,7,9,0.96) 0%, rgba(7,7,9,0.91) 24%, rgba(7,7,9,0.5) 46%, rgba(7,7,9,0.1) 70%, rgba(7,7,9,0.3) 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at 79% 30%, rgba(212,175,55,0.19) 0%, rgba(212,175,55,0.1) 15%, rgba(212,175,55,0.028) 28%, rgba(10,10,12,0) 46%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at 72% 56%, rgba(242,210,136,0.082) 0%, rgba(242,210,136,0.032) 15%, rgba(10,10,12,0) 32%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at 64% 54%, rgba(255,248,230,0.048) 0%, rgba(255,248,230,0.02) 11%, rgba(10,10,12,0) 30%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at center, rgba(10,10,12,0) 38%, rgba(10,10,12,0.3) 70%, rgba(5,5,7,0.88) 100%)',
+        }}
+      />
     </div>
   )
 }
