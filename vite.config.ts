@@ -8,7 +8,7 @@ function removeLazyChunkPreload(): Plugin {
     name: 'remove-lazy-chunk-preload',
     transformIndexHtml(html) {
       return html.replace(
-        /<link rel="modulepreload"[^>]*(?:remotion|framer-motion|three)[^>]*>\n?\s*/g,
+        /<link rel="modulepreload"[^>]*(?:remotion|framer-motion|three|ThreeBackground)[^>]*>\n?\s*/g,
         '',
       )
     },
@@ -26,14 +26,14 @@ export default defineConfig({
     removeLazyChunkPreload(),
   ],
   build: {
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 850,
     rollupOptions: {
       output: {
-        manualChunks: {
-          remotion: ['remotion', '@remotion/player', '@remotion/transitions'],
-          'framer-motion': ['framer-motion'],
-          three: ['three'],
-          icons: ['lucide-react'],
+        manualChunks(id) {
+          if (id.includes('node_modules/three/')) return 'three'
+          if (id.includes('node_modules/remotion') || id.includes('node_modules/@remotion/')) return 'remotion'
+          if (id.includes('node_modules/framer-motion')) return 'framer-motion'
+          if (id.includes('node_modules/lucide-react')) return 'icons'
         },
       },
     },

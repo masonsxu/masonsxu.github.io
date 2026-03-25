@@ -1,413 +1,315 @@
 import { useEffect, useRef } from 'react'
-import * as THREE from 'three'
+import {
+  WebGPURenderer,
+  PerspectiveCamera,
+  Scene,
+  FogExp2,
+  Color,
+  Points,
+  BufferGeometry,
+  BufferAttribute,
+  PointsNodeMaterial,
+  StorageBufferAttribute,
+  AdditiveBlending,
+  CanvasTexture,
+  RenderPipeline,
+} from 'three/webgpu'
+import {
+  Fn,
+  storage,
+  instanceIndex,
+  uniform,
+  float,
+  vec3,
+  vec4,
+  sin,
+  cos,
+  If,
+  screenUV,
+  pass,
+  time,
+} from 'three/tsl'
+import { bloom as bloomFn } from 'three/examples/jsm/tsl/display/BloomNode.js'
 
-// ─── Utilities ───────────────────────────────────────────────────
+// ─── Theme ───────────────────────────────────────────────────────
 
-/** Deterministic pseudo-random (project convention) */
-function hash(n: number): number {
-  return ((Math.sin(n * 127.1 + 311.7) * 43758.5453) % 1 + 1) % 1
+const BG = 0x0a0a0c
+
+const PALETTE = {
+  gold:      new Color(0xd4af37),
+  lightGold: new Color(0xf2d288),
+  warmGold:  new Color(0xc9a030),
+  pearl:     new Color(0xfcfcfc),
+  dim:       new Color(0x3a3a40),
 }
 
-/**
- * Soft circular glow texture generated from canvas
- * Cache at module level to avoid recreation (hoist-static-io)
- */
-const GLOW_TEXTURE = (() => {
-  const size = 64
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size
-  const ctx = canvas.getContext('2d')!
-  const c = size / 2
-  const grad = ctx.createRadialGradient(c, c, 0, c, c, c)
-  grad.addColorStop(0, 'rgba(255,255,255,1)')
-  grad.addColorStop(0.08, 'rgba(255,255,255,0.85)')
-  grad.addColorStop(0.35, 'rgba(255,255,255,0.18)')
-  grad.addColorStop(0.7, 'rgba(255,255,255,0.03)')
-  grad.addColorStop(1, 'rgba(255,255,255,0)')
-  ctx.fillStyle = grad
-  ctx.fillRect(0, 0, size, size)
-  return new THREE.CanvasTexture(canvas)
-})()
-
-/** Sin/cos flow field — cheap organic divergence-free motion */
-function flowVelocity(
-  x: number, y: number, z: number, t: number,
-): [number, number, number] {
-  const s = 0.035
-  return [
-    Math.sin(y * s * 1.4 + t * 0.18) * 0.5 + Math.cos(z * s * 0.9 + t * 0.13) * 0.25,
-    Math.cos(z * s * 1.1 + t * 0.15) * 0.4 + Math.sin(x * s * 0.7 + t * 0.11) * 0.25,
-    Math.sin(x * s * 0.8 + t * 0.12) * 0.2 + Math.cos(y * s * 1.2 + t * 0.08) * 0.15,
-  ]
-}
-
-// ─── Theme Colors ────────────────────────────────────────────────
-
-const CLR = {
-  bg: 0x0c0c0e,
-  gold: new THREE.Color(0xd4af37),
-  lightGold: new THREE.Color(0xf2d288),
-  warmGold: new THREE.Color(0xc9a030),
-  pearl: new THREE.Color(0xfcfcfc),
-  muted: new THREE.Color(0xa1a1aa),
-}
-
-// ─── Configuration (lazy eval to avoid SSR issues) ───────────────
+// ─── Configuration ───────────────────────────────────────────────
 
 function getConfig() {
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const mobile = typeof window !== 'undefined' && window.innerWidth < 768
   return {
-    flowCount: isMobile ? 1500 : 3000,
-    nodeCount: isMobile ? 40 : 80,
-    dustCount: isMobile ? 800 : 1500,
-    maxLines: isMobile ? 150 : 300,
-    bounds: 120,
-    connectDist: 20,
-    fpsBudget: 33, // ~30fps cap
+    count: mobile ? 30000 : 60000,
+    bounds: 140,
   }
+}
+
+// ─── Soft glow sprite ────────────────────────────────────────────
+
+function makeGlow() {
+  const s = 64, canvas = document.createElement('canvas')
+  canvas.width = s; canvas.height = s
+  const ctx = canvas.getContext('2d')!
+  const c = s / 2
+  const g = ctx.createRadialGradient(c, c, 0, c, c, c)
+  g.addColorStop(0,    'rgba(255,255,255,1)')
+  g.addColorStop(0.1,  'rgba(255,255,255,0.7)')
+  g.addColorStop(0.4,  'rgba(255,255,255,0.1)')
+  g.addColorStop(0.75, 'rgba(255,255,255,0.02)')
+  g.addColorStop(1,    'rgba(255,255,255,0)')
+  ctx.fillStyle = g
+  ctx.fillRect(0, 0, s, s)
+  return new CanvasTexture(canvas)
+}
+
+// ─── Deterministic hash ─────────────────────────────────────────
+
+function h(n: number): number {
+  return ((Math.sin(n * 127.1 + 311.7) * 43758.5453) % 1 + 1) % 1
 }
 
 // ─── Component ───────────────────────────────────────────────────
 
 export default function ThreeBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const mouseRef = useRef({ x: 0, y: 0 })
+  const mouseRef  = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const config = getConfig()
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const motionScale = reducedMotion ? 0.1 : 1
+    let raf = 0
+    let destroyed = false
+    const disposables: { dispose(): void }[] = []
 
-    performance.mark('three-init-start')
+    const onMouse = (e: MouseEvent) => {
+      mouseRef.current.x = (e.clientX / window.innerWidth)  * 2 - 1
+      mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
+    }
+    window.addEventListener('mousemove', onMouse, { passive: true })
 
-    // ── Core Setup ───────────────────────────────────────────────
+    ;(async () => {
+      const cfg = getConfig()
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const motion  = reduced ? 0.1 : 1
 
-    const scene = new THREE.Scene()
-    scene.fog = new THREE.FogExp2(CLR.bg, 0.005)
+      // ── Renderer ─────────────────────────────────────────────
 
-    const camera = new THREE.PerspectiveCamera(
-      60, window.innerWidth / window.innerHeight, 0.1, 500,
-    )
-    camera.position.z = 80
+      const scene = new Scene()
+      scene.fog = new FogExp2(BG, 0.006)
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false })
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(CLR.bg, 1)
+      const camera = new PerspectiveCamera(
+        55, window.innerWidth / window.innerHeight, 0.1, 400,
+      )
+      camera.position.z = 90
 
-    const disposables: { dispose(): void }[] = [GLOW_TEXTURE, renderer]
+      const renderer = new WebGPURenderer({ canvas, antialias: false })
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
+      renderer.setClearColor(BG, 1)
 
-    // Helper: create a Points system
-    function makePoints(
-      count: number,
-      initFn: (i: number, pos: Float32Array, col: Float32Array) => void,
-      size: number,
-      opacity: number,
-    ) {
-      const pos = new Float32Array(count * 3)
-      const col = new Float32Array(count * 3)
-      for (let i = 0; i < count; i++) initFn(i, pos, col)
-      const geom = new THREE.BufferGeometry()
-      geom.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-      geom.setAttribute('color', new THREE.BufferAttribute(col, 3))
-      const mat = new THREE.PointsMaterial({
-        size,
-        map: GLOW_TEXTURE,
-        vertexColors: true,
+      try { await renderer.init() } catch { return }
+      if (destroyed) { renderer.dispose(); return }
+
+      const glow = makeGlow()
+      disposables.push(glow, renderer)
+
+      // ── Particles ────────────────────────────────────────────
+      //
+      // Three depth tiers give natural layering:
+      //   - ~10% bright gold "hero" particles (large, close)
+      //   - ~30% medium warm tones (mid-field)
+      //   - ~60% dim dust (far, tiny) — these give atmosphere
+      //
+
+      const N = cfg.count
+      const initPos  = new Float32Array(N * 3)
+      const initCol  = new Float32Array(N * 3)
+      const initSize = new Float32Array(N)
+
+      for (let i = 0; i < N; i++) {
+        // Spread with slight center bias for natural clustering
+        const r = h(i * 3)
+        const spread = cfg.bounds * (0.6 + r * 0.8)
+        initPos[i * 3]     = (h(i * 3)     - 0.5) * spread * 2
+        initPos[i * 3 + 1] = (h(i * 3 + 1) - 0.5) * spread * 2
+        initPos[i * 3 + 2] = (h(i * 3 + 2) - 0.5) * spread * 2
+
+        // Depth tier determines color & brightness
+        const tier = h(i * 11 + 7)
+        let c: Color
+        let brightness: number
+        let size: number
+
+        if (tier < 0.08) {
+          // Hero: bright gold or pearl — rare, eye-catching
+          c = h(i * 13) < 0.6 ? PALETTE.lightGold : PALETTE.pearl
+          brightness = 0.8 + h(i * 17) * 0.2
+          size = 1.2 + h(i * 19) * 0.8
+        } else if (tier < 0.35) {
+          // Mid: warm gold tones
+          c = h(i * 23) < 0.5 ? PALETTE.gold : PALETTE.warmGold
+          brightness = 0.3 + h(i * 29) * 0.25
+          size = 0.5 + h(i * 31) * 0.4
+        } else {
+          // Dust: dim, monochrome
+          c = PALETTE.dim
+          brightness = 0.08 + h(i * 37) * 0.12
+          size = 0.2 + h(i * 41) * 0.25
+        }
+
+        initCol[i * 3]     = c.r * brightness
+        initCol[i * 3 + 1] = c.g * brightness
+        initCol[i * 3 + 2] = c.b * brightness
+        initSize[i] = size
+      }
+
+      const posBuf  = new StorageBufferAttribute(initPos, 3)
+      const colBuf  = new StorageBufferAttribute(initCol, 3)
+      const sizeBuf = new StorageBufferAttribute(initSize, 1)
+
+      const posStore  = storage(posBuf, 'vec3', N)
+      const colStore  = storage(colBuf, 'vec3', N)
+      const sizeStore = storage(sizeBuf, 'float', N)
+
+      const uMx = uniform(0)
+      const uMy = uniform(0)
+      const uMotion = uniform(motion)
+      const uBounds = uniform(cfg.bounds)
+
+      // ── Compute: gentle curl flow + soft mouse influence ───
+
+      const computeFlow = Fn(() => {
+        const i   = instanceIndex
+        const pos = posStore.element(i)
+        const t   = time.mul(uMotion)
+
+        // Slow, layered curl noise — organic, not mechanical
+        const s = float(0.02)
+        const vx = sin(pos.y.mul(s).mul(1.3).add(t.mul(0.12))).mul(0.3)
+          .add(cos(pos.z.mul(s).mul(0.7).add(t.mul(0.08))).mul(0.15))
+        const vy = cos(pos.z.mul(s).mul(0.9).add(t.mul(0.10))).mul(0.25)
+          .add(sin(pos.x.mul(s).mul(0.5).add(t.mul(0.07))).mul(0.12))
+        const vz = sin(pos.x.mul(s).mul(0.6).add(t.mul(0.06))).mul(0.1)
+          .add(cos(pos.y.mul(s).mul(0.8).add(t.mul(0.05))).mul(0.08))
+
+        // Mouse: gentle breeze, not a magnet
+        const mw   = vec3(uMx.mul(40), uMy.mul(25), float(0))
+        const diff = mw.sub(pos)
+        const dist = diff.length().max(1.0)
+        const push = diff.normalize().mul(float(2.0).div(dist.add(15.0)))
+
+        const speed = float(0.04).mul(uMotion)
+        pos.addAssign(vec3(vx, vy, vz).add(push.mul(0.08)).mul(speed))
+
+        // Soft wrap
+        const b = uBounds
+        If(pos.x.greaterThan(b), () => { pos.x.subAssign(b.mul(2)) })
+        If(pos.x.lessThan(b.negate()), () => { pos.x.addAssign(b.mul(2)) })
+        If(pos.y.greaterThan(b), () => { pos.y.subAssign(b.mul(2)) })
+        If(pos.y.lessThan(b.negate()), () => { pos.y.addAssign(b.mul(2)) })
+        If(pos.z.greaterThan(b), () => { pos.z.subAssign(b.mul(2)) })
+        If(pos.z.lessThan(b.negate()), () => { pos.z.addAssign(b.mul(2)) })
+      })().compute(N)
+
+      // ── Material ─────────────────────────────────────────────
+
+      const mat = new PointsNodeMaterial({
         transparent: true,
-        opacity,
-        blending: THREE.AdditiveBlending,
+        blending: AdditiveBlending,
         depthWrite: false,
         sizeAttenuation: true,
       })
-      const points = new THREE.Points(geom, mat)
-      scene.add(points)
+      mat.size = 1
+      mat.map = glow
+      mat.positionNode  = posStore.toAttribute()
+      mat.colorNode     = vec4(colStore.toAttribute(), 0.65)
+      mat.sizeNode      = sizeStore.toAttribute()
+
+      const geom = new BufferGeometry()
+      geom.setAttribute('position', new BufferAttribute(new Float32Array(N * 3), 3))
+      geom.drawRange.count = N
+
+      const pts = new Points(geom, mat)
+      pts.frustumCulled = false
+      scene.add(pts)
       disposables.push(geom, mat)
-      return { geom, points, pos }
-    }
 
-    // ═══════════════════════════════════════════════════════════════
-    //  LAYER 1 — Nebula: soft ambient golden glow
-    // ═══════════════════════════════════════════════════════════════
+      // ── Post-processing: soft bloom + deep vignette ──────────
 
-    const nebulaSprites: THREE.Sprite[] = []
-    const nebulaConfigs = [
-      { pos: [-40, 25, -90] as const, scale: 90 },
-      { pos: [55, -20, -110] as const, scale: 100 },
-      { pos: [5, 10, -70] as const, scale: 70 },
-      { pos: [-25, -35, -100] as const, scale: 80 },
-      { pos: [35, 40, -80] as const, scale: 75 },
-    ]
-    nebulaConfigs.forEach(({ pos, scale }, i) => {
-      const mat = new THREE.SpriteMaterial({
-        map: GLOW_TEXTURE,
-        color: i % 2 === 0 ? CLR.gold : CLR.warmGold,
-        transparent: true,
-        opacity: 0.025,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-      })
-      const sprite = new THREE.Sprite(mat)
-      sprite.position.set(pos[0], pos[1], pos[2])
-      sprite.scale.set(scale, scale, 1)
-      scene.add(sprite)
-      nebulaSprites.push(sprite)
-      disposables.push(mat)
-    })
+      const pipeline = new RenderPipeline(renderer)
+      const scenePass = pass(scene, camera)
+      scenePass.setMRT(null)
+      const color = scenePass.getTextureNode('output')
 
-    // ═══════════════════════════════════════════════════════════════
-    //  LAYER 2 — Flow Particles: organic flowing streams
-    // ═══════════════════════════════════════════════════════════════
+      // Gentle bloom — just enough to make bright particles glow
+      const glow2 = bloomFn(color, 0.45, 0.6, 0.15)
 
-    const flow = makePoints(
-      config.flowCount,
-      (i, pos, col) => {
-        pos[i * 3] = (hash(i * 3) - 0.5) * config.bounds * 2
-        pos[i * 3 + 1] = (hash(i * 3 + 1) - 0.5) * config.bounds * 2
-        pos[i * 3 + 2] = (hash(i * 3 + 2) - 0.5) * config.bounds * 2
-        const r = hash(i * 7 + 13)
-        const c = r < 0.45 ? CLR.gold : r < 0.7 ? CLR.lightGold : r < 0.88 ? CLR.warmGold : CLR.pearl
-        col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
-      },
-      0.7, 0.55,
-    )
+      // Deep vignette — draws the eye inward, adds cinematic depth
+      pipeline.outputNode = Fn(() => {
+        const uv = screenUV
+        const d  = uv.sub(0.5).length()
+        const v  = float(1.0).sub(d.mul(1.6).pow(2.2)).clamp(0, 1)
+        return color.add(glow2).mul(v)
+      })()
 
-    // ═══════════════════════════════════════════════════════════════
-    //  LAYER 3 — Network: orbiting nodes + dynamic connections
-    // ═══════════════════════════════════════════════════════════════
+      disposables.push(pipeline)
 
-    interface NodeOrbit {
-      radius: number; speed: number; phase: number
-      tilt: number; elevate: number
-      x: number; y: number; z: number
-    }
-    const orbits: NodeOrbit[] = []
+      if (destroyed) return
 
-    const nodes = makePoints(
-      config.nodeCount,
-      (i, pos, col) => {
-        orbits.push({
-          radius: 12 + hash(i * 31) * 50,
-          speed: (0.02 + hash(i * 37) * 0.05) * (hash(i * 41) > 0.5 ? 1 : -1),
-          phase: hash(i * 43) * Math.PI * 2,
-          tilt: (hash(i * 47) - 0.5) * Math.PI * 0.7,
-          elevate: (hash(i * 53) - 0.5) * 30,
-          x: 0, y: 0, z: 0,
-        })
-        pos[i * 3] = 0; pos[i * 3 + 1] = 0; pos[i * 3 + 2] = 0
-        const r = hash(i * 59)
-        const c = r < 0.55 ? CLR.gold : r < 0.8 ? CLR.lightGold : CLR.pearl
-        col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
-      },
-      2.0, 0.85,
-    )
+      // ── Animation ────────────────────────────────────────────
 
-    // Dynamic golden connection lines
-    const linePos = new Float32Array(config.maxLines * 6)
-    const lineCol = new Float32Array(config.maxLines * 6)
-    const lineGeom = new THREE.BufferGeometry()
-    lineGeom.setAttribute('position', new THREE.BufferAttribute(linePos, 3))
-    lineGeom.setAttribute('color', new THREE.BufferAttribute(lineCol, 3))
-    lineGeom.setDrawRange(0, 0)
-    const lineMat = new THREE.LineBasicMaterial({
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.3,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    })
-    const linesMesh = new THREE.LineSegments(lineGeom, lineMat)
-    scene.add(linesMesh)
-    disposables.push(lineGeom, lineMat)
+      let prev = performance.now()
 
-    // ═══════════════════════════════════════════════════════════════
-    //  LAYER 4 — Ambient Dust: tiny dim particles for atmosphere
-    // ═══════════════════════════════════════════════════════════════
+      const animate = async (now: number) => {
+        if (destroyed) return
+        raf = requestAnimationFrame(animate)
 
-    const dust = makePoints(
-      config.dustCount,
-      (i, pos, col) => {
-        pos[i * 3] = (hash(i * 67 + 100) - 0.5) * config.bounds * 2.5
-        pos[i * 3 + 1] = (hash(i * 71 + 200) - 0.5) * config.bounds * 2.5
-        pos[i * 3 + 2] = (hash(i * 73 + 300) - 0.5) * config.bounds * 2.5
-        const dim = 0.25 + hash(i * 79) * 0.3
-        col[i * 3] = CLR.muted.r * dim
-        col[i * 3 + 1] = CLR.muted.g * dim
-        col[i * 3 + 2] = CLR.muted.b * dim
-      },
-      0.25, 0.25,
-    )
+        const dt = Math.min((now - prev) / 1000, 0.1)
+        prev = now
 
-    // ═══════════════════════════════════════════════════════════════
-    //  LAYER 5 — Wireframe Geometry Accents
-    // ═══════════════════════════════════════════════════════════════
+        uMx.value = mouseRef.current.x
+        uMy.value = mouseRef.current.y
 
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: CLR.gold,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.05,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-    })
+        renderer.compute(computeFlow)
 
-    const octaGeom = new THREE.OctahedronGeometry(9, 0)
-    const octa = new THREE.Mesh(octaGeom, wireMat.clone())
-    octa.position.set(-38, 22, -45)
-    scene.add(octa)
+        // Very gentle camera drift from mouse — subtle parallax
+        camera.position.x += (mouseRef.current.x * 4 - camera.position.x) * 0.008
+        camera.position.y += (mouseRef.current.y * 3 - camera.position.y) * 0.008
+        camera.lookAt(0, 0, 0)
 
-    const icoGeom = new THREE.IcosahedronGeometry(7, 0)
-    const ico = new THREE.Mesh(icoGeom, wireMat.clone())
-    ico.position.set(42, -18, -35)
-    scene.add(ico)
+        // Slow global rotation — gives the scene life without being busy
+        pts.rotation.y += dt * 0.003 * motion
+        pts.rotation.x += dt * 0.001 * motion
 
-    const torusGeom = new THREE.TorusGeometry(11, 0.4, 8, 40)
-    const torus = new THREE.Mesh(torusGeom, wireMat.clone())
-    torus.position.set(10, 35, -55)
-    scene.add(torus)
+        await pipeline.renderAsync()
+      }
 
-    disposables.push(
-      octaGeom, icoGeom, torusGeom, wireMat,
-      octa.material as THREE.Material,
-      ico.material as THREE.Material,
-      torus.material as THREE.Material,
-    )
-
-    // ═══════════════════════════════════════════════════════════════
-    //  ANIMATION LOOP (fps-capped)
-    // ═══════════════════════════════════════════════════════════════
-
-    let raf = 0
-    let prev = performance.now()
-    let time = 0
-    let lastFrame = 0
-
-    const animate = (now: number) => {
       raf = requestAnimationFrame(animate)
 
-      // Frame-rate cap: skip frame if too soon
-      if (now - lastFrame < config.fpsBudget) return
-      lastFrame = now
-
-      const dt = Math.min((now - prev) / 1000, 0.1)
-      prev = now
-      time += dt * motionScale
-
-      // ── Camera parallax from mouse position ──
-      camera.position.x += (mouseRef.current.x * 8 - camera.position.x) * 0.015
-      camera.position.y += (mouseRef.current.y * 5 - camera.position.y) * 0.015
-      camera.lookAt(0, 0, 0)
-
-      // ── Flow particles: follow flow field ──
-      const fp = flow.pos
-      for (let i = 0; i < config.flowCount; i++) {
-        const ix = i * 3
-        const [vx, vy, vz] = flowVelocity(fp[ix], fp[ix + 1], fp[ix + 2], time)
-        fp[ix] += vx * dt * 4 * motionScale
-        fp[ix + 1] += vy * dt * 4 * motionScale
-        fp[ix + 2] += vz * dt * 4 * motionScale
-        for (let a = 0; a < 3; a++) {
-          if (fp[ix + a] > config.bounds) fp[ix + a] -= config.bounds * 2
-          if (fp[ix + a] < -config.bounds) fp[ix + a] += config.bounds * 2
-        }
+      const onResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight)
       }
-      flow.geom.attributes.position.needsUpdate = true
-      flow.points.rotation.y += dt * 0.006 * motionScale
-
-      // ── Network nodes: orbital motion ──
-      const np = nodes.pos
-      for (let i = 0; i < config.nodeCount; i++) {
-        const o = orbits[i]
-        const angle = o.phase + time * o.speed
-        o.x = Math.cos(angle) * o.radius
-        o.y = o.elevate + Math.sin(angle) * o.radius * Math.sin(o.tilt) * 0.5
-        o.z = Math.sin(angle) * o.radius * Math.cos(o.tilt) * 0.4
-        np[i * 3] = o.x
-        np[i * 3 + 1] = o.y
-        np[i * 3 + 2] = o.z
-      }
-      nodes.geom.attributes.position.needsUpdate = true
-
-      // ── Dynamic connections (O(n²) but reduced N) ──
-      let li = 0
-      const pulse = time * 0.4
-      for (let i = 0; i < config.nodeCount && li < config.maxLines; i++) {
-        for (let j = i + 1; j < config.nodeCount && li < config.maxLines; j++) {
-          const dx = orbits[i].x - orbits[j].x
-          const dy = orbits[i].y - orbits[j].y
-          const dz = orbits[i].z - orbits[j].z
-          const d = Math.sqrt(dx * dx + dy * dy + dz * dz)
-          if (d < config.connectDist) {
-            const fade = 1 - d / config.connectDist
-            const p = Math.sin(pulse + (i + j) * 0.37) * 0.5 + 0.5
-            const b = fade * (0.3 + p * 0.7)
-            const ci = li * 6
-            linePos[ci] = orbits[i].x; linePos[ci + 1] = orbits[i].y; linePos[ci + 2] = orbits[i].z
-            linePos[ci + 3] = orbits[j].x; linePos[ci + 4] = orbits[j].y; linePos[ci + 5] = orbits[j].z
-            const gr = CLR.gold.r * b, gg = CLR.gold.g * b, gb = CLR.gold.b * b
-            lineCol[ci] = gr; lineCol[ci + 1] = gg; lineCol[ci + 2] = gb
-            lineCol[ci + 3] = gr; lineCol[ci + 4] = gg; lineCol[ci + 5] = gb
-            li++
-          }
-        }
-      }
-      lineGeom.setDrawRange(0, li * 2)
-      lineGeom.attributes.position.needsUpdate = true
-      lineGeom.attributes.color.needsUpdate = true
-
-      // ── Dust: slow drift ──
-      dust.points.rotation.y += dt * 0.003 * motionScale
-      dust.points.rotation.x += dt * 0.001 * motionScale
-
-      // ── Nebula: breathing opacity ──
-      for (let i = 0; i < nebulaSprites.length; i++) {
-        ; (nebulaSprites[i].material as THREE.SpriteMaterial).opacity =
-          0.02 + Math.sin(time * 0.15 + i * 1.8) * 0.015
-      }
-
-      // ── Wireframes: slow rotation ──
-      octa.rotation.x += dt * 0.06 * motionScale
-      octa.rotation.y += dt * 0.09 * motionScale
-      ico.rotation.x += dt * 0.07 * motionScale
-      ico.rotation.z += dt * 0.05 * motionScale
-      torus.rotation.x += dt * 0.035 * motionScale
-      torus.rotation.y += dt * 0.06 * motionScale
-
-      renderer.render(scene, camera)
-    }
-
-    raf = requestAnimationFrame(animate)
-
-    // ── Events ───────────────────────────────────────────────────
-
-    const onResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight
-      camera.updateProjectionMatrix()
-      renderer.setSize(window.innerWidth, window.innerHeight)
-    }
-    const onMouse = (e: MouseEvent) => {
-      mouseRef.current.x = (e.clientX / window.innerWidth) * 2 - 1
-      mouseRef.current.y = -(e.clientY / window.innerHeight) * 2 + 1
-    }
-    window.addEventListener('resize', onResize)
-    window.addEventListener('mousemove', onMouse, { passive: true })
-
-    // ── Cleanup ──────────────────────────────────────────────────
-
-    performance.mark('three-init-end')
+      window.addEventListener('resize', onResize)
+      disposables.push({ dispose: () => window.removeEventListener('resize', onResize) })
+    })()
 
     return () => {
-      performance.mark('three-cleanup-start')
+      destroyed = true
       cancelAnimationFrame(raf)
-      window.removeEventListener('resize', onResize)
       window.removeEventListener('mousemove', onMouse)
       disposables.forEach(d => d.dispose())
-      scene.clear()
-      performance.mark('three-cleanup-end')
     }
   }, [])
 
@@ -418,14 +320,6 @@ export default function ThreeBackground() {
       style={{ pointerEvents: 'none' }}
     >
       <canvas ref={canvasRef} className="block w-full h-full" />
-      {/* Cinematic vignette overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, rgba(12,12,14,0.65) 100%)',
-        }}
-      />
     </div>
   )
 }
