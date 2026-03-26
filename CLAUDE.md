@@ -246,3 +246,182 @@ Follow conventional commits format (lowercase, Chinese):
 - `docs:` for documentation
 
 Example: `feat: 添加新的核心项目展示区`
+
+## WebGPU Development Common Pitfalls
+
+**IMPORTANT**: This project uses WebGPU for the liquid metal background. When working with WebGPU shaders, watch out for these common issues that can cause "invisible rendering":
+
+### 1. WGSL Struct Alignment Rules
+
+**Problem**: Buffer size mismatch errors like "buffer bound with size 32 where the shader expects 48"
+
+**Root Cause**: WGSL enforces 16-byte alignment for struct members. Each vec3f takes 12 bytes but gets padded to 16 bytes.
+
+```wgsl
+// ❌ WRONG: Assumes 32 bytes
+struct LightParams {
+  lightDir: vec3f,      // 12 bytes + 4 padding = 16
+  lightColor: vec3f,    // 12 bytes + 4 padding = 32
+  lightIntensity: f32,  // 4 bytes + 4 padding = 36
+  time: f32,           // 4 bytes + 12 padding = 48
+}
+```
+
+**Solution**: Always pad to 16-byte boundaries in TypeScript:
+
+```typescript
+// ✅ CORRECT: 48 bytes with proper padding
+const params = new Float32Array([
+  0.3, 0.5, 0.8, 0,      // lightDir + padding
+  1.0, 0.9, 0.8, 0,      // lightColor + padding
+  1.2, 0,                // lightIntensity + padding
+  0, 0, 0, 0,            // time + padding to 16-byte boundary
+])
+```
+
+**Key Rule**: When creating uniform buffers in TypeScript, calculate size as:
+- `vec3f` → 16 bytes (12 + 4 padding)
+- `vec2f` → 8 bytes (8, no padding needed)
+- `f32` → 4 bytes
+- Total must be multiple of 16
+
+### 2. Duplicate @builtin(position) in Fragment Shader
+
+**Problem**: "Built-in Position is present more than once" validation error
+
+**Root Cause**: Passing `@builtin(position)` as both a struct member AND a function parameter.
+
+```wgsl
+// ❌ WRONG: position appears twice
+struct VsOut {
+  @builtin(position) pos: vec4f,  // ← Already here
+  @location(0) velocity: vec2f,
+}
+
+@fragment
+fn fs(
+  input: VsOut,
+  @builtin(position) fragCoord: vec4f  // ← DUPLICATE!
+) -> @location(0) vec4f {
+  let offset = fragCoord.xy - center;
+}
+```
+
+**Solution**: Remove the parameter and use the struct member:
+
+```wgsl
+// ✅ CORRECT: Only in struct
+@fragment
+fn fs(input: VsOut) -> @location(0) vec4f {
+  let offset = input.pos.xy - center;  // Use struct member
+}
+```
+
+### 3. Texture Sampling Type Mismatch
+
+**Problem**: "Non-filterable float textures can't be sampled with a filtering sampler"
+
+**Root Cause**: Using `sampleType: 'float'` for filterable formats like `rgba8unorm`
+
+**Solution**: Use the correct sample type:
+
+```typescript
+// ❌ WRONG
+texture: { sampleType: 'float' }  // For unfilterable formats only
+
+// ✅ CORRECT
+texture: { sampleType: 'float' }  // rgba8unorm IS filterable
+sampler: { type: 'filtering' }
+
+// For depth textures:
+texture: { sampleType: 'depth' }
+```
+
+**Note**: `rgba8unorm`, `bgra8unorm` ARE filterable and can use filtering samplers.
+
+### 4. Coordinate System Confusion
+
+**Problem**: Particles render but appear off-screen or distorted
+
+**Root Cause**: Mixing clip space [-1,1] with pixel coordinates in fragment shader
+
+```wgsl
+// ❌ WRONG: Mixing coordinate systems
+let center = input.screenPos * vec2f(640.0, 360.0);  // Pixel space
+let offset = fragCoord.xy - center;  // Clip space - MISMATCH!
+```
+
+**Solution**: Stay in one coordinate system throughout:
+
+```wgsl
+// ✅ CORRECT: Use clip space everywhere
+@vertex
+fn vs(@builtin(vertex_index) vid: u32) -> VsOut {
+  let p = particles[vid].pos;
+  let clip = vec2f(p.x * 2.0 - 1.0, 1.0 - p.y * 2.0);
+  output.pos = vec4f(clip, 0.0, 1.0);
+  output.screenPos = clip;  // Pass clip space, NOT pixel space
+}
+
+@fragment
+fn fs(input: VsOut) -> @location(0) vec4f {
+  // Everything in clip space [-1, 1]
+  let distFromCenter = length(input.screenPos);
+}
+```
+
+### 5. Render Pass Load/Clear Order
+
+**Problem**: Earlier render passes get cleared by later ones
+
+**Root Cause**: Using `loadOp: 'clear'` in multiple render passes
+
+```typescript
+// ❌ WRONG: Second pass clears first pass
+// Pass 1: Render particles
+loadOp: 'clear'  // Clears screen
+
+// Pass 2: Render reflections
+loadOp: 'clear'  // Clears particles! Should be 'load'
+```
+
+**Solution**: Only clear first pass, use 'load' for subsequent passes:
+
+```typescript
+// ✅ CORRECT: Proper ordering
+// Pass 1: Render particles (clear first)
+{
+  loadOp: 'clear',
+  storeOp: 'store',
+}
+
+// Pass 2: Render reflections on top
+{
+  loadOp: 'load',   // Load existing framebuffer
+  storeOp: 'store',
+}
+```
+
+### Debugging Checklist
+
+When background doesn't render:
+
+1. **Check browser console for WebGPU errors**
+2. **Verify buffer sizes match WGSL struct alignment**
+3. **Ensure no duplicate @builtin(position)**
+4. **Confirm coordinate system consistency**
+5. **Check render pass loadOp ordering**
+6. **Verify particle count > 0 in logs**
+7. **Test with larger/brighter particles first**
+8. **Simplify fragment shader to basic colors**
+
+### WebGPU File Locations
+
+- `src/webgpu/WebGPUContext.ts` - Device management
+- `src/webgpu/ComputeShaderSystem.ts` - Particle physics
+- `src/webgpu/RenderShaderSystem.ts` - Rendering pipeline
+- `src/webgpu/UIInteractionLayer.ts` - Mouse/touch input
+- `src/webgpu/ReflectionCompositor.ts` - Reflection effects
+- `src/webgpu/PerformanceMonitor.ts` - Adaptive quality
+- `public/shaders/compute.wgsl` - Compute shader (WGSL)
+- `src/components/WebGPUBackground.tsx` - React orchestrator

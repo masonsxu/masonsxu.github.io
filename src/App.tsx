@@ -8,8 +8,8 @@ import Navbar from './components/Navbar'
 import OpenSource from './components/OpenSource'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
+import WebGPUBackground from './components/WebGPUBackground'
 
-const ThreeBackground = lazy(() => import('./components/ThreeBackground'))
 const Essence = lazy(() => import('./components/Essence'))
 const ShowreelGallery = lazy(() => import('./components/ShowreelGallery'))
 
@@ -84,31 +84,31 @@ export default function App() {
     }
   }, [])
 
-  return (
-    <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
-      <div className="fixed inset-0 tech-bg z-[-1] pointer-events-none opacity-40" />
-      {bgReady && (
-        <Suspense fallback={null}>
-          <ThreeBackground />
-        </Suspense>
-      )}
-      <Navbar />
-      <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
-        <ContentHero />
-        <Architecture />
-        <Skills />
-        <Projects />
-        <Experience />
-        <Education />
-        <Suspense fallback={null}>
-          <Essence />
-        </Suspense>
-        <Suspense fallback={null}>
-          <ShowreelGallery />
-        </Suspense>
-        <OpenSource />
-        <Footer />
-      </main>
-    </div>
-  )
+   return (
+     <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
+        <div className="fixed inset-0 tech-bg z-[-1] pointer-events-none opacity-40" />
+         {bgReady && (
+           <Suspense fallback={null}>
+             <WebGPUBackground />
+           </Suspense>
+         )}
+       <Navbar />
+       <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+         <ContentHero />
+         <Architecture />
+         <Skills />
+         <Projects />
+         <Experience />
+         <Education />
+         <Suspense fallback={null}>
+           <Essence />
+         </Suspense>
+         <Suspense fallback={null}>
+           <ShowreelGallery />
+         </Suspense>
+         <OpenSource />
+         <Footer />
+       </main>
+     </div>
+   )
 }
