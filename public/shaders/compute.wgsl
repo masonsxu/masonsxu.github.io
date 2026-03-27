@@ -155,7 +155,6 @@ struct Params {
 @group(0) @binding(0) var<storage, read>       particlesIn:  array<Particle>;
 @group(0) @binding(1) var<storage, read_write>  particlesOut: array<Particle>;
 @group(0) @binding(2) var<uniform>              params:       Params;
-@group(0) @binding(3) var<storage, read_write>  densityGrid:  array<atomic<u32>>;
 
 // ═══════════════════════════════════════════════════════════════
 //  Section 3: 模拟常量（Luxury-Slow 配置）
@@ -170,12 +169,6 @@ const TIME_SCALE: f32     = 0.04; // 减缓时间变化
 const VISCOSITY_COEFF: f32 = 12.0; // 增加阻尼，使运动更平滑
 const MAX_SPEED: f32       = 0.10; // 限制最大速度
 
-const GRID_W: u32         = 64u;
-const GRID_H: u32         = 64u;
-const GRID_CELLS: u32     = 4096u;
-const PBD_STIFFNESS: f32  = 0.001; // 降低刚度，更柔和的约束
-const PBD_THRESHOLD: f32  = 0.5;
-
 const MOUSE_RADIUS: f32   = 0.12;
 const MOUSE_STRENGTH: f32 = 0.35; // 降低鼠标强度，更渐进的响应
 
@@ -185,41 +178,6 @@ const BOUNDARY_FORCE: f32  = 2.0;
 // ═══════════════════════════════════════════════════════════════
 //  Section 4: 辅助函数
 // ═══════════════════════════════════════════════════════════════
-
-fn posToCell(p: vec2f) -> vec2u {
-  return vec2u(
-    u32(clamp(p.x, 0.0, 0.9999) * f32(GRID_W)),
-    u32(clamp(p.y, 0.0, 0.9999) * f32(GRID_H))
-  );
-}
-
-fn cellIdx(c: vec2u) -> u32 {
-  return c.y * GRID_W + c.x;
-}
-
-fn safeCellIdx(cx: i32, cy: i32) -> u32 {
-  let sx = u32(clamp(cx, 0, i32(GRID_W) - 1));
-  let sy = u32(clamp(cy, 0, i32(GRID_H) - 1));
-  return sy * GRID_W + sx;
-}
-
-fn localDensity(p: vec2f) -> f32 {
-  let c = posToCell(p);
-  return f32(atomicLoad(&densityGrid[cellIdx(c)]));
-}
-
-fn densityGradient(p: vec2f) -> vec2f {
-  let c = posToCell(p);
-  let ci = i32(c.x);
-  let cj = i32(c.y);
-
-  let d_l = f32(atomicLoad(&densityGrid[safeCellIdx(ci - 1, cj)]));
-  let d_r = f32(atomicLoad(&densityGrid[safeCellIdx(ci + 1, cj)]));
-  let d_d = f32(atomicLoad(&densityGrid[safeCellIdx(ci, cj - 1)]));
-  let d_u = f32(atomicLoad(&densityGrid[safeCellIdx(ci, cj + 1)]));
-
-  return vec2f(d_r - d_l, d_u - d_d) * 0.5;
-}
 
 fn calcMouseForce(p: vec2f) -> vec2f {
   if (params.mouseForce < 0.001) {
@@ -263,20 +221,7 @@ fn boundaryForce(p: vec2f) -> vec2f {
 //  Section 5: Entry Points
 // ═══════════════════════════════════════════════════════════════
 
-// Pass 1: 构建密度网格（调用前 JS 侧 clearBuffer）
-@compute @workgroup_size(256)
-fn buildDensityGrid(@builtin(global_invocation_id) gid: vec3u) {
-  let idx = gid.x;
-  if (idx >= arrayLength(&particlesIn)) {
-    return;
-  }
-
-  let p = particlesIn[idx].pos;
-  let c = posToCell(p);
-  atomicAdd(&densityGrid[cellIdx(c)], 1u);
-}
-
-// Pass 2: 粒子物理模拟
+// 粒子物理模拟
 @compute @workgroup_size(256)
 fn simulate(@builtin(global_invocation_id) gid: vec3u) {
   let idx = gid.x;
@@ -290,62 +235,38 @@ fn simulate(@builtin(global_invocation_id) gid: vec3u) {
   let dt = params.dt;
   let t = params.time * TIME_SCALE;
 
-  // 1. Curl noise 流场
+  // 1. Curl noise 流场（无散度 → 天然不可压缩，无需 PBD 密度约束）
   let flowBase = curlNoise2D(pos * NOISE_SCALE, t) * FLOW_SPEED;
   let flowDetail = curlNoise2D(pos * DETAIL_SCALE, t * 1.5) * FLOW_SPEED * DETAIL_WEIGHT;
-  let jitter = (hash21(vec2f(f32(idx), t * 0.1)) - 0.5) * 0.0005;
-  let flowForce = flowBase + flowDetail + vec2f(jitter, -jitter);
+  // 轻微扩散抖动，防止粒子长时间轨迹重合
+  let diffusion = vec2f(
+    (hash21(vec2f(f32(idx), t * 0.3)) - 0.5),
+    (hash21(vec2f(f32(idx) + 99.0, t * 0.3)) - 0.5),
+  ) * 0.0003;
+  let flowForce = flowBase + flowDetail + diffusion;
 
-  // 2. PBD 密度约束
-  let restDensity = f32(count) / f32(GRID_CELLS);
-  let density = localDensity(pos);
-  let densityError = density - restDensity * (1.0 + PBD_THRESHOLD);
-
-  var pbdForce = vec2f(0.0);
-  if (densityError > 0.0) {
-    let grad = densityGradient(pos);
-    let gradLen = length(grad);
-    if (gradLen > 0.01) {
-      pbdForce = normalize(grad) * densityError * PBD_STIFFNESS;
-    }
-  }
-
-  // 3. 鼠标交互
+  // 2. 鼠标交互
   let mForce = calcMouseForce(pos);
 
-  // 4. 边界回弹
+  // 3. 边界回弹
   let bForce = boundaryForce(pos);
 
-  // 5. 半隐式 Euler 积分
-  let totalForce = flowForce - pbdForce + mForce + bForce;
+  // 4. 半隐式 Euler 积分
+  let totalForce = flowForce + mForce + bForce;
   vel += totalForce * dt;
 
-  // 6. 粘度阻尼
+  // 5. 粘度阻尼
   vel = applyViscosity(vel, VISCOSITY_COEFF, dt);
 
-  // 7. 速度限幅
+  // 6. 速度限幅
   let speed = length(vel);
   if (speed > MAX_SPEED) {
     vel = vel * (MAX_SPEED / speed);
   }
 
-  // 8. 位置更新 + 硬边界
+  // 7. 位置更新 + 硬边界
   pos = clamp(pos + vel * dt, vec2f(0.001), vec2f(0.999));
 
-  // 9. 写出
+  // 8. 写出
   particlesOut[idx] = Particle(pos, vel);
 }
-
-// ================================================================
-//  扩展说明：真正的 O(N) 近邻 PBD
-//
-//  当前实现用"每格粒子计数"近似密度，适合 10万~100万粒子的
-//  背景效果。如果需要真正的粒子-粒子 PBD 约束：
-//
-//  1. 增加一个 cellStart / cellEnd 前缀和数组（prefix sum）
-//  2. 在 buildDensityGrid 后追加一个 prefix-sum dispatch
-//  3. simulate 中对当前格及 8 邻格内的粒子做 SPH 密度 + 压力
-//  4. 每个粒子只检查 ≤9 格 → O(N * K), K ≈ 邻居数
-//
-//  详见：Macklin & Müller, "Position Based Fluids" (2013)
-// ================================================================

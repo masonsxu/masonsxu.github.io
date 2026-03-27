@@ -16,9 +16,6 @@
 import { WebGPUContext } from './WebGPUContext'
 
 // 必须与 compute.wgsl 中的 const 保持一致
-const GRID_W = 64
-const GRID_H = 64
-const GRID_CELLS = GRID_W * GRID_H
 const WORKGROUP_SIZE = 256
 
 export class ComputeShaderSystem {
@@ -27,7 +24,6 @@ export class ComputeShaderSystem {
   private height: number
 
   // Pipelines
-  private buildDensityPipeline: GPUComputePipeline | null = null
   private simulatePipeline: GPUComputePipeline | null = null
   private bindGroupLayout: GPUBindGroupLayout | null = null
 
@@ -37,7 +33,6 @@ export class ComputeShaderSystem {
 
   // Buffers
   private particleBuffers: GPUBuffer[] = [] // [A, B]
-  private densityGridBuffer: GPUBuffer | null = null
   private paramsBuffer: GPUBuffer | null = null
 
   private particleCount: number
@@ -89,15 +84,6 @@ export class ComputeShaderSystem {
         }),
       )
     }
-
-    // Density grid: GRID_CELLS × u32
-    this.densityGridBuffer = this.device.createBuffer({
-      label: 'density-grid',
-      size: GRID_CELLS * 4,
-      usage:
-        GPUBufferUsage.STORAGE |
-        GPUBufferUsage.COPY_DST,
-    })
   }
 
   private createParamsBuffer(): void {
@@ -133,12 +119,6 @@ export class ComputeShaderSystem {
           visibility: GPUShaderStage.COMPUTE,
           buffer: { type: 'uniform' },
         },
-        {
-          // binding 3: densityGrid (read-write storage, atomic)
-          binding: 3,
-          visibility: GPUShaderStage.COMPUTE,
-          buffer: { type: 'storage' },
-        },
       ],
     })
   }
@@ -160,7 +140,6 @@ export class ComputeShaderSystem {
             { binding: 0, resource: { buffer: i === 0 ? bufA : bufB } },
             { binding: 1, resource: { buffer: i === 0 ? bufB : bufA } },
             { binding: 2, resource: { buffer: this.paramsBuffer! } },
-            { binding: 3, resource: { buffer: this.densityGridBuffer! } },
           ],
         }),
       )
@@ -173,12 +152,6 @@ export class ComputeShaderSystem {
     const shaderModule = await this.loadShaderModule()
     const layout = this.device.createPipelineLayout({
       bindGroupLayouts: [this.bindGroupLayout!],
-    })
-
-    this.buildDensityPipeline = this.device.createComputePipeline({
-      label: 'build-density',
-      layout,
-      compute: { module: shaderModule, entryPoint: 'buildDensityGrid' },
     })
 
     this.simulatePipeline = this.device.createComputePipeline({
@@ -266,40 +239,23 @@ export class ComputeShaderSystem {
   }
 
   /**
-   * 执行一帧物理模拟
-   *
-   * 单个 command buffer 内两次 compute pass：
-   *   1. clearBuffer(densityGrid) — GPU 侧清零
-   *   2. buildDensityGrid dispatch — 统计密度
-   *   3. simulate dispatch — 物理积分
-   *
-   * 同一 command buffer 内 pass 之间有隐式屏障
-   */
-  /**
    * 执行一帧物理模拟（使用外部 encoder，支持与渲染管线合并提交）
+   *
+   * curl noise 本身是无散度场（不可压缩），无需 PBD 密度约束。
+   * 密度网格已移除，仅保留 simulate 一次 compute pass。
    */
   dispatchToEncoder(encoder: GPUCommandEncoder): void {
-    if (!this.buildDensityPipeline || !this.simulatePipeline) return
+    if (!this.simulatePipeline) return
 
     const workgroupCount = Math.ceil(this.particleCount / WORKGROUP_SIZE)
     const bindGroup = this.bindGroups[this.pingPongIndex]
 
-    // —— 清零密度网格 ——
-    encoder.clearBuffer(this.densityGridBuffer!)
-
-    // —— Pass 1: 构建密度网格 ——
-    const pass1 = encoder.beginComputePass({ label: 'build-density' })
-    pass1.setPipeline(this.buildDensityPipeline)
-    pass1.setBindGroup(0, bindGroup)
-    pass1.dispatchWorkgroups(workgroupCount)
-    pass1.end()
-
-    // —— Pass 2: 粒子物理模拟 ——
-    const pass2 = encoder.beginComputePass({ label: 'simulate' })
-    pass2.setPipeline(this.simulatePipeline)
-    pass2.setBindGroup(0, bindGroup)
-    pass2.dispatchWorkgroups(workgroupCount)
-    pass2.end()
+    // —— 粒子物理模拟 ——
+    const pass = encoder.beginComputePass({ label: 'simulate' })
+    pass.setPipeline(this.simulatePipeline)
+    pass.setBindGroup(0, bindGroup)
+    pass.dispatchWorkgroups(workgroupCount)
+    pass.end()
 
     // —— Ping-pong 交换 ——
     this.pingPongIndex = 1 - this.pingPongIndex
@@ -326,13 +282,10 @@ export class ComputeShaderSystem {
 
   destroy(): void {
     this.particleBuffers.forEach((b) => b.destroy())
-    this.densityGridBuffer?.destroy()
     this.paramsBuffer?.destroy()
 
     this.particleBuffers = []
-    this.densityGridBuffer = null
     this.paramsBuffer = null
-    this.buildDensityPipeline = null
     this.simulatePipeline = null
     this.bindGroupLayout = null
     this.bindGroups = []
