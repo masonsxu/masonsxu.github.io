@@ -75,7 +75,7 @@ export default function WebGPUBackground() {
 
           // Update render uniforms
           const pointSize = Math.max(Math.min(context.width, context.height) / 120, 2.0)
-          renderSystem.updateUniforms(pointSize, timeSeconds)
+          renderSystem.updateUniforms(pointSize, context.width, context.height, timeSeconds)
           renderSystem.setParticleBuffer(computeSystem.getCurrentPositionBuffer())
 
           const particleCount = computeSystem.getParticleCount()
