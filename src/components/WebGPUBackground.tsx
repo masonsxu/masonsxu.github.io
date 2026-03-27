@@ -28,11 +28,11 @@ export default function WebGPUBackground() {
 
     const initWebGPU = async () => {
       try {
+        if (!navigator.gpu) return
         const canvasElement = canvasRef.current!
         const context = new WebGPUContext(canvasElement)
-        await context.init()
-
-        if (disposed) { context.destroy(); return }
+        const ready = await context.init()
+        if (!ready || disposed) { context.destroy(); return }
 
         // Performance monitor
         const performanceMonitor = new PerformanceMonitor(60)
@@ -171,7 +171,7 @@ export default function WebGPUBackground() {
 
         rafId = requestAnimationFrame(animate)
       } catch (error) {
-        console.error('Failed to initialize WebGPU:', error)
+        // WebGPU 不可用时静默降级，CSS 覆盖层仍提供背景
       }
     }
 

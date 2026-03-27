@@ -12,17 +12,13 @@ export class WebGPUContext {
 
   constructor(private canvas: HTMLCanvasElement) {}
 
-  async init(): Promise<void> {
-    if (!navigator.gpu) {
-      throw new Error('WebGPU not supported on this browser')
-    }
+  async init(): Promise<boolean> {
+    if (!navigator.gpu) return false
 
     const adapter = await navigator.gpu.requestAdapter({
       powerPreference: 'high-performance',
     })
-    if (!adapter) {
-      throw new Error('Could not request WebGPU adapter')
-    }
+    if (!adapter) return false
 
     this.device = await adapter.requestDevice({
       requiredLimits: {
@@ -43,6 +39,7 @@ export class WebGPUContext {
     }
 
     this.resize()
+    return true
   }
 
   resize(): void {
