@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { FlowField } from '../webgpu/FlowField'
-import { ParticleSystem } from '../webgpu/ParticleSystem'
+import { NeuralNetwork } from '../webgpu/NeuralNetwork'
+import { NetworkRenderer } from '../webgpu/NetworkRenderer'
 import { BloomEffect } from '../webgpu/BloomEffect'
 import { PostFX } from '../webgpu/PostFX'
 import { UIInteractionLayer } from '../webgpu/UIInteractionLayer'
@@ -37,37 +37,36 @@ export default function WebGPUBackground() {
         // Performance monitor
         const performanceMonitor = new PerformanceMonitor(60)
 
-        // UI interaction (pure CPU state, no async)
+        // UI interaction (hover tracking)
         const uiInteraction = new UIInteractionLayer(() => ({
           width: context.width,
           height: context.height,
         }))
 
-        // Flow field
-        const flowField = new FlowField(context)
-        await flowField.init()
-        if (disposed) { flowField.destroy(); context.destroy(); return }
+        // Neural network
+        const neuralNetwork = new NeuralNetwork(context)
+        await neuralNetwork.init()
+        if (disposed) { neuralNetwork.destroy(); context.destroy(); return }
 
-        // Particle system
-        const initialParticleCount = performanceMonitor.getRecommendedParticleCount()
-        const particleSystem = new ParticleSystem(context, initialParticleCount)
-        await particleSystem.init()
-        if (disposed) { particleSystem.destroy(); flowField.destroy(); context.destroy(); return }
+        // Network renderer
+        const networkRenderer = new NetworkRenderer(context, neuralNetwork)
+        await networkRenderer.init()
+        if (disposed) { networkRenderer.destroy(); neuralNetwork.destroy(); context.destroy(); return }
 
         // Bloom effect
         const bloomEffect = new BloomEffect(context)
         await bloomEffect.init()
-        if (disposed) { bloomEffect.destroy(); particleSystem.destroy(); flowField.destroy(); context.destroy(); return }
+        if (disposed) { bloomEffect.destroy(); networkRenderer.destroy(); neuralNetwork.destroy(); context.destroy(); return }
 
         // Post-processing
         const postFX = new PostFX(context)
         await postFX.init()
-        if (disposed) { postFX.destroy(); bloomEffect.destroy(); particleSystem.destroy(); flowField.destroy(); context.destroy(); return }
+        if (disposed) { postFX.destroy(); bloomEffect.destroy(); networkRenderer.destroy(); neuralNetwork.destroy(); context.destroy(); return }
 
         // Resize handler
         const onResize = () => {
           context.resize()
-          particleSystem.onResize()
+          neuralNetwork.onResize()
         }
         window.addEventListener('resize', onResize)
 
@@ -89,35 +88,29 @@ export default function WebGPUBackground() {
           const mousePos = uiInteraction.getMousePos()
           const mouseForce = uiInteraction.getMouseForce()
 
-          // Update system parameters
-          flowField.updateParams(deltaTime, timeSeconds, [w, h], mousePos, mouseForce)
-          particleSystem.updateComputeParams(deltaTime, timeSeconds, [w, h], mousePos, mouseForce)
+          // Update neural network
+          neuralNetwork.updateSimParams(deltaTime, timeSeconds, [w, h], mousePos, mouseForce)
 
-          const pointSize = Math.max(Math.min(w, h) / 120, 2.0)
-          particleSystem.updateRenderUniforms(pointSize, w, h, timeSeconds)
+          const pointScale = Math.max(Math.min(w, h) / 140, 1.5)
+          neuralNetwork.updateRenderParams(pointScale, w, h, timeSeconds, mousePos)
 
-          // Ensure textures are correct size
-          const hdrTarget = particleSystem.ensureHDRRenderTarget(w, h)
+          // Ensure textures
+          const hdrTarget = neuralNetwork.ensureHDRRenderTarget(w, h)
           bloomEffect.ensureTextures(w, h)
-
-          // Get flow field read texture
-          const flowFieldReadTex = flowField.getCurrentFieldTexture()
-          particleSystem.setFlowFieldTexture(flowFieldReadTex)
 
           const device = context.device!
 
           // === Single Command Encoder ===
           const encoder = device.createCommandEncoder({ label: 'frame' })
 
-          // --- Compute Pass ---
+          // --- Compute Pass: Node simulation ---
           const computePass = encoder.beginComputePass({ label: 'compute' })
-          flowField.dispatch(computePass)
-          particleSystem.dispatchCompute(computePass, flowFieldReadTex)
+          neuralNetwork.dispatchCompute(computePass)
           computePass.end()
 
-          // --- Render Pass 1: Particles → HDR offscreen ---
+          // --- Render Pass 1: Connections + Nodes + Dust → HDR offscreen ---
           const rp1 = encoder.beginRenderPass({
-            label: 'render-particles',
+            label: 'render-scene',
             colorAttachments: [{
               view: hdrTarget.createView(),
               clearValue: { r: 0, g: 0, b: 0, a: 0 },
@@ -125,10 +118,10 @@ export default function WebGPUBackground() {
               storeOp: 'store',
             }],
           })
-          particleSystem.renderToPass(rp1)
+          networkRenderer.renderToPass(rp1)
           rp1.end()
 
-          // --- Render Pass 2: Bloom H (bright extract + horizontal blur) ---
+          // --- Render Pass 2: Bloom H ---
           const rp2 = encoder.beginRenderPass({
             label: 'bloom-h',
             colorAttachments: [{
@@ -141,7 +134,7 @@ export default function WebGPUBackground() {
           bloomEffect.renderH(rp2, hdrTarget)
           rp2.end()
 
-          // --- Render Pass 3: Bloom V (vertical blur) ---
+          // --- Render Pass 3: Bloom V ---
           const rp3 = encoder.beginRenderPass({
             label: 'bloom-v',
             colorAttachments: [{
@@ -197,6 +190,35 @@ export default function WebGPUBackground() {
   return (
     <div className="fixed inset-0 z-[-2] overflow-hidden" aria-hidden="true" style={{ pointerEvents: 'none' }}>
       <canvas ref={canvasRef} className="block h-full w-full" />
+      {/* Atmospheric overlays */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'linear-gradient(90deg, rgba(12,12,14,0.96) 0%, rgba(12,12,14,0.91) 24%, rgba(12,12,14,0.5) 46%, rgba(12,12,14,0.1) 70%, rgba(12,12,14,0.3) 100%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at 79% 30%, rgba(212,175,55,0.12) 0%, rgba(212,175,55,0.06) 15%, rgba(212,175,55,0.02) 28%, rgba(12,12,14,0) 46%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at 72% 56%, rgba(242,210,136,0.06) 0%, rgba(242,210,136,0.02) 15%, rgba(12,12,14,0) 32%)',
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(circle at center, rgba(12,12,14,0) 38%, rgba(12,12,14,0.3) 70%, rgba(12,12,14,0.85) 100%)',
+        }}
+      />
     </div>
   )
 }

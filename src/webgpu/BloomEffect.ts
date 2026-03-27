@@ -67,8 +67,8 @@ export class BloomEffect {
 
     const dataH = new ArrayBuffer(32)
     const viewH = new DataView(dataH)
-    viewH.setFloat32(0, 0.8, true)                     // threshold
-    viewH.setFloat32(4, 0.5, true)                     // strength
+    viewH.setFloat32(0, 0.5, true)                     // threshold
+    viewH.setFloat32(4, 0.7, true)                     // strength
     viewH.setFloat32(8, 1.0, true)                     // direction.x (horizontal)
     viewH.setFloat32(12, 0.0, true)                    // direction.y
     viewH.setFloat32(16, 1.0 / this.currentWidth, true) // texelSize.x
@@ -77,8 +77,8 @@ export class BloomEffect {
 
     const dataV = new ArrayBuffer(32)
     const viewV = new DataView(dataV)
-    viewV.setFloat32(0, 0.8, true)                     // threshold
-    viewV.setFloat32(4, 0.5, true)                     // strength
+    viewV.setFloat32(0, 0.5, true)                     // threshold
+    viewV.setFloat32(4, 0.7, true)                     // strength
     viewV.setFloat32(8, 0.0, true)                     // direction.x
     viewV.setFloat32(12, 1.0, true)                    // direction.y (vertical)
     viewV.setFloat32(16, 1.0 / this.currentWidth, true) // texelSize.x

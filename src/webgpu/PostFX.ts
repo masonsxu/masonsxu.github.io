@@ -44,8 +44,8 @@ export class PostFX {
   private writeUniforms(): void {
     if (!this.uniformBuffer) return
     const data = new Float32Array([
-      1.5,  // vignetteStrength
-      0.5,  // bloomStrength
+      1.0,  // vignetteStrength
+      0.8,  // bloomStrength
       0, 0,  // _pad
     ])
     this.device.queue.writeBuffer(this.uniformBuffer, 0, data)

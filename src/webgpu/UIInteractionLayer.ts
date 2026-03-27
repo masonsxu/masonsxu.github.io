@@ -1,25 +1,21 @@
 /**
- * UI Interaction Layer — 纯 CPU 状态追踪器
- * 转换屏幕坐标为归一化坐标，提供鼠标力场状态
+ * UI Interaction Layer — 鼠标/触摸悬停追踪
+ * 始终追踪鼠标位置（无需按下），提供平滑的悬停力度指示器
  */
 
 export class UIInteractionLayer {
   private width: number
   private height: number
 
-  private mousePos: [number, number] = [0, 0]
+  private mousePos: [number, number] = [0.5, 0.5]
   private mouseForce: number = 0
-  private isMouseDown: boolean = false
+  private isMouseActive: boolean = false
 
-  private forceDecay: number = 0.92
-  private baseForce: number = 0.6
-  private forceBuildRate: number = 0.012
+  private forceDecay: number = 0.95
+  private forceBuildRate: number = 0.05
 
-  // 存储事件处理器引用，确保 removeEventListener 正确移除
   private boundHandlers: {
-    mousedown: (e: MouseEvent) => void
     mousemove: (e: MouseEvent) => void
-    mouseup: () => void
     mouseleave: () => void
     touchstart: (e: TouchEvent) => void
     touchmove: (e: TouchEvent) => void
@@ -36,20 +32,16 @@ export class UIInteractionLayer {
     this.height = size.height
 
     this.boundHandlers = {
-      mousedown: (e) => this.onMouseDown(e),
       mousemove: (e) => this.onMouseMove(e),
-      mouseup: () => this.onMouseUp(),
-      mouseleave: () => this.onMouseUp(),
+      mouseleave: () => this.onMouseLeave(),
       touchstart: (e) => this.onTouchStart(e),
       touchmove: (e) => this.onTouchMove(e),
-      touchend: () => this.onMouseUp(),
-      touchcancel: () => this.onMouseUp(),
+      touchend: () => this.onMouseLeave(),
+      touchcancel: () => this.onMouseLeave(),
       resize: () => this.onResize(),
     }
 
-    window.addEventListener('mousedown', this.boundHandlers.mousedown)
     window.addEventListener('mousemove', this.boundHandlers.mousemove)
-    window.addEventListener('mouseup', this.boundHandlers.mouseup)
     window.addEventListener('mouseleave', this.boundHandlers.mouseleave)
     window.addEventListener('touchstart', this.boundHandlers.touchstart, { passive: true })
     window.addEventListener('touchmove', this.boundHandlers.touchmove, { passive: true })
@@ -58,32 +50,25 @@ export class UIInteractionLayer {
     window.addEventListener('resize', this.boundHandlers.resize)
   }
 
-  private onMouseDown(e: MouseEvent): void {
-    this.isMouseDown = true
+  private onMouseMove(e: MouseEvent): void {
+    this.isMouseActive = true
     this.updateMousePosition(e.clientX, e.clientY)
   }
 
-  private onMouseMove(e: MouseEvent): void {
-    if (this.isMouseDown) {
-      this.updateMousePosition(e.clientX, e.clientY)
-    }
-  }
-
-  private onMouseUp(): void {
-    this.isMouseDown = false
-    this.mouseForce = 0
+  private onMouseLeave(): void {
+    this.isMouseActive = false
   }
 
   private onTouchStart(e: TouchEvent): void {
     if (e.touches.length > 0) {
-      this.isMouseDown = true
+      this.isMouseActive = true
       const touch = e.touches[0]
       this.updateMousePosition(touch.clientX, touch.clientY)
     }
   }
 
   private onTouchMove(e: TouchEvent): void {
-    if (this.isMouseDown && e.touches.length > 0) {
+    if (e.touches.length > 0) {
       const touch = e.touches[0]
       this.updateMousePosition(touch.clientX, touch.clientY)
     }
@@ -104,9 +89,10 @@ export class UIInteractionLayer {
     return this.mousePos
   }
 
+  /** 平滑的悬停力度指示器：鼠标在页面上时递增到 1.0，离开时衰减到 0 */
   getMouseForce(): number {
-    if (this.isMouseDown) {
-      this.mouseForce = Math.min(this.mouseForce + this.forceBuildRate, this.baseForce)
+    if (this.isMouseActive) {
+      this.mouseForce = Math.min(this.mouseForce + this.forceBuildRate, 1.0)
     } else if (this.mouseForce > 0.005) {
       this.mouseForce *= this.forceDecay
     } else {
@@ -116,9 +102,7 @@ export class UIInteractionLayer {
   }
 
   destroy(): void {
-    window.removeEventListener('mousedown', this.boundHandlers.mousedown)
     window.removeEventListener('mousemove', this.boundHandlers.mousemove)
-    window.removeEventListener('mouseup', this.boundHandlers.mouseup)
     window.removeEventListener('mouseleave', this.boundHandlers.mouseleave)
     window.removeEventListener('touchstart', this.boundHandlers.touchstart)
     window.removeEventListener('touchmove', this.boundHandlers.touchmove)
