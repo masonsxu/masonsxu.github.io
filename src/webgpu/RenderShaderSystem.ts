@@ -1,15 +1,23 @@
 /**
- * Enhanced Render Shader System
- * 
- * 实现材质系统、点 splatting、基础光照
- * 支持 Matte Titanium 和液态黑曜石材质
+ * Render Shader System — 液态金属粒子渲染
+ *
+ * 简洁的 2D 粒子渲染管线：
+ *   - point-list topology + 动态 point_size
+ *   - splat texture 径向软粒子
+ *   - 速度着色：慢 → 深色液态金属，快 → 金色高光
+ *   - 时间 shimmer 微光效果
+ *
+ * Bind group layout:
+ *   binding 0: 粒子 storage buffer (read-only)
+ *   binding 1: splat texture
+ *   binding 2: splat sampler
+ *   binding 3: uniform (pointSize, time — 16 bytes)
  */
 
 import { WebGPUContext } from './WebGPUContext'
 
 export class RenderShaderSystem {
   private device: GPUDevice
-  private context: GPUCanvasContext
   private format: GPUTextureFormat
 
   pipeline: GPURenderPipeline | null = null
@@ -19,32 +27,27 @@ export class RenderShaderSystem {
   private bindGroupCache = new Map<GPUBuffer, GPUBindGroup>()
   private currentBindGroup: GPUBindGroup | null = null
 
-  // 材质参数缓冲区
-  private materialParamsBuffer: GPUBuffer | null = null
+  // Uniform buffer: pointSize(f32) + time(f32) = 8 bytes, padded to 16
+  private uniformBuffer: GPUBuffer | null = null
 
   // 点 splatting 纹理
   private splatTexture: GPUTexture | null = null
   private splatSampler: GPUSampler | null = null
 
-  // 光照参数
-  private lightParamsBuffer: GPUBuffer | null = null
-
   constructor(ctxWrapper: WebGPUContext) {
     this.device = ctxWrapper.device!
-    this.context = ctxWrapper.context!
     this.format = ctxWrapper.format
   }
 
   async init(): Promise<void> {
     this.createSplatTexture()
-    this.createMaterialParams()
-    this.createLightParams()
+    this.createUniformBuffer()
     this.createBindGroupLayout()
     this.createPipeline()
   }
 
   /**
-   * 创建点 splatting 纹理（径向渐变）
+   * 创建点 splatting 纹理（径向渐变软圆）
    */
   private createSplatTexture(): void {
     const size = 64
@@ -61,7 +64,7 @@ export class RenderShaderSystem {
         // 径向距离
         const dist = Math.sqrt(nx * nx + ny * ny)
 
-        // 软边圆形
+        // 软边圆形：中心亮，边缘柔和衰减
         let alpha = 1.0 - dist
         alpha = Math.max(0, alpha)
         alpha = Math.pow(alpha, 1.5) // 使边缘更柔和
@@ -81,18 +84,10 @@ export class RenderShaderSystem {
     })
 
     this.device.queue.writeTexture(
-      {
-        texture: this.splatTexture,
-      },
+      { texture: this.splatTexture },
       data,
-      {
-        bytesPerRow: size * 4,
-        rowsPerImage: size,
-      },
-      {
-        width: size,
-        height: size,
-      }
+      { bytesPerRow: size * 4, rowsPerImage: size },
+      { width: size, height: size },
     )
 
     this.splatSampler = this.device.createSampler({
@@ -104,61 +99,12 @@ export class RenderShaderSystem {
     })
   }
 
-  /**
-   * 创建材质参数
-   */
-  private createMaterialParams(): void {
-    // Matte Titanium 基底
-    const titaniumBase = [0.02, 0.02, 0.02] // #050505
-    const titaniumRoughness = 0.95 // 高粗糙度
-    const titaniumMetallic = 0.1 // 低金属度
-
-    // 液态黑曜石
-    const obsidianColor = [0.05, 0.05, 0.06]
-    const obsidianRoughness = 0.08 // 低粗糙度
-    const obsidianMetallic = 0.9 // 高金属度
-
-    // 两种材质的混合
-    const mixFactor = 0.3 // 30% 液态表面
-
-    this.materialParamsBuffer = this.device.createBuffer({
-      label: 'material-params',
-      size: 64, // 16 floats
+  private createUniformBuffer(): void {
+    this.uniformBuffer = this.device.createBuffer({
+      label: 'render-uniforms',
+      size: 16, // pointSize(f32) + time(f32) + 8 bytes padding
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     })
-
-    const params = new Float32Array([
-      ...titaniumBase,
-      titaniumRoughness,
-      titaniumMetallic,
-      ...obsidianColor,
-      obsidianRoughness,
-      obsidianMetallic,
-      mixFactor,
-      0, 0, 0, // padding
-    ])
-
-    this.device.queue.writeBuffer(this.materialParamsBuffer, 0, params)
-  }
-
-  /**
-   * 创建光照参数
-   */
-  private createLightParams(): void {
-    this.lightParamsBuffer = this.device.createBuffer({
-      label: 'light-params',
-      size: 48, // 需要符合 WGSL struct 对齐（16 字节边界）
-      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    })
-
-    const params = new Float32Array([
-      0.3, 0.5, 0.8, 0, // 光照方向 + padding
-      1.0, 0.9, 0.8, 0, // 暖色光 + padding
-      1.2, 0, // 强度 + padding
-      0, 0, 0, 0, // time + padding（对齐到 16 字节）
-    ])
-
-    this.device.queue.writeBuffer(this.lightParamsBuffer, 0, params)
   }
 
   private createBindGroupLayout(): void {
@@ -167,7 +113,7 @@ export class RenderShaderSystem {
       entries: [
         {
           binding: 0,
-          visibility: GPUShaderStage.VERTEX,
+          visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
           buffer: { type: 'read-only-storage' },
         },
         {
@@ -182,12 +128,7 @@ export class RenderShaderSystem {
         },
         {
           binding: 3,
-          visibility: GPUShaderStage.FRAGMENT,
-          buffer: { type: 'uniform' },
-        },
-        {
-          binding: 4,
-          visibility: GPUShaderStage.FRAGMENT,
+          visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT,
           buffer: { type: 'uniform' },
         },
       ],
@@ -196,41 +137,28 @@ export class RenderShaderSystem {
 
   private createPipeline(): void {
     const module = this.device.createShaderModule({
-      label: 'enhanced-particle-render-shader',
+      label: 'particle-render-shader',
       code: /* wgsl */ `
         struct Particle {
           pos: vec2f,
           vel: vec2f,
         }
 
-        struct MaterialParams {
-          titaniumBase: vec3f,
-          titaniumRoughness: f32,
-          titaniumMetallic: f32,
-          obsidianColor: vec3f,
-          obsidianRoughness: f32,
-          obsidianMetallic: f32,
-          mixFactor: f32,
-          _padding: vec3f,
-        }
-
-        struct LightParams {
-          lightDir: vec3f,
-          lightColor: vec3f,
-          lightIntensity: f32,
+        struct RenderUniforms {
+          pointSize: f32,
           time: f32,
         }
 
         @group(0) @binding(0) var<storage, read> particles: array<Particle>;
-        @group(0) @binding(1) var splatTexture: texture_2d<f32>;
-        @group(0) @binding(2) var splatSampler: sampler;
-        @group(0) @binding(3) var<uniform> materialParams: MaterialParams;
-        @group(0) @binding(4) var<uniform> lightParams: LightParams;
+        @group(0) @binding(1) var splatTex: texture_2d<f32>;
+        @group(0) @binding(2) var splatSamp: sampler;
+        @group(0) @binding(3) var<uniform> uniforms: RenderUniforms;
 
         struct VsOut {
           @builtin(position) pos: vec4f,
+          @builtin(point_size) size: f32,
           @location(0) velocity: vec2f,
-          @location(1) screenPos: vec2f,
+          @location(1) uv: vec2f,
         }
 
         @vertex
@@ -241,57 +169,59 @@ export class RenderShaderSystem {
           // [0,1] -> [-1,1] clip space, Y 翻转
           let clip = vec2f(p.x * 2.0 - 1.0, 1.0 - p.y * 2.0);
 
+          // 速度越快，点越大（基础大小 + 速度加成）
+          let speed = length(v);
+          let sizeBoost = smoothstep(0.0, 0.08, speed) * uniforms.pointSize * 0.6;
+
           var output: VsOut;
           output.pos = vec4f(clip, 0.0, 1.0);
+          output.size = uniforms.pointSize + sizeBoost;
           output.velocity = v;
-          output.screenPos = clip;
+          output.uv = clip; // 归一化 UV 用于 shimmer
 
           return output;
         }
 
         @fragment
         fn fs(input: VsOut) -> @location(0) vec4f {
-          // 简化：直接渲染整个像素
-          // 使用基于屏幕位置的噪声来创建纹理效果
-          let noise = sin(input.screenPos.x * 20.0) * cos(input.screenPos.y * 20.0) * 0.5 + 0.5;
+          // 采样 splat 纹理（point center 对应 texture center）
+          let splatAlpha = textureSample(splatTex, splatSamp, vec2f(0.5)).a;
 
-          // 金色基础颜色
-          let baseColor = vec3f(0.83, 0.68, 0.21);
-
-          // 添加速度发光
+          // 速度着色：慢 → 深色液态金属，快 → 金色高光
           let speed = length(input.velocity);
-          let glow = smoothstep(0.0, 0.5, speed) * 0.8;
-          var finalColor = baseColor * (0.5 + noise * 0.3) + vec3f(glow);
+          let t = smoothstep(0.0, 0.06, speed);
 
-          // 添加时间动画闪烁
-          let shimmer = sin(lightParams.time * 4.0 + input.screenPos.x * 10.0 + input.screenPos.y * 10.0) * 0.15;
-          finalColor = finalColor + vec3f(shimmer * 0.5);
+          // 深色液态金属底色
+          let darkMetal = vec3f(0.10, 0.10, 0.12);
+          // 金色高光
+          let gold = vec3f(0.831, 0.686, 0.216);
 
-          // 基于距离中心的淡出（创建圆形效果）
-          let distFromCenter = length(input.screenPos);
-          let alpha = 1.0 - smoothstep(0.0, 1.4, distFromCenter);
+          var color = mix(darkMetal, gold, t);
 
-          return vec4f(finalColor, alpha * 0.7);
+          // 时间 shimmer：基于粒子 UV 坐标（非屏幕坐标），微光闪烁
+          let shimmer = sin(uniforms.time * 3.0 + input.uv.x * 15.0 + input.uv.y * 15.0) * 0.5 + 0.5;
+          color += vec3f(shimmer * 0.08 * t); // 速度快的粒子 shimmer 更明显
+
+          // alpha = splat 衰减 × 亮度
+          let brightness = 0.4 + t * 0.6;
+          let alpha = splatAlpha * brightness;
+
+          return vec4f(color, alpha);
         }
       `,
     })
 
     // 检查编译错误
-    const compilationInfoPromise = module.getCompilationInfo()
-    if (compilationInfoPromise) {
-      compilationInfoPromise.then((info) => {
-        for (const msg of info.messages) {
-          if (msg.type === 'error') {
-            console.error(`WGSL error [${msg.lineNum}:${msg.linePos}]: ${msg.message}`)
-          }
+    module.getCompilationInfo().then((info) => {
+      for (const msg of info.messages) {
+        if (msg.type === 'error') {
+          console.error(`WGSL error [${msg.lineNum}:${msg.linePos}]: ${msg.message}`)
         }
-      }).catch((err) => {
-        console.error('Failed to get shader compilation info:', err)
-      })
-    }
+      }
+    }).catch(() => {})
 
     this.pipeline = this.device.createRenderPipeline({
-      label: 'enhanced-particle-render-pipeline',
+      label: 'particle-render-pipeline',
       layout: this.device.createPipelineLayout({
         bindGroupLayouts: [this.bindGroupLayout!],
       }),
@@ -338,8 +268,7 @@ export class RenderShaderSystem {
             { binding: 0, resource: { buffer } },
             { binding: 1, resource: this.splatTexture!.createView() },
             { binding: 2, resource: this.splatSampler! },
-            { binding: 3, resource: { buffer: this.materialParamsBuffer! } },
-            { binding: 4, resource: { buffer: this.lightParamsBuffer! } },
+            { binding: 3, resource: { buffer: this.uniformBuffer! } },
           ],
         }),
       )
@@ -347,49 +276,26 @@ export class RenderShaderSystem {
     this.currentBindGroup = this.bindGroupCache.get(buffer)!
   }
 
-  render(particleCount: number): void {
+  /**
+   * 更新 uniform 参数（pointSize + time）
+   */
+  updateUniforms(pointSize: number, time: number): void {
+    if (!this.uniformBuffer) return
+    // 16 bytes: pointSize(f32) + time(f32) + 8 padding
+    const data = new Float32Array([pointSize, time, 0, 0])
+    this.device.queue.writeBuffer(this.uniformBuffer, 0, data)
+  }
+
+  /**
+   * 渲染粒子到外部 render pass
+   * @param pass 外部 render pass（支持合并到同一个 command encoder）
+   */
+  renderToPass(pass: GPURenderPassEncoder, particleCount: number): void {
     if (!this.pipeline || !this.currentBindGroup) return
-
-    const view = this.context.getCurrentTexture().createView()
-    const encoder = this.device.createCommandEncoder({ label: 'render' })
-
-    const pass = encoder.beginRenderPass({
-      colorAttachments: [
-        {
-          view,
-          clearValue: { r: 0.05, g: 0.05, b: 0.05, a: 1.0 }, // 稍微亮一点的背景
-          loadOp: 'clear',
-          storeOp: 'store',
-        },
-      ],
-    })
 
     pass.setPipeline(this.pipeline)
     pass.setBindGroup(0, this.currentBindGroup)
     pass.draw(particleCount)
-    pass.end()
-
-    this.device.queue.submit([encoder.finish()])
-  }
-
-  /**
-   * Update uniform matrices for the render pipeline
-   */
-  updateUniforms(_projectionMatrix: Float32Array, _viewMatrix: Float32Array, time: number): void {
-    // 更新光照参数中的时间
-    if (this.lightParamsBuffer && this.device) {
-      // time 在偏移 36 处（lightIntensity 之后）
-      this.device.queue.writeBuffer(this.lightParamsBuffer, 36, new Float32Array([time]))
-    }
-  }
-
-  /**
-   * 更新材质混合
-   */
-  setMaterialMix(mixFactor: number): void {
-    if (this.materialParamsBuffer && this.device) {
-      this.device.queue.writeBuffer(this.materialParamsBuffer, 44, new Float32Array([mixFactor]))
-    }
   }
 
   destroy(): void {
@@ -399,12 +305,10 @@ export class RenderShaderSystem {
     this.currentBindGroup = null
 
     this.splatTexture?.destroy()
-    this.materialParamsBuffer?.destroy()
-    this.lightParamsBuffer?.destroy()
+    this.uniformBuffer?.destroy()
 
     this.splatTexture = null
     this.splatSampler = null
-    this.materialParamsBuffer = null
-    this.lightParamsBuffer = null
+    this.uniformBuffer = null
   }
 }

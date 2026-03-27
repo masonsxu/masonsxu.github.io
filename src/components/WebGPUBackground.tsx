@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { ComputeShaderSystem } from '../webgpu/ComputeShaderSystem'
-import { ReflectionCompositor } from '../webgpu/ReflectionCompositor'
 import { RenderShaderSystem } from '../webgpu/RenderShaderSystem'
 import { UIInteractionLayer } from '../webgpu/UIInteractionLayer'
 import { WebGPUContext } from '../webgpu/WebGPUContext'
@@ -22,119 +21,96 @@ export default function WebGPUBackground() {
   useEffect(() => {
     if (!mounted || !canvasRef.current) return
 
+    let rafId = 0
+    let disposed = false
+
     const initWebGPU = async () => {
       try {
-        console.log('Starting WebGPU initialization...')
         const canvasElement = canvasRef.current!
-        console.log('Canvas element:', canvasElement)
-        
         const context = new WebGPUContext(canvasElement)
-        console.log('Created WebGPUContext')
         await context.init()
-        console.log('Initialized WebGPUContext')
 
-        // Initialize performance monitor for adaptive quality
-        const performanceMonitor = new PerformanceMonitor(60, 100000) // 60 FPS target, base 100K particles
-        console.log('Created PerformanceMonitor')
-        
-        // Initialize compute system with particle count based on device tier and performance
+        if (disposed) { context.destroy(); return }
+
+        // Performance monitor
+        const performanceMonitor = new PerformanceMonitor(60, 100000)
+
+        // Compute system
         const initialParticleCount = performanceMonitor.getRecommendedParticleCount()
-        console.log(`Initial particle count: ${initialParticleCount}`)
         const computeSystem = new ComputeShaderSystem(context, initialParticleCount)
         await computeSystem.init()
-        console.log('Initialized ComputeShaderSystem')
 
-        // Initialize UI interaction layer
+        if (disposed) { computeSystem.destroy(); context.destroy(); return }
+
+        // UI interaction
         const uiInteraction = new UIInteractionLayer(context)
         await uiInteraction.init()
-        console.log('Initialized UIInteractionLayer')
 
-        // Initialize render system
+        // Render system
         const renderSystem = new RenderShaderSystem(context)
         await renderSystem.init()
-        console.log('Initialized RenderShaderSystem')
 
-        // Connect compute system output to render system input
-        // Give the render system access to the compute system's current position buffer
-        if (renderSystem && computeSystem) {
-          renderSystem.setParticleBuffer(computeSystem.getCurrentPositionBuffer())
-          console.log('Set particle buffer')
+        if (disposed) {
+          renderSystem.destroy(); computeSystem.destroy(); context.destroy(); return
         }
 
-        // Initialize reflection compositor
-        const reflectionCompositor = new ReflectionCompositor(context)
-        await reflectionCompositor.init()
-        console.log('Initialized ReflectionCompositor')
+        // Connect compute output to render input
+        renderSystem.setParticleBuffer(computeSystem.getCurrentPositionBuffer())
 
-        // Start render loop
-        const animate = (timeStamp: number) => {
-          if (!context || !renderSystem || !computeSystem || !uiInteraction || !reflectionCompositor) {
-            console.log('Missing required components in render loop')
-            return
-          }
+        // Render loop
+        let lastTime = performance.now()
 
-          // Update uniform matrices
-          const projectionMatrix = new Float32Array([
-            2 / context.width, 0, 0, 0,
-            0, -2 / context.height, 0, 0,
-            0, 0, 1, 0,
-            -1, 1, 0, 1
-          ])
+        const animate = () => {
+          if (disposed) return
 
-          const viewMatrix = new Float32Array([
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-          ])
-
-          // Calculate delta time
-          const now = timeStamp / 1000 // Convert to seconds
-          const deltaTime = animate.lastTime ? now - animate.lastTime : 0
-          animate.lastTime = now
+          const now = performance.now()
+          const deltaTime = (now - lastTime) / 1000
+          lastTime = now
+          const timeSeconds = now / 1000
 
           // Update simulation parameters
-          const mousePos = uiInteraction ? uiInteraction.getMousePos() : [0, 0] as [number, number]
-          const mouseForce = uiInteraction ? uiInteraction.getMouseForce() : 0
-
-          computeSystem.updateParameters(deltaTime, now, mousePos, mouseForce)
-
-          // Dispatch compute shader
-          computeSystem.dispatch()
+          const mousePos = uiInteraction.getMousePos()
+          const mouseForce = uiInteraction.getMouseForce()
+          computeSystem.updateParameters(deltaTime, timeSeconds, mousePos, mouseForce)
 
           // Update render uniforms
-          renderSystem.updateUniforms(projectionMatrix, viewMatrix, now)
-
-          // Update the render system with the latest position buffer from compute system
-          // (important for ping-pong buffering)
+          const pointSize = Math.max(Math.min(context.width, context.height) / 120, 2.0)
+          renderSystem.updateUniforms(pointSize, timeSeconds)
           renderSystem.setParticleBuffer(computeSystem.getCurrentPositionBuffer())
 
-          // Get current particle count from compute system and render particles FIRST
           const particleCount = computeSystem.getParticleCount()
-          if (particleCount === 0) {
-            console.warn('WARNING: Particle count is 0!')
-          }
-          // Only log occasionally to avoid spam
-          if (Math.random() < 0.01) {
-            console.log(`Rendering frame with ${particleCount} particles`)
-          }
-          renderSystem.render(particleCount)
 
-          // Capture UI for reflection (handle promise without await)
-          reflectionCompositor.captureUI().catch(console.error)
+          // Single command encoder: compute + render
+          const encoder = context.device!.createCommandEncoder({ label: 'frame' })
 
-          // Render reflection effect ON TOP of particles (handle promise without await)
-          reflectionCompositor.renderReflection().catch(console.error)
+          // Compute passes
+          computeSystem.dispatchToEncoder(encoder)
 
-          // Update performance monitor
-          const frameTime = 1000 / 60 // Assuming 60fps for simplicity, in reality we'd measure actual frame time
-          performanceMonitor.update(frameTime)
+          // Render pass
+          const textureView = context.context!.getCurrentTexture().createView()
+          const pass = encoder.beginRenderPass({
+            label: 'render-particles',
+            colorAttachments: [
+              {
+                view: textureView,
+                clearValue: { r: 0.047, g: 0.047, b: 0.055, a: 1.0 }, // #0C0C0E Obsidian
+                loadOp: 'clear',
+                storeOp: 'store',
+              },
+            ],
+          })
+          renderSystem.renderToPass(pass, particleCount)
+          pass.end()
 
-          requestAnimationFrame(animate)
+          context.device!.queue.submit([encoder.finish()])
+
+          // Update performance monitor with actual frame time
+          performanceMonitor.update(now - lastTime + deltaTime * 1000)
+
+          rafId = requestAnimationFrame(animate)
         }
-        animate.lastTime = performance.now() / 1000
-        requestAnimationFrame(animate)
-        console.log('Started render loop')
+
+        rafId = requestAnimationFrame(animate)
       } catch (error) {
         console.error('Failed to initialize WebGPU:', error)
       }
@@ -143,8 +119,8 @@ export default function WebGPUBackground() {
     initWebGPU()
 
     return () => {
-      // Cleanup
-      // Note: We're not cleaning up here to avoid potential issues during development
+      disposed = true
+      if (rafId) cancelAnimationFrame(rafId)
     }
   }, [mounted])
 

@@ -275,13 +275,14 @@ export class ComputeShaderSystem {
    *
    * 同一 command buffer 内 pass 之间有隐式屏障
    */
-  dispatch(): void {
+  /**
+   * 执行一帧物理模拟（使用外部 encoder，支持与渲染管线合并提交）
+   */
+  dispatchToEncoder(encoder: GPUCommandEncoder): void {
     if (!this.buildDensityPipeline || !this.simulatePipeline) return
 
     const workgroupCount = Math.ceil(this.particleCount / WORKGROUP_SIZE)
     const bindGroup = this.bindGroups[this.pingPongIndex]
-
-    const encoder = this.device.createCommandEncoder({ label: 'compute-frame' })
 
     // —— 清零密度网格 ——
     encoder.clearBuffer(this.densityGridBuffer!)
@@ -299,8 +300,6 @@ export class ComputeShaderSystem {
     pass2.setBindGroup(0, bindGroup)
     pass2.dispatchWorkgroups(workgroupCount)
     pass2.end()
-
-    this.device.queue.submit([encoder.finish()])
 
     // —— Ping-pong 交换 ——
     this.pingPongIndex = 1 - this.pingPongIndex
