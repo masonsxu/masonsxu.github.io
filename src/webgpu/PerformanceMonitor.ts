@@ -12,9 +12,9 @@ export class PerformanceMonitor {
   
   // Device tier detection
   private deviceTier: 'high' | 'medium' | 'low' = 'medium';
-  private baseParticleCount: number = 100000; // Base count for scaling
+  private baseParticleCount: number = 40000; // Base count for scaling (reduced for bloom overhead)
 
-  constructor(targetFPS: number = 60, baseParticleCount: number = 100000) {
+  constructor(targetFPS: number = 60, baseParticleCount: number = 40000) {
     this.targetFrameTime = 1000 / targetFPS;
     this.baseParticleCount = baseParticleCount;
     this.detectDeviceTier();
@@ -47,13 +47,13 @@ export class PerformanceMonitor {
       let tierMultiplier = 1;
       switch (this.deviceTier) {
         case 'high':
-          tierMultiplier = 5; // 500K particles for high-end (100K * 5)
+          tierMultiplier = 5; // 200K particles for high-end (40K * 5)
           break;
         case 'medium':
-          tierMultiplier = 2;  // 200K particles for medium (100K * 2)
+          tierMultiplier = 2;  // 80K particles for medium (40K * 2)
           break;
         case 'low':
-          tierMultiplier = 0.5; // 50K particles for low-end (100K * 0.5)
+          tierMultiplier = 0.75; // 30K particles for low-end (40K * 0.75)
           break;
         default:
           // Fallback to medium if deviceTier is not set (should not happen)

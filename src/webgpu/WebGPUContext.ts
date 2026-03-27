@@ -67,4 +67,23 @@ export class WebGPUContext {
   isReady(): boolean {
     return !!this.device && !!this.context
   }
+
+  getCurrentTextureView(): GPUTextureView {
+    return this.context!.getCurrentTexture().createView()
+  }
+
+  createTexture(
+    width: number,
+    height: number,
+    format: GPUTextureFormat = 'rgba16float',
+    usage?: GPUTextureUsageFlags,
+    label?: string,
+  ): GPUTexture {
+    return this.device!.createTexture({
+      label: label ?? 'offscreen-texture',
+      size: [width, height],
+      format,
+      usage: usage ?? (GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING),
+    })
+  }
 }
