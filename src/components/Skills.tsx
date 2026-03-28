@@ -46,8 +46,8 @@ export default function Skills() {
       <SectionHeader title="专业技能 / Skills" className="mb-12" />
 
       <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {skillGroups.map(group => (
-          <StaggerChild key={group.title} className="h-full">
+        {skillGroups.map((group, index) => (
+          <StaggerChild key={group.title} className={`h-full ${index === 0 || index === 3 ? 'md:col-span-2' : ''}`}>
             <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors flex flex-col">
               <div className="flex items-center gap-3 mb-5">
                 <div className="text-primary">{group.icon}</div>
@@ -55,8 +55,8 @@ export default function Skills() {
               </div>
               <div className="space-y-3 flex-1">
                 {group.skills.map(skill => (
-                  <div key={skill.label} className="text-sm">
-                    <span className="text-primary font-medium">{skill.label}</span>
+                  <div key={skill.label} className="flex text-sm gap-2">
+                    <span className="text-primary font-medium w-36 shrink-0">{skill.label}</span>
                     <span className="text-muted">{skill.text}</span>
                   </div>
                 ))}

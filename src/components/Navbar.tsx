@@ -42,11 +42,8 @@ export default function Navbar() {
   return (
     <nav className="fixed w-full z-50 top-0 glass transition-all duration-300">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" onClick={e => handleAnchorClick(e, '#')} className="group flex items-center gap-3">
-          <div className="w-10 h-8 rounded bg-surface border border-border/20 flex items-center justify-center font-mono font-bold text-white group-hover:border-primary/50 group-hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all whitespace-nowrap">
-            <span className="text-primary">&lt;</span>X<span className="text-primary">/&gt;</span>
-          </div>
-          <span className="font-bold text-sm tracking-wide text-muted group-hover:text-white transition-colors">MASONS.XU</span>
+        <a href="#" onClick={e => handleAnchorClick(e, '#')} className="group">
+          <img src="/logo.svg" alt="Masons Xu Brand Logo" className="h-10 w-auto" />
         </a>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted">

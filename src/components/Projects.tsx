@@ -9,7 +9,7 @@ export default function Projects() {
       <ScrollReveal stagger className="space-y-6">
         {/* Project 1 */}
         <StaggerChild>
-          <div className="group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors">
+          <div className="group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors spotlight-card">
             <div className="grid md:grid-cols-12 gap-0">
               <div className="md:col-span-8 p-8 flex flex-col justify-between h-full relative z-10">
                 <div>
@@ -39,7 +39,7 @@ export default function Projects() {
                   </div>
                 </div>
               </div>
-              <div className="md:col-span-4 bg-surface-light/30 border-l border-border/20 p-8 flex flex-col justify-center space-y-6">
+              <div className="md:col-span-4 border-l border-border/20 p-8 flex flex-col justify-center space-y-6">
                 <div>
                   <div className="text-xs text-muted font-mono uppercase mb-2">System Scale</div>
                   <div className="grid grid-cols-2 gap-4">
@@ -62,7 +62,7 @@ export default function Projects() {
 
         {/* Project 2: Mria */}
         <StaggerChild>
-          <div className="group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors">
+          <div className="group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors spotlight-card">
             <div className="grid md:grid-cols-12 gap-0">
               <div className="md:col-span-8 p-8 flex flex-col justify-between h-full relative z-10">
                 <div>
@@ -103,7 +103,7 @@ export default function Projects() {
                 </div>
               </div>
 
-              <div className="md:col-span-4 bg-surface-light/30 border-l border-border/20 p-8 flex flex-col justify-center space-y-6">
+              <div className="md:col-span-4 border-l border-border/20 p-8 flex flex-col justify-center space-y-6">
                 <div>
                   <div className="text-xs text-muted font-mono uppercase mb-2">Scale & Impact</div>
                   <div className="grid grid-cols-2 gap-4">

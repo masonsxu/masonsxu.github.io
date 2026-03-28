@@ -52,7 +52,7 @@ const PRCard = memo(({ pr }: { pr: typeof PR_CONTRIBUTIONS[number] }) => (
     href={pr.href}
     target="_blank"
     rel="noopener noreferrer"
-    className="h-full p-5 bg-surface border border-border/20 rounded-lg hover:border-primary/50 hover:bg-surface-light/30 transition-all group flex flex-col"
+    className="h-full p-5 bg-surface border border-border/20 rounded-lg hover:border-primary/50 transition-all group flex flex-col spotlight-card"
   >
     <div className="flex items-center justify-between mb-3">
       <div className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">PR {pr.prNum}</div>
@@ -80,7 +80,7 @@ export default function OpenSource() {
 
       {/* Featured Project */}
       <ScrollReveal>
-        <div className="mb-8 group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors">
+        <div className="mb-8 group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors spotlight-card">
           <div className="p-8">
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-mono font-bold">OPEN SOURCE</span>

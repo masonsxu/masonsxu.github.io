@@ -30,7 +30,7 @@ export default function ContentHero() {
             <span className="text-2xl md:text-4xl text-muted font-light font-sans italic">Masons Xu</span>
             <span className="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
           </div>
-          <div className="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3">
+          <div className="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3 font-serif">
             后端技术负责人 · 分布式系统架构师
           </div>
         </h1>

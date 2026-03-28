@@ -222,7 +222,21 @@ body {
 
 .nav-active {
   color: #FCFCFC !important;
+  position: relative;
 }
+
+.nav-active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; /* Adjust for more space */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%; /* Make it shorter than the text */
+  height: 2px;
+  background-color: #D4AF37;
+  transition: all 0.2s ease-out;
+}
+
 
 /* Scroll Reveal (IntersectionObserver-based, no framer-motion) */
 .reveal {

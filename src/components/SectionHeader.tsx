@@ -3,11 +3,12 @@ interface SectionHeaderProps {
   className?: string
 }
 
-export default function SectionHeader({ title, className = 'mb-8' }: SectionHeaderProps) {
+export default function SectionHeader({ title, className = 'mb-16' }: SectionHeaderProps) {
   return (
-    <div className={`flex items-center justify-between ${className}`}>
-      <h2 className="text-sm font-bold text-muted uppercase tracking-widest">{title}</h2>
-      <div className="h-px bg-border/20 flex-1 ml-6" />
+    <div className={`flex items-center gap-6 ${className}`}>
+      <div className="h-px bg-border/20 flex-grow" />
+      <h2 className="text-3xl font-serif text-white shrink-0">{title}</h2>
+      <div className="h-px bg-border/20 flex-grow" />
     </div>
   )
 }
