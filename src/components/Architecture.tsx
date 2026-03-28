@@ -18,7 +18,7 @@ export default function Architecture() {
                 </div>
                 <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-mono rounded">ARCHITECT</span>
               </div>
-              <h3 className="text-xl font-bold text-white mb-6">核心竞争力</h3>
+              <h3 className="text-xl font-bold text-text mb-6">核心竞争力</h3>
               <div className="space-y-6">
                 <Pillar
                   icon={<Network size={16} />}
@@ -45,7 +45,7 @@ export default function Architecture() {
           <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
             <div className="text-muted text-xs font-mono uppercase">Microservices</div>
             <div>
-              <div className="text-4xl font-bold text-white font-mono group-hover:text-primary transition-colors">10+</div>
+              <div className="text-4xl font-bold text-text font-mono group-hover:text-primary transition-colors">10+</div>
               <div className="text-xs text-muted mt-2">独立设计的微服务模块</div>
             </div>
           </div>
@@ -56,7 +56,7 @@ export default function Architecture() {
           <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
             <div className="text-muted text-xs font-mono uppercase">Lines of Code</div>
             <div>
-              <div className="text-4xl font-bold text-white font-mono group-hover:text-primary transition-colors">数万行</div>
+              <div className="text-4xl font-bold text-text font-mono group-hover:text-primary transition-colors">数万行</div>
               <div className="text-xs text-muted mt-2">Go 生产环境核心代码</div>
             </div>
           </div>
@@ -70,17 +70,17 @@ export default function Architecture() {
                 <div className="text-muted text-xs font-mono uppercase">Architecture</div>
                 <div className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-500 font-mono">MIGRATED</div>
               </div>
-              <div className="mt-2 text-lg font-bold text-white font-mono group-hover:text-primary transition-colors">Python → Go</div>
+              <div className="mt-2 text-lg font-bold text-text font-mono group-hover:text-primary transition-colors">Python → Go</div>
               <div className="text-xs text-muted mt-1">主导整体架构转型</div>
             </div>
             <div className="mt-6 space-y-3">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted">Team Size</span>
-                <span className="text-white font-mono">8 人</span>
+                <span className="text-text font-mono">8 人</span>
               </div>
-              <div className="flex items-center justify-between text-xs border-t border-white/5 pt-2">
+              <div className="flex items-center justify-between text-xs border-t border-text/5 pt-2">
                 <span className="text-muted">Arch Docs</span>
-                <span className="text-white font-mono">2,000+ 行</span>
+                <span className="text-text font-mono">2,000+ 行</span>
               </div>
             </div>
           </div>
@@ -95,7 +95,7 @@ function Pillar({ icon, title, text }: { icon: React.ReactNode; title: string; t
     <div>
       <div className="flex items-center gap-2 mb-2">
         <span className="text-primary">{icon}</span>
-        <span className="text-sm font-bold text-white">{title}</span>
+        <span className="text-sm font-bold text-text">{title}</span>
       </div>
       <p className="text-sm text-muted leading-relaxed pl-6">{text}</p>
     </div>

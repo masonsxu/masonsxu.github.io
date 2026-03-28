@@ -1,19 +1,15 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
 import Architecture from './components/Architecture'
-import ActivationOverlay from './components/ActivationOverlay'
 import ContentHero from './components/ContentHero'
 import Education from './components/Education'
 import Experience from './components/Experience'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
-import NeuralBackgroundToggle from './components/NeuralBackgroundToggle'
 import OpenSource from './components/OpenSource'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
-import { NeuralBackgroundProvider, useNeuralBackground } from './contexts/NeuralBackgroundContext'
-import { useKonamiCode } from './hooks/useKonamiCode'
+import { ThemeProvider } from './contexts/ThemeContext'
 
-const WebGPUBackground = lazy(() => import('./components/WebGPUBackground'))
 const Essence = lazy(() => import('./components/Essence'))
 const ShowreelGallery = lazy(() => import('./components/ShowreelGallery'))
 
@@ -69,45 +65,10 @@ function SpotlightEffect() {
 }
 
 function AppContent() {
-  const { state, toggle } = useNeuralBackground()
-  const [overlayMode, setOverlayMode] = useState<'activate' | 'deactivate' | null>(null)
-  const [gpuVisible, setGpuVisible] = useState(false)
-
-  useKonamiCode('mason', () => toggle('konami'))
-
-  useEffect(() => {
-    if (state.enabled) {
-      setOverlayMode('activate')
-      setGpuVisible(true)
-    } else {
-      setOverlayMode('deactivate')
-      setTimeout(() => setGpuVisible(false), 800)
-    }
-  }, [state.enabled])
-
-  const handleOverlayComplete = useCallback(() => {
-    setOverlayMode(null)
-  }, [])
-
   return (
     <>
       <SpotlightEffect />
-      <ActivationOverlay mode={overlayMode} onComplete={handleOverlayComplete} />
       <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
-        <div
-          className="fixed inset-0 tech-bg z-[-1] pointer-events-none transition-opacity duration-600"
-          style={{ opacity: state.enabled ? 0.4 : 0 }}
-        />
-        {gpuVisible && (
-          <Suspense fallback={null}>
-            <div
-              className="transition-opacity duration-1000"
-              style={{ opacity: state.enabled ? 1 : 0 }}
-            >
-              <WebGPUBackground />
-            </div>
-          </Suspense>
-        )}
         <Navbar />
         <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
           <ContentHero />
@@ -126,15 +87,14 @@ function AppContent() {
           <Footer />
         </main>
       </div>
-      <NeuralBackgroundToggle />
     </>
   )
 }
 
 export default function App() {
   return (
-    <NeuralBackgroundProvider>
+    <ThemeProvider>
       <AppContent />
-    </NeuralBackgroundProvider>
+    </ThemeProvider>
   )
 }

@@ -32,9 +32,9 @@ const FEATURED_TAGS = {
 }
 
 const HIGHLIGHTS = [
-  <>编写 <strong className="text-white">330+ 行 AGENTS.md</strong>，将架构规范、分层约束、错误处理模式等领域知识编码为 AI 可理解的结构化上下文</>,
-  <>设计 <strong className="text-white">8 个 Custom Skills</strong> 封装端到端开发流程（如 /add-rpc-method 一键完成 IDL→DAL→Converter→Logic→Handler 全层实现 + 测试编写）</>,
-  <>部署 <strong className="text-white">3 个 AI 驱动 GitHub Actions</strong>（Issue 自动实现 / PR 自动 Review / Issue 自动分类），实现 DevOps 自动化</>,
+  <>编写 <strong className="text-text">330+ 行 AGENTS.md</strong>，将架构规范、分层约束、错误处理模式等领域知识编码为 AI 可理解的结构化上下文</>,
+  <>设计 <strong className="text-text">8 个 Custom Skills</strong> 封装端到端开发流程（如 /add-rpc-method 一键完成 IDL→DAL→Converter→Logic→Handler 全层实现 + 测试编写）</>,
+  <>部署 <strong className="text-text">3 个 AI 驱动 GitHub Actions</strong>（Issue 自动实现 / PR 自动 Review / Issue 自动分类），实现 DevOps 自动化</>,
 ] as const
 
 // Memoize highlight component
@@ -56,9 +56,9 @@ const PRCard = memo(({ pr }: { pr: typeof PR_CONTRIBUTIONS[number] }) => (
   >
     <div className="flex items-center justify-between mb-3">
       <div className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">PR {pr.prNum}</div>
-      <ExternalLink size={16} className="text-muted group-hover:text-white transition-colors" />
+      <ExternalLink size={16} className="text-muted group-hover:text-text transition-colors" />
     </div>
-    <h3 className="font-bold text-white mb-1 group-hover:text-primary transition-colors font-serif">
+    <h3 className="font-bold text-text mb-1 group-hover:text-primary transition-colors font-serif">
       {pr.title}
     </h3>
     <p className="text-xs text-muted">{pr.desc}</p>
@@ -89,13 +89,13 @@ export default function OpenSource() {
                 href="https://github.com/masonsxu/cloudwego-microservice-demo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="ml-auto text-muted hover:text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
+                className="ml-auto text-muted hover:text-text text-xs font-mono flex items-center gap-1.5 transition-colors"
               >
                 <GitHubIcon size={14} />
                 cloudwego-microservice-demo
               </a>
             </div>
-            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">
+            <h3 className="text-xl font-bold text-text mb-3 group-hover:text-primary transition-colors">
               CloudWeGo 微服务架构模板 · AI 辅助开发实践
             </h3>
             <p className="text-muted text-sm leading-relaxed mb-5 max-w-3xl">

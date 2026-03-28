@@ -218,7 +218,7 @@ function VideoCard({
           <div className="text-primary mb-4">
             {video.icon}
           </div>
-          <h3 className="text-white font-bold text-center">{video.title}</h3>
+          <h3 className="text-text font-bold text-center">{video.title}</h3>
         </div>
 
         {/* 中心大播放按钮 */}
@@ -247,7 +247,7 @@ function VideoCard({
             {video.icon}
           </div>
           <div className="min-w-0">
-            <h3 className="text-white font-bold text-sm truncate">
+            <h3 className="text-text font-bold text-sm truncate">
               {video.title}
             </h3>
             <p className="text-muted text-[11px] font-mono">{video.subtitle}</p>

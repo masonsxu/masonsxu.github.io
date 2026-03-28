@@ -17,7 +17,7 @@ export default function Projects() {
                     <span className="px-2 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-mono font-bold">ENTERPRISE</span>
                     <span className="text-muted text-xs font-mono">2025.03 - 至今</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-accent transition-colors">
+                  <h3 className="text-2xl font-bold text-text mb-3 group-hover:text-accent transition-colors">
                     核心分布式数据管理平台 — 微服务架构从 0 到 1
                   </h3>
                   <p className="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
@@ -26,7 +26,7 @@ export default function Projects() {
                   <div className="space-y-2 mb-8">
                     <div className="flex items-start gap-3 text-sm text-text">
                       <span className="text-accent mt-1">▹</span>
-                      <span>设计 <strong className="text-white">DDD 四层架构</strong> + 仓储模式，业务逻辑与框架完全解耦</span>
+                      <span>设计 <strong className="text-text">DDD 四层架构</strong> + 仓储模式，业务逻辑与框架完全解耦</span>
                     </div>
                     <div className="flex items-start gap-3 text-sm text-text">
                       <span className="text-accent mt-1">▹</span>
@@ -70,7 +70,7 @@ export default function Projects() {
                     <span className="px-2 py-0.5 rounded-full bg-muted/10 text-muted text-xs font-mono font-bold uppercase tracking-wider">Python Era</span>
                     <span className="text-muted text-xs font-mono">2021.06 - 2025.03</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-primary transition-colors font-serif">
+                  <h3 className="text-2xl font-bold text-text mb-3 group-hover:text-primary transition-colors font-serif">
                     遗留系统性能优化与容器化转型
                   </h3>
                   <p className="text-muted text-sm leading-relaxed mb-6 max-w-2xl">
@@ -79,7 +79,7 @@ export default function Projects() {
                   <div className="space-y-2 mb-8">
                     <div className="flex items-start gap-3 text-sm text-text">
                       <span className="text-primary mt-1">▹</span>
-                      <span>基于 <strong className="text-white">Asyncio</strong> 重写核心查询链路，接口响应时间降低 50%</span>
+                      <span>基于 <strong className="text-text">Asyncio</strong> 重写核心查询链路，接口响应时间降低 50%</span>
                     </div>
                     <div className="flex items-start gap-3 text-sm text-text">
                       <span className="text-primary mt-1">▹</span>
@@ -87,7 +87,7 @@ export default function Projects() {
                     </div>
                     <div className="flex items-start gap-3 text-sm text-text">
                       <span className="text-primary mt-1">▹</span>
-                      <span>设计多环境 <strong className="text-white">Docker</strong> 镜像构建策略，部署时间 4h→30min，故障率降低 45%</span>
+                      <span>设计多环境 <strong className="text-text">Docker</strong> 镜像构建策略，部署时间 4h→30min，故障率降低 45%</span>
                     </div>
                   </div>
 
@@ -125,7 +125,7 @@ export default function Projects() {
 function StatItem({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <div className="text-xl font-bold text-white font-mono">{value}</div>
+      <div className="text-xl font-bold text-text font-mono">{value}</div>
       <div className="text-[10px] text-muted">{label}</div>
     </div>
   )
@@ -140,7 +140,7 @@ function Incident({ num, title, desc }: { num: string; title: string; desc: stri
     <div className="flex items-start gap-3 text-sm">
       <span className="text-primary/60 mt-0.5 shrink-0">{num}</span>
       <div>
-        <span className="text-white font-medium">{title}</span>
+        <span className="text-text font-medium">{title}</span>
         <span className="text-muted">{desc}</span>
       </div>
     </div>

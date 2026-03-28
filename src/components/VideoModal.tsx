@@ -113,7 +113,7 @@ export default function VideoModal({
                     </div>
                     {title && (
                       <div className="flex items-center gap-2 ml-2">
-                        <span className="text-xs text-white/90 font-medium">{title}</span>
+                        <span className="text-xs text-text/90 font-medium">{title}</span>
                         {subtitle && (
                           <>
                             <span className="text-border/30 text-[10px]">|</span>
@@ -125,7 +125,7 @@ export default function VideoModal({
                   </div>
                   <button
                     onClick={onClose}
-                    className="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-white hover:bg-surface-light/50 transition-all"
+                    className="w-7 h-7 rounded-md flex items-center justify-center text-muted hover:text-text hover:bg-surface-light/50 transition-all"
                   >
                     <X size={14} />
                   </button>

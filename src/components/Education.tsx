@@ -11,7 +11,7 @@ export default function Education() {
         <StaggerChild className="lg:col-span-2 h-full">
           <div className="h-full bg-surface border border-border/20 rounded-lg p-8 hover:border-primary/50 transition-colors spotlight-card flex flex-col justify-center">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-2">
-              <h3 className="text-xl font-bold text-white font-serif">信息管理与信息系统 (大数据方向)</h3>
+              <h3 className="text-xl font-bold text-text font-serif">信息管理与信息系统 (大数据方向)</h3>
               <div className="font-mono text-xs text-muted bg-surface-light px-2 py-1 rounded mt-2 md:mt-0 shrink-0">
                 2017 - 2021
               </div>
@@ -54,7 +54,7 @@ function Award({ icon, title, desc }: { icon: React.ReactNode; title: React.Reac
         {icon}
       </div>
       <div>
-        <div className="text-sm text-white font-medium group-hover:text-primary transition-colors">
+        <div className="text-sm text-text font-medium group-hover:text-primary transition-colors">
           {title}
         </div>
         <div className="text-xs text-muted">{desc}</div>

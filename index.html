@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
+<html lang="zh-CN" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="G2epoIKr_2qYzKKIiRJAvYtVra9_R5NlAwkhPmoKb6U" />
@@ -56,6 +56,13 @@
             "name": "技术架构与分布式系统"
         }
     }
+    </script>
+    <script>
+        (function() {
+            var t = localStorage.getItem('masonsxu-theme');
+            if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            document.documentElement.classList.toggle('dark', t === 'dark');
+        })();
     </script>
 </head>
 <body>

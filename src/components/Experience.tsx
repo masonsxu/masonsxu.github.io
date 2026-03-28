@@ -18,7 +18,7 @@ export default function Experience() {
             <div className="bg-surface border border-border/20 rounded-lg p-6 hover:border-primary/30 transition-colors">
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-white">技术负责人 / Go 后端架构师</h3>
+                  <h3 className="text-lg font-bold text-text">技术负责人 / Go 后端架构师</h3>
                   <div className="text-primary text-sm mt-1">福建自贸试验区厦门片区 Manteia 数据科技有限公司</div>
                 </div>
                 <div className="font-mono text-xs text-muted bg-surface-light px-2 py-1 rounded mt-2 md:mt-0">
@@ -52,7 +52,7 @@ export default function Experience() {
             <div className="bg-surface border border-border/20 rounded-lg p-6 hover:border-primary/50 transition-colors">
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-white">Python 后端开发工程师</h3>
+                  <h3 className="text-lg font-bold text-text">Python 后端开发工程师</h3>
                   <div className="text-muted text-sm mt-1">福建自贸试验区厦门片区 Manteia 数据科技有限公司</div>
                 </div>
                 <div className="font-mono text-xs text-muted bg-surface-light px-2 py-1 rounded mt-2 md:mt-0">

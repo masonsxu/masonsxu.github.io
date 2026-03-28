@@ -51,7 +51,7 @@ export default function Skills() {
             <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors flex flex-col">
               <div className="flex items-center gap-3 mb-5">
                 <div className="text-primary">{group.icon}</div>
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">{group.title}</h3>
+                <h3 className="text-sm font-bold text-text uppercase tracking-wider">{group.title}</h3>
               </div>
               <div className="space-y-3 flex-1">
                 {group.skills.map(skill => (
