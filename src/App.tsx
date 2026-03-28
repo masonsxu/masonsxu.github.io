@@ -1,43 +1,24 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import Architecture from './components/Architecture'
+import ActivationOverlay from './components/ActivationOverlay'
 import ContentHero from './components/ContentHero'
 import Education from './components/Education'
 import Experience from './components/Experience'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
+import NeuralBackgroundToggle from './components/NeuralBackgroundToggle'
 import OpenSource from './components/OpenSource'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
-import WebGPUBackground from './components/WebGPUBackground'
+import { NeuralBackgroundProvider, useNeuralBackground } from './contexts/NeuralBackgroundContext'
+import { useKonamiCode } from './hooks/useKonamiCode'
 
+const WebGPUBackground = lazy(() => import('./components/WebGPUBackground'))
 const Essence = lazy(() => import('./components/Essence'))
 const ShowreelGallery = lazy(() => import('./components/ShowreelGallery'))
 
-/**
- * Defer heavy rendering until after first paint
- * Simplified - direct timeout is sufficient for this use case
- */
-function useDeferredMount(delay = 200) {
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      performance.mark('app-heavy-components-mount-start')
-      setMounted(true)
-      performance.mark('app-heavy-components-mount-end')
-    }, delay)
-    return () => clearTimeout(timer)
-  }, [delay])
-  return mounted
-}
-
-export default function App() {
+function SpotlightEffect() {
   const rafRef = useRef<number | undefined>(undefined)
-
-  useEffect(() => {
-    performance.mark('app-first-paint')
-  }, [])
-
-  const bgReady = useDeferredMount(200)
 
   useEffect(() => {
     const cardsCache = new Map<Element, DOMRect>()
@@ -50,8 +31,8 @@ export default function App() {
           rect = (card as HTMLElement).getBoundingClientRect()
           cardsCache.set(card, rect)
         }
-        ; (card as HTMLElement).style.setProperty('--mouse-x', `${clientX - rect.left}px`)
-          ; (card as HTMLElement).style.setProperty('--mouse-y', `${clientY - rect.top}px`)
+        ;(card as HTMLElement).style.setProperty('--mouse-x', `${clientX - rect.left}px`)
+        ;(card as HTMLElement).style.setProperty('--mouse-y', `${clientY - rect.top}px`)
       }
     }
 
@@ -84,31 +65,76 @@ export default function App() {
     }
   }, [])
 
-   return (
-     <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
-        <div className="fixed inset-0 tech-bg z-[-1] pointer-events-none opacity-40" />
-         {bgReady && (
-           <Suspense fallback={null}>
-             <WebGPUBackground />
-           </Suspense>
-         )}
-       <Navbar />
-       <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
-         <ContentHero />
-         <Architecture />
-         <Skills />
-         <Projects />
-         <Experience />
-         <Education />
-         <Suspense fallback={null}>
-           <Essence />
-         </Suspense>
-         <Suspense fallback={null}>
-           <ShowreelGallery />
-         </Suspense>
-         <OpenSource />
-         <Footer />
-       </main>
-     </div>
-   )
+  return null
+}
+
+function AppContent() {
+  const { state, toggle } = useNeuralBackground()
+  const [overlayMode, setOverlayMode] = useState<'activate' | 'deactivate' | null>(null)
+  const [gpuVisible, setGpuVisible] = useState(false)
+
+  useKonamiCode('mason', () => toggle('konami'))
+
+  useEffect(() => {
+    if (state.enabled) {
+      setOverlayMode('activate')
+      setGpuVisible(true)
+    } else {
+      setOverlayMode('deactivate')
+      setTimeout(() => setGpuVisible(false), 800)
+    }
+  }, [state.enabled])
+
+  const handleOverlayComplete = useCallback(() => {
+    setOverlayMode(null)
+  }, [])
+
+  return (
+    <>
+      <SpotlightEffect />
+      <ActivationOverlay mode={overlayMode} onComplete={handleOverlayComplete} />
+      <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
+        <div
+          className="fixed inset-0 tech-bg z-[-1] pointer-events-none transition-opacity duration-600"
+          style={{ opacity: state.enabled ? 0.4 : 0 }}
+        />
+        {gpuVisible && (
+          <Suspense fallback={null}>
+            <div
+              className="transition-opacity duration-1000"
+              style={{ opacity: state.enabled ? 1 : 0 }}
+            >
+              <WebGPUBackground />
+            </div>
+          </Suspense>
+        )}
+        <Navbar />
+        <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+          <ContentHero />
+          <Architecture />
+          <Skills />
+          <Projects />
+          <Experience />
+          <Education />
+          <Suspense fallback={null}>
+            <Essence />
+          </Suspense>
+          <Suspense fallback={null}>
+            <ShowreelGallery />
+          </Suspense>
+          <OpenSource />
+          <Footer />
+        </main>
+      </div>
+      <NeuralBackgroundToggle />
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <NeuralBackgroundProvider>
+      <AppContent />
+    </NeuralBackgroundProvider>
+  )
 }
