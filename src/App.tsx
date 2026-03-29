@@ -1,9 +1,9 @@
-import { lazy, Suspense, useCallback, useEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect, useRef } from 'react'
 import Architecture from './components/Architecture'
 import ContentHero from './components/ContentHero'
-import Education from './components/Education'
 import Experience from './components/Experience'
 import Footer from './components/Footer'
+import Interlude from './components/Interlude'
 import Navbar from './components/Navbar'
 import OpenSource from './components/OpenSource'
 import Projects from './components/Projects'
@@ -72,11 +72,13 @@ function AppContent() {
         <Navbar />
         <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
           <ContentHero />
+          <Projects />
+          <Interlude type="quote" />
           <Architecture />
           <Skills />
-          <Projects />
+          <Interlude type="data" />
           <Experience />
-          <Education />
+          <Interlude type="keywords" />
           <Suspense fallback={null}>
             <Essence />
           </Suspense>

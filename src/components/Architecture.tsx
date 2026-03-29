@@ -19,21 +19,24 @@ export default function Architecture() {
                 <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-mono rounded">ARCHITECT</span>
               </div>
               <h3 className="text-xl font-bold text-text mb-6">核心竞争力</h3>
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <Pillar
                   icon={<Network size={16} />}
-                  title="架构落地能力"
-                  text="以业务能力为边界划分服务，独立完成从技术选型到系统落地的全链路设计与交付。具备在不确定性中做出正确架构决策的能力"
+                  title="架构落地"
+                  text="独立完成从技术选型到系统落地的全链路设计与交付"
+                  tags={['DDD', '微服务', '全链路']}
                 />
                 <Pillar
                   icon={<Shield size={16} />}
-                  title="可靠性与安全"
-                  text="对数据准确性零容忍，在数据校验、异常处理、重传机制、权限隔离等环节建立系统性保障，并经大规模生产环境持续验证"
+                  title="可靠性"
+                  text="对数据准确性零容忍，经大规模生产环境持续验证"
+                  tags={['数据校验', '权限隔离', '高可用']}
                 />
                 <Pillar
                   icon={<Zap size={16} />}
-                  title="工程与 AI 效能"
-                  text="建立 IDL-First 开发流程与工程规范，系统性落地 AI 辅助开发（Vibe Coding），将架构决策与工程规范编码为 AI 可执行知识，构建自动化开发与 DevOps 工作流；CloudWeGo 生态贡献者"
+                  title="工程效能"
+                  text="IDL-First 流程 + AI 辅助开发，构建自动化工作流"
+                  tags={['Vibe Coding', 'CloudWeGo', 'DevOps']}
                 />
               </div>
             </div>
@@ -90,14 +93,19 @@ export default function Architecture() {
   )
 }
 
-function Pillar({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+function Pillar({ icon, title, text, tags }: { icon: React.ReactNode; title: string; text: string; tags: string[] }) {
   return (
     <div>
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-1.5">
         <span className="text-primary">{icon}</span>
         <span className="text-sm font-bold text-text">{title}</span>
       </div>
-      <p className="text-sm text-muted leading-relaxed pl-6">{text}</p>
+      <p className="text-sm text-muted pl-6 mb-2">{text}</p>
+      <div className="flex flex-wrap gap-1.5 pl-6">
+        {tags.map((tag) => (
+          <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-surface-light/50 rounded text-muted">{tag}</span>
+        ))}
+      </div>
     </div>
   )
 }
