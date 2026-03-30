@@ -7,6 +7,7 @@ import Interlude from './components/Interlude'
 import Navbar from './components/Navbar'
 import OpenSource from './components/OpenSource'
 import Projects from './components/Projects'
+import SiteBackground from './components/SiteBackground'
 import Skills from './components/Skills'
 import { ThemeProvider } from './contexts/ThemeContext'
 
@@ -68,26 +69,29 @@ function AppContent() {
   return (
     <>
       <SpotlightEffect />
-      <div className="antialiased selection:bg-gold/20 selection:text-gold font-sans">
-        <Navbar />
-        <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
-          <ContentHero />
-          <Projects />
-          <Interlude type="quote" />
-          <Architecture />
-          <Skills />
-          <Interlude type="data" />
-          <Experience />
-          <Interlude type="keywords" />
-          <Suspense fallback={null}>
-            <Essence />
-          </Suspense>
-          <Suspense fallback={null}>
-            <ShowreelGallery />
-          </Suspense>
-          <OpenSource />
-          <Footer />
-        </main>
+      <div className="relative isolate antialiased selection:bg-gold/20 selection:text-gold font-sans">
+        <SiteBackground />
+        <div className="relative z-10">
+          <Navbar />
+          <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+            <ContentHero />
+            <Projects />
+            <Interlude type="quote" />
+            <Architecture />
+            <Skills />
+            <Interlude type="data" />
+            <Experience />
+            <Interlude type="keywords" />
+            <Suspense fallback={null}>
+              <Essence />
+            </Suspense>
+            <Suspense fallback={null}>
+              <ShowreelGallery />
+            </Suspense>
+            <OpenSource />
+            <Footer />
+          </main>
+        </div>
       </div>
     </>
   )

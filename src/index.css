@@ -58,6 +58,14 @@
   --theme-card-shadow: rgba(0, 0, 0, 0.08);
   --theme-dot-pattern: rgba(184, 150, 31, 0.08);
   --theme-nav-active-color: #1A1A1A;
+  --theme-site-bg-top: #f8f6f2;
+  --theme-site-bg-bottom: #efebe3;
+  --theme-site-bg-wave: rgba(139, 105, 20, 0.276);
+  --theme-site-bg-spark: rgba(184, 150, 31, 0.313);
+  --theme-site-bg-dot: rgba(107, 114, 128, 0.221);
+  --theme-site-bg-dot-near: rgba(139, 105, 20, 0.405);
+  --theme-site-bg-divider: rgba(184, 150, 31, 0.313);
+  --theme-site-bg-veil: rgba(250, 250, 248, 0.24);
   color-scheme: light;
 }
 
@@ -86,6 +94,14 @@
   --theme-card-shadow: rgba(0, 0, 0, 0.3);
   --theme-dot-pattern: rgba(212, 175, 55, 0.1);
   --theme-nav-active-color: #FCFCFC;
+  --theme-site-bg-top: #0b0e14;
+  --theme-site-bg-bottom: #121214;
+  --theme-site-bg-wave: rgba(212, 175, 55, 0.276);
+  --theme-site-bg-spark: rgba(242, 210, 136, 0.313);
+  --theme-site-bg-dot: rgba(161, 161, 170, 0.184);
+  --theme-site-bg-dot-near: rgba(212, 175, 55, 0.368);
+  --theme-site-bg-divider: rgba(212, 175, 55, 0.313);
+  --theme-site-bg-veil: rgba(11, 14, 20, 0.52);
   color-scheme: dark;
 }
 
@@ -182,6 +198,79 @@
 body {
   background-color: var(--theme-body-bg);
   color: var(--theme-body-text);
+}
+
+.site-bg-root {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.site-bg-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.site-bg-base {
+  background: linear-gradient(to bottom, var(--theme-site-bg-top) 0%, var(--theme-site-bg-top) 80%, var(--theme-site-bg-bottom) 80%, var(--theme-site-bg-bottom) 100%);
+}
+
+.site-bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.site-bg-mesh {
+  background-image:
+    linear-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px);
+  background-size: 30px 30px, 30px 30px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.42) 64%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.42) 64%, transparent 100%);
+  opacity: 0.386;
+}
+
+.dark .site-bg-mesh {
+  opacity: 0.313;
+}
+
+.site-bg-transition {
+  background:
+    linear-gradient(to bottom, transparent 70%, rgba(212, 175, 55, 0.11) 79%, rgba(212, 175, 55, 0.03) 86%, transparent 92%),
+    radial-gradient(56% 16% at 50% 82%, rgba(212, 175, 55, 0.14), transparent 70%);
+  opacity: 0.386;
+}
+
+.dark .site-bg-transition {
+  background:
+    linear-gradient(to bottom, transparent 70%, rgba(212, 175, 55, 0.14) 79%, rgba(212, 175, 55, 0.05) 86%, transparent 92%),
+    radial-gradient(52% 14% at 50% 82%, rgba(212, 175, 55, 0.16), transparent 70%);
+  opacity: 0.478;
+}
+
+.site-bg-grain {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.12) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+}
+
+.dark .site-bg-grain {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 0.6px, transparent 0.6px);
+  opacity: 0.1;
+  mix-blend-mode: screen;
+}
+
+.site-bg-veil {
+  background: linear-gradient(to bottom, var(--theme-site-bg-veil) 0%, transparent 24%, transparent 74%, rgba(12, 12, 14, 0.1) 100%);
+}
+
+.dark .site-bg-veil {
+  background: linear-gradient(to bottom, var(--theme-site-bg-veil) 0%, transparent 24%, transparent 74%, rgba(12, 12, 14, 0.3) 100%);
 }
 
 /* Custom Scrollbar */
