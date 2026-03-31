@@ -1,22 +1,22 @@
-import { Code2, Container, Network } from 'lucide-react'
+import { Code2, Database, Network } from 'lucide-react'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
 import SectionHeader from './SectionHeader'
 
 const domains = [
   {
     icon: <Code2 size={18} />,
-    title: 'Go 微服务',
-    tags: ['Go 1.24+', 'Kitex RPC', 'Hertz HTTP', 'gRPC', 'DDD', 'Wire DI', 'Thrift IDL']
+    title: 'Go 分布式系统',
+    tags: ['Go 1.24+', 'Kitex RPC', 'Hertz HTTP', 'gRPC', 'GORM', 'Google Wire', 'Thrift IDL', 'Casbin RBAC']
+  },
+  {
+    icon: <Database size={18} />,
+    title: '数据湖与 ETL',
+    tags: ['Apache Iceberg', 'Airflow 3.1', 'Trino', 'Polars', 'PyIceberg', 'PyArrow', 'Schema Evolution']
   },
   {
     icon: <Network size={18} />,
-    title: '分布式治理',
-    tags: ['etcd', 'OpenTelemetry', 'Casbin RBAC', '限流熔断', 'JWT', '全链路追踪']
-  },
-  {
-    icon: <Container size={18} />,
-    title: '工程化',
-    tags: ['Docker', 'Podman', 'PostgreSQL', 'Redis', 'IDL-First', 'AI 辅助开发']
+    title: '云原生与工程化',
+    tags: ['Docker', 'Podman', 'Kubernetes', 'etcd', 'OpenTelemetry', 'Jaeger', 'PostgreSQL', 'Redis']
   }
 ]
 

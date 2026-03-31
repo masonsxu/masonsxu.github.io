@@ -31,14 +31,15 @@ export default function ContentHero() {
             <span className="animate-pulse text-primary text-4xl md:text-7xl font-thin -ml-2">_</span>
           </div>
           <div className="text-4xl md:text-6xl gold-gradient-text leading-tight pb-3 font-serif">
-            后端技术负责人 · 分布式系统架构师
+            Go 后端工程师 · 分布式系统 · 云原生基础设施
           </div>
         </h1>
 
         <p className="text-lg md:text-xl text-muted max-w-3xl leading-relaxed mb-10">
-          5 年专注<strong className="text-text">分布式系统架构</strong>与<strong className="text-text">规模化落地</strong>，积累 Go 微服务架构设计与<strong className="text-text">企业级系统交付</strong>双重经验。<br />
-          主导 Python 单体到 Go 微服务的<strong className="text-text">整体架构转型</strong>，独立完成核心分布式数据管理平台从0到1的架构设计与落地交付；<br />
-          主导<strong className="text-text">众多生产环境</strong>部署，系统可用性 <strong className="text-text">99.9%</strong>。
+          5 年 Go 后端开发经验，深耕<strong className="text-text">分布式系统架构</strong>与<strong className="text-text">云原生基础设施</strong>。<br />
+          主导 Python 单体到 <strong className="text-text">CloudWeGo 微服务架构</strong>的整体转型，独立设计并交付 10+ 微服务的分布式数据平台；<br />
+          构建基于 <strong className="text-text">Apache Iceberg + Airflow + Polars</strong> 的数据湖平台，处理多源异构数据的 ETL 与跨源 JOIN；<br />
+          向 <strong className="text-text">CloudWeGo 开源项目</strong>提交 3 个已合并 PR，持续贡献 RPC/HTTP 框架生态。
         </p>
 
         <div className="flex flex-wrap gap-4">

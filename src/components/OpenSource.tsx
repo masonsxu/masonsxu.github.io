@@ -14,7 +14,7 @@ const PR_CONTRIBUTIONS = [
   {
     href: 'https://github.com/hertz-contrib/obs-opentelemetry/pull/67',
     prNum: '#67',
-    title: 'obs-opentelemetry',
+    title: 'hertz-contrib/obs-opentelemetry',
     desc: '优化可观测性组件，提升链路追踪稳定性与准确性',
   },
   {
@@ -26,7 +26,7 @@ const PR_CONTRIBUTIONS = [
 ] as const
 
 const FEATURED_TAGS = {
-  primary: ['Kitex RPC', 'Hertz HTTP', 'Vibe Coding'] as const,
+  primary: ['Kitex RPC', 'Hertz HTTP', 'CloudWeGo'] as const,
   secondary: ['Etcd', 'Wire DI', 'Casbin', 'OpenTelemetry', 'AGENTS.md', 'GitHub Actions'] as const,
 }
 

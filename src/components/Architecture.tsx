@@ -22,21 +22,21 @@ export default function Architecture() {
               <div className="space-y-5">
                 <Pillar
                   icon={<Network size={16} />}
-                  title="架构落地"
-                  text="独立完成从技术选型到系统落地的全链路设计与交付"
-                  tags={['DDD', '微服务', '全链路']}
+                  title="分布式系统落地"
+                  text="独立完成从技术选型到系统交付的全链路设计，掌握 RPC 框架、服务治理、可观测性体系"
+                  tags={['Kitex', 'Hertz', 'etcd', 'OpenTelemetry']}
                 />
                 <Pillar
                   icon={<Shield size={16} />}
-                  title="可靠性"
-                  text="对数据准确性零容忍，经大规模生产环境持续验证"
-                  tags={['数据校验', '权限隔离', '高可用']}
+                  title="数据湖与 ETL"
+                  text="构建 Iceberg 数据湖平台，多源异构数据统一入湖，配置驱动 SQL 生成与跨源 JOIN"
+                  tags={['Iceberg', 'Airflow', 'Trino', 'Polars']}
                 />
                 <Pillar
                   icon={<Zap size={16} />}
-                  title="工程效能"
-                  text="IDL-First 流程 + AI 辅助开发，构建自动化工作流"
-                  tags={['Vibe Coding', 'CloudWeGo', 'DevOps']}
+                  title="云原生工程效能"
+                  text="IDL-First 流程 + Google Wire 编译时 DI + CI/CD 自动化，构建标准化开发工作流"
+                  tags={['CloudWeGo', 'Docker', 'Wire DI', 'OpenTelemetry']}
                 />
               </div>
             </div>
