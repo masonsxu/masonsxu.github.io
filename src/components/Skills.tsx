@@ -22,16 +22,16 @@ const domains = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="mb-32">
+    <section id="skills" className="mb-24 lg:mb-28">
       <SectionHeader title="技术域 / Domains" className="mb-12" />
 
       <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {domains.map((domain) => (
           <StaggerChild key={domain.title} className="h-full">
-            <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
+            <div className="h-full bg-surface border border-border/20 rounded-lg p-5 lg:p-6 spotlight-card hover:border-primary/50 transition-colors">
               <div className="flex items-center gap-3 mb-5">
                 <div className="text-primary">{domain.icon}</div>
-                <h3 className="text-sm font-bold text-text uppercase tracking-wider">{domain.title}</h3>
+                <h3 className="text-[15px] font-bold text-text uppercase tracking-wide">{domain.title}</h3>
               </div>
               <div className="flex flex-wrap gap-2">
                 {domain.tags.map((tag) => (

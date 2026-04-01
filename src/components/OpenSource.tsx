@@ -48,7 +48,7 @@ const EDUCATION = {
 }
 
 const OSHighlight = memo(({ text }: { text: React.ReactNode }) => (
-  <div className="flex items-start gap-3 text-sm text-muted">
+  <div className="flex items-start gap-3 text-[15px] leading-7 text-muted">
     <span className="text-primary mt-1">▹</span>
     <span>{text}</span>
   </div>
@@ -60,7 +60,7 @@ const PRCard = memo(({ pr }: { pr: typeof PR_CONTRIBUTIONS[number] }) => (
     href={pr.href}
     target="_blank"
     rel="noopener noreferrer"
-    className="h-full p-5 bg-surface border border-border/20 rounded-lg hover:border-primary/50 transition-all group flex flex-col spotlight-card"
+    className="h-full p-5 lg:p-6 bg-surface border border-border/20 rounded-lg hover:border-primary/50 transition-all group flex flex-col spotlight-card"
   >
     <div className="flex items-center justify-between mb-3">
       <div className="font-mono text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">PR {pr.prNum}</div>
@@ -69,7 +69,7 @@ const PRCard = memo(({ pr }: { pr: typeof PR_CONTRIBUTIONS[number] }) => (
     <h3 className="font-bold text-text mb-1 group-hover:text-primary transition-colors font-serif">
       {pr.title}
     </h3>
-    <p className="text-xs text-muted">{pr.desc}</p>
+    <p className="text-[13px] leading-6 text-muted">{pr.desc}</p>
   </a>
 ))
 PRCard.displayName = 'PRCard'
@@ -83,13 +83,13 @@ export default function OpenSource() {
   )), [])
 
   return (
-    <section id="opensource" className="mb-20">
+    <section id="opensource" className="mb-18 lg:mb-20">
       <SectionHeader title="开源与教育 / Open Source & Education" />
 
       {/* Featured Project */}
       <ScrollReveal>
         <div className="mb-8 group relative bg-surface border border-border/20 rounded-lg overflow-hidden hover:border-primary/50 transition-colors spotlight-card">
-          <div className="p-8">
+          <div className="p-6 lg:p-7">
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-mono font-bold">OPEN SOURCE</span>
               <span className="text-muted text-xs font-mono">2025</span>
@@ -106,7 +106,7 @@ export default function OpenSource() {
             <h3 className="text-xl font-bold text-text mb-3 group-hover:text-primary transition-colors">
               CloudWeGo 微服务架构模板 · AI 辅助开发实践
             </h3>
-            <p className="text-muted text-sm leading-relaxed mb-5 max-w-3xl">
+            <p className="text-muted text-[15px] leading-7 mb-5 max-w-3xl">
               基于生产级 Go 微服务实践，提炼并开源 CloudWeGo 标准架构模板；系统性落地 AI 辅助开发（Vibe Coding），构建从编码到 DevOps 的全流程人机协作体系。
             </p>
             <div className="space-y-2 mb-6">
@@ -133,7 +133,7 @@ export default function OpenSource() {
       {/* Education - Separate Row */}
       <div className="text-xs text-muted font-mono uppercase tracking-widest mb-4">Education</div>
       <ScrollReveal>
-        <div className="bg-surface border border-border/20 rounded-lg p-6 spotlight-card hover:border-primary/50 transition-colors">
+        <div className="bg-surface border border-border/20 rounded-lg p-5 lg:p-6 spotlight-card hover:border-primary/50 transition-colors">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <h4 className="text-lg font-bold text-text">{EDUCATION.degree}</h4>
@@ -145,7 +145,7 @@ export default function OpenSource() {
                   <span className="shrink-0">{award.icon}</span>
                   <div>
                     <div className="text-xs text-text font-medium">{award.title}</div>
-                    <div className="text-[10px] text-muted">{award.desc}</div>
+                    <div className="text-[11px] text-muted">{award.desc}</div>
                   </div>
                 </div>
               ))}

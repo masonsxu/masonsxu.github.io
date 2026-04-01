@@ -4,13 +4,13 @@ import SectionHeader from './SectionHeader';
 
 export default function Architecture() {
   return (
-    <section id="about" className="mb-32">
+    <section id="about" className="mb-24 lg:mb-28">
       <SectionHeader title="架构能力 / Architecture" />
 
-      <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4">
+      <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 lg:gap-5">
         {/* Core: Three Pillars */}
         <StaggerChild className="md:col-span-2 md:row-span-2 h-full">
-          <div className="h-full bg-surface border border-border/20 rounded-lg p-8 spotlight-card group hover:border-primary/50 transition-colors flex flex-col justify-between">
+          <div className="h-full bg-surface border border-border/20 rounded-lg p-6 lg:p-7 spotlight-card group hover:border-primary/50 transition-colors flex flex-col justify-between">
             <div>
               <div className="flex items-start justify-between mb-6">
                 <div className="w-12 h-12 rounded bg-primary/10 flex items-center justify-center text-primary">
@@ -19,7 +19,7 @@ export default function Architecture() {
                 <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-mono rounded">ARCHITECT</span>
               </div>
               <h3 className="text-xl font-bold text-text mb-6">核心竞争力</h3>
-              <div className="space-y-5">
+              <div className="space-y-4.5">
                 <Pillar
                   icon={<Network size={16} />}
                   title="分布式系统落地"
@@ -45,7 +45,7 @@ export default function Architecture() {
 
         {/* Stat: Microservices */}
         <StaggerChild className="h-full">
-          <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
+          <div className="h-full bg-surface border border-border/20 rounded-lg p-5 lg:p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
             <div className="text-muted text-xs font-mono uppercase">Microservices</div>
             <div>
               <div className="text-4xl font-bold text-text font-mono group-hover:text-primary transition-colors">10+</div>
@@ -56,7 +56,7 @@ export default function Architecture() {
 
         {/* Stat: Code Lines */}
         <StaggerChild className="h-full">
-          <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
+          <div className="h-full bg-surface border border-border/20 rounded-lg p-5 lg:p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
             <div className="text-muted text-xs font-mono uppercase">Lines of Code</div>
             <div>
               <div className="text-4xl font-bold text-text font-mono group-hover:text-primary transition-colors">数万行</div>
@@ -67,7 +67,7 @@ export default function Architecture() {
 
         {/* Stat: Architecture Transformation */}
         <StaggerChild className="md:col-span-2 h-full">
-          <div className="h-full bg-surface border border-border/20 rounded-lg p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
+          <div className="h-full bg-surface border border-border/20 rounded-lg p-5 lg:p-6 spotlight-card flex flex-col justify-between group hover:border-primary/50">
             <div>
               <div className="flex items-center justify-between">
                 <div className="text-muted text-xs font-mono uppercase">Architecture</div>
@@ -100,10 +100,10 @@ function Pillar({ icon, title, text, tags }: { icon: React.ReactNode; title: str
         <span className="text-primary">{icon}</span>
         <span className="text-sm font-bold text-text">{title}</span>
       </div>
-      <p className="text-sm text-muted pl-6 mb-2">{text}</p>
+      <p className="text-[15px] leading-6 text-muted pl-6 mb-2">{text}</p>
       <div className="flex flex-wrap gap-1.5 pl-6">
         {tags.map((tag) => (
-          <span key={tag} className="text-[10px] px-1.5 py-0.5 bg-surface-light/50 rounded text-muted">{tag}</span>
+          <span key={tag} className="text-[11px] px-1.5 py-0.5 bg-surface-light/50 rounded text-muted">{tag}</span>
         ))}
       </div>
     </div>

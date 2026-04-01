@@ -69,11 +69,11 @@ function AppContent() {
   return (
     <>
       <SpotlightEffect />
-      <div className="relative isolate antialiased selection:bg-gold/20 selection:text-gold font-sans">
+      <div className="relative isolate selection:bg-gold/20 selection:text-gold font-sans">
         <SiteBackground />
         <div className="relative z-10">
           <Navbar />
-          <main className="max-w-6xl mx-auto px-6 pt-32 pb-20">
+          <main className="max-w-5xl 2xl:max-w-6xl mx-auto px-6 lg:px-7 pt-28 lg:pt-30 pb-18 lg:pb-20">
             <ContentHero />
             <Projects />
             <Interlude type="quote" />

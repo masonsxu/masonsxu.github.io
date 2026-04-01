@@ -25,9 +25,9 @@ export default function Interlude({ type }: InterludeProps) {
   if (type === 'quote') {
     const quote = interludes.quote
     return (
-      <section className="py-24 my-16 border-y border-border/10">
+      <section className="py-18 lg:py-20 my-12 lg:my-14 border-y border-border/10">
         <div className="max-w-3xl mx-auto text-center">
-          <blockquote className="text-2xl md:text-3xl font-serif text-text leading-relaxed mb-6">
+          <blockquote className="text-xl md:text-[1.75rem] font-serif text-text leading-relaxed mb-5">
             "{quote.content}"
           </blockquote>
           <cite className="text-muted text-sm font-mono not-italic">{quote.attribution}</cite>
@@ -39,12 +39,12 @@ export default function Interlude({ type }: InterludeProps) {
   if (type === 'data') {
     const data = interludes.data
     return (
-      <section className="py-20 my-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="py-16 lg:py-18 my-12 lg:my-14">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
           {data.metrics.map((metric) => (
             <div key={metric.label} className="text-center">
-              <div className="text-4xl md:text-5xl font-bold text-primary font-mono mb-2">{metric.value}</div>
-              <div className="text-xs text-muted uppercase tracking-widest">{metric.label}</div>
+              <div className="text-3xl md:text-[2.75rem] font-bold text-primary font-mono mb-2">{metric.value}</div>
+              <div className="text-[11px] text-muted uppercase tracking-[0.18em]">{metric.label}</div>
             </div>
           ))}
         </div>
@@ -55,7 +55,7 @@ export default function Interlude({ type }: InterludeProps) {
   if (type === 'keywords') {
     const keywords = interludes.keywords
     return (
-      <section className="py-20 my-16">
+      <section className="py-16 lg:py-18 my-12 lg:my-14">
         <div className="flex flex-wrap justify-center gap-3">
           {keywords.items.map((item) => (
             <span

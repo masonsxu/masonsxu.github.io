@@ -231,11 +231,11 @@ body {
   background-size: 30px 30px, 30px 30px;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.42) 64%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.42) 64%, transparent 100%);
-  opacity: 0.386;
+  opacity: 0.3;
 }
 
 .dark .site-bg-mesh {
-  opacity: 0.313;
+  opacity: 0.24;
 }
 
 .site-bg-transition {
@@ -255,13 +255,13 @@ body {
 .site-bg-grain {
   background-image: radial-gradient(rgba(0, 0, 0, 0.12) 0.6px, transparent 0.6px);
   background-size: 3px 3px;
-  opacity: 0.16;
+  opacity: 0.1;
   mix-blend-mode: multiply;
 }
 
 .dark .site-bg-grain {
   background-image: radial-gradient(rgba(255, 255, 255, 0.08) 0.6px, transparent 0.6px);
-  opacity: 0.1;
+  opacity: 0.06;
   mix-blend-mode: screen;
 }
 
@@ -293,7 +293,7 @@ body {
 
 .glass {
   background: var(--theme-glass-bg);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--theme-glass-border);
 }
 
@@ -328,11 +328,11 @@ body {
 
 .gold-gradient-text {
   background: linear-gradient(to right, #D4AF37, #F2D288, #D4AF37);
-  background-size: 200% 100%;
+  background-size: 180% 100%;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: gradientShift 8s ease infinite;
+  animation: gradientShift 12s ease infinite;
 }
 
 .shimmer-effect {
