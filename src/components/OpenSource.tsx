@@ -84,7 +84,7 @@ export default function OpenSource() {
 
   return (
     <section id="opensource" className="mb-18 lg:mb-20">
-      <SectionHeader title="开源与教育 / Open Source & Education" />
+      <SectionHeader title="开源贡献与教育背景 / Open Source & Education" />
 
       {/* Featured Project */}
       <ScrollReveal>

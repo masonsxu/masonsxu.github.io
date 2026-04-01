@@ -84,8 +84,8 @@ export default function Navbar() {
   return (
     <nav className="fixed w-full z-50 top-0 glass transition-all duration-300">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" onClick={e => handleAnchorClick(e, '#')} className="group">
-          <img src={theme === 'dark' ? '/logo.svg' : '/logo-light.svg'} alt="Masons Xu Brand Logo" className="h-10 w-auto" />
+        <a href="#hero" onClick={e => handleAnchorClick(e, '#hero')} className="group" aria-label="返回首页首屏">
+          <img src={theme === 'dark' ? '/logo.svg' : '/logo-light.svg'} alt="Masons Xu 个人技术作品集 Logo" className="h-10 w-auto" />
         </a>
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted">

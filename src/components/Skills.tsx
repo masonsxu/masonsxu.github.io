@@ -23,7 +23,7 @@ const domains = [
 export default function Skills() {
   return (
     <section id="skills" className="mb-24 lg:mb-28">
-      <SectionHeader title="技术域 / Domains" className="mb-12" />
+      <SectionHeader title="Go / 分布式系统 / 云原生技术栈" className="mb-12" />
 
       <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {domains.map((domain) => (

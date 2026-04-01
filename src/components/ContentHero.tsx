@@ -5,7 +5,7 @@ const HeroConstellation = lazy(() => import('./HeroConstellation'))
 
 export default function ContentHero() {
   return (
-    <section className="mb-24 lg:mb-28 relative">
+    <section id="hero" className="mb-24 lg:mb-28 relative" aria-labelledby="hero-title">
       <div className="absolute -top-16 -left-16 w-80 h-80 bg-gold/4 rounded-full blur-[72px] pointer-events-none" />
 
       {/* Remotion Constellation Animation */}
@@ -24,7 +24,7 @@ export default function ContentHero() {
           可接受新机会 / Open to Work
         </div>
 
-        <h1 className="font-bold tracking-tight text-text mb-7 lg:mb-8">
+        <h1 id="hero-title" className="font-bold tracking-tight text-text mb-7 lg:mb-8">
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-3">
             <span className="text-4xl sm:text-5xl lg:text-6xl 2xl:text-7xl font-sans">徐俊飞</span>
             <span className="text-xl sm:text-2xl lg:text-[2rem] text-muted font-normal font-sans italic">Masons Xu</span>
@@ -36,7 +36,7 @@ export default function ContentHero() {
         </h1>
 
         <p className="text-lg lg:text-[1.375rem] text-muted/92 max-w-[52rem] leading-[1.8] mb-8 lg:mb-9">
-          5 年 Go 后端开发经验，深耕<strong className="text-text">分布式系统架构</strong>与<strong className="text-text">云原生基础设施</strong>。<br />
+          我是专注 <strong className="text-text">Go 后端开发</strong> 的工程师，长期聚焦 <strong className="text-text">分布式系统架构</strong>、<strong className="text-text">云原生基础设施</strong> 与 <strong className="text-text">数据湖平台</strong>。<br />
           主导 Python 单体到 <strong className="text-text">CloudWeGo 微服务架构</strong>的整体转型，独立设计并交付 10+ 微服务的分布式数据平台；<br />
           构建基于 <strong className="text-text">Apache Iceberg + Airflow + Polars</strong> 的数据湖平台，处理多源异构数据的 ETL 与跨源 JOIN；<br />
           向 <strong className="text-text">CloudWeGo 开源项目</strong>提交 3 个已合并 PR，持续贡献 RPC/HTTP 框架生态。

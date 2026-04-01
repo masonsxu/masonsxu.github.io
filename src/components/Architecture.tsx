@@ -5,7 +5,7 @@ import SectionHeader from './SectionHeader';
 export default function Architecture() {
   return (
     <section id="about" className="mb-24 lg:mb-28">
-      <SectionHeader title="架构能力 / Architecture" />
+      <SectionHeader title="后端架构能力 / Backend Architecture" />
 
       <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 lg:gap-5">
         {/* Core: Three Pillars */}

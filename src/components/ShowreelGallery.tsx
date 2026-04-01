@@ -123,7 +123,13 @@ export default function ShowreelGallery() {
 
   return (
     <section id="showreel" className="mb-32 relative">
-      <SectionHeader title="动态影集 / Showreel" className="mb-12" />
+      <SectionHeader title="技术演示影集 / Technical Showreel" className="mb-12" />
+
+      <ScrollReveal>
+        <p className="text-sm md:text-[15px] leading-7 text-muted max-w-3xl mb-8">
+          通过可视化视频演示展示 <strong className="text-text">Go 微服务架构</strong>、<strong className="text-text">分布式系统演进</strong>、<strong className="text-text">GitHub 开源贡献</strong> 与 <strong className="text-text">数据平台实践</strong>，让技术作品集不仅可读，也可被直观看见。
+        </p>
+      </ScrollReveal>
 
       <ScrollReveal stagger>
         {/* 第一行：3 列 */}
