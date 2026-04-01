@@ -94,11 +94,11 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 
 ## Common Development Tasks
 
-**Local development**: `npm run dev` — starts Vite dev server with HMR
+**Local development**: `bun run dev` — starts Vite dev server with HMR
 
-**Production build**: `npm run build` — runs TypeScript check + Vite build → `dist/`
+**Production build**: `bun run build` — runs TypeScript check + Vite build → `dist/`
 
-**Preview build**: `npm run preview` — serves the built `dist/` locally
+**Preview build**: `bun run preview` — serves the built `dist/` locally
 
 **Adding a new section**:
 1. Create `src/components/NewSection.tsx`
@@ -223,7 +223,7 @@ This is a personal portfolio website for Masons Xu, a backend technical lead and
 
 ## Deployment Notes
 
-- **Cloudflare Pages**: Builds from `main` branch, build command: `npm run build`, output dir: `dist`
+- **Cloudflare Pages**: Builds from `main` branch, build command: `bun run build`, output dir: `dist`
 - Custom domain: `masonsxu-github-io.pages.dev`
 - `public/CNAME` and `public/404.html` are deployed as-is
 - **GitHub Actions Maintenance**: Regularly check and update action versions to avoid deprecation warnings. Currently using:
