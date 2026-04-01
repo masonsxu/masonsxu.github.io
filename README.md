@@ -53,16 +53,16 @@
 ## 本地开发
 
 ```bash
-npm install     # 安装依赖
-npm run dev     # 启动 Vite 开发服务器（HMR）
-npm run build   # 生产构建（TypeScript 检查 + Vite 构建 → dist/）
-npm run preview # 本地预览构建产物
+bun install     # 安装依赖
+bun run dev     # 启动 Vite 开发服务器（HMR）
+bun run build   # 生产构建（TypeScript 检查 + Vite 构建 → dist/）
+bun run preview # 本地预览构建产物
 ```
 
 ## 部署
 
 推送到 `main` 分支后，Cloudflare Pages 自动构建部署：
-- Build command: `npm run build`
+- Build command: `bun run build`
 - Output directory: `dist`
 - 自定义域名: `masonsxu-github-io.pages.dev`
 
