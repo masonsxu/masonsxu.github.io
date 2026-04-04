@@ -9,7 +9,7 @@ import {
   type LayoutCursor,
   type PreparedTextWithSegments,
   type LayoutLineRange,
-} from '@chenglou/pretext'
+} from "@chenglou/pretext";
 import {
   prepareInlineFlow,
   walkInlineFlowLines,
@@ -17,9 +17,14 @@ import {
   type InlineFlowItem,
   type PreparedInlineFlow,
   type InlineFlowFragment,
-} from '@chenglou/pretext/inline-flow'
+} from "@chenglou/pretext/inline-flow";
 
-export type { LayoutCursor, PreparedTextWithSegments, PreparedInlineFlow, InlineFlowItem }
+export type {
+  LayoutCursor,
+  PreparedTextWithSegments,
+  PreparedInlineFlow,
+  InlineFlowItem,
+};
 
 export {
   layout,
@@ -32,29 +37,32 @@ export {
   prepareInlineFlow,
   walkInlineFlowLines,
   measureInlineFlowGeometry,
-}
+};
 
 export type TextMetrics = {
-  lineCount: number
-  height: number
-}
+  lineCount: number;
+  height: number;
+};
 
 export type LineInfo = {
-  text: string
-  width: number
-  x: number
-  y: number
-}
+  text: string;
+  width: number;
+  x: number;
+  y: number;
+};
 
 export type LayoutConfig = {
-  font: string
-  lineHeight: number
-  maxWidth: number
-}
+  font: string;
+  lineHeight: number;
+  maxWidth: number;
+};
 
-export function computeTextHeight(text: string, config: LayoutConfig): TextMetrics {
-  const prepared = prepare(text, config.font)
-  return layout(prepared, config.maxWidth, config.lineHeight)
+export function computeTextHeight(
+  text: string,
+  config: LayoutConfig,
+): TextMetrics {
+  const prepared = prepare(text, config.font);
+  return layout(prepared, config.maxWidth, config.lineHeight);
 }
 
 export function computeTextHeightPrepared(
@@ -62,7 +70,7 @@ export function computeTextHeightPrepared(
   maxWidth: number,
   lineHeight: number,
 ): TextMetrics {
-  return layout(prepared, maxWidth, lineHeight)
+  return layout(prepared, maxWidth, lineHeight);
 }
 
 export function layoutAllLines(
@@ -72,70 +80,84 @@ export function layoutAllLines(
   startX = 0,
   startY = 0,
 ): LineInfo[] {
-  const lines: LineInfo[] = []
-  let cursor: LayoutCursor = { segmentIndex: 0, graphemeIndex: 0 }
-  let lineIndex = 0
+  const lines: LineInfo[] = [];
+  let cursor: LayoutCursor = { segmentIndex: 0, graphemeIndex: 0 };
+  let lineIndex = 0;
 
   while (true) {
-    const line = layoutNextLine(prepared, cursor, maxWidth)
-    if (line === null) break
+    const line = layoutNextLine(prepared, cursor, maxWidth);
+    if (line === null) break;
     lines.push({
       text: line.text,
       width: line.width,
       x: startX,
       y: startY + lineIndex * lineHeight,
-    })
-    cursor = line.end
-    lineIndex++
+    });
+    cursor = line.end;
+    lineIndex++;
   }
 
-  return lines
+  return lines;
 }
 
 export type RichInlineSpec =
-  | { kind: 'text'; text: string; className: string; font: string; extraWidth?: number }
-  | { kind: 'chip'; label: string; className: string; font: string; extraWidth: number; break?: 'never' }
+  | {
+      kind: "text";
+      text: string;
+      className: string;
+      font: string;
+      extraWidth?: number;
+    }
+  | {
+      kind: "chip";
+      label: string;
+      className: string;
+      font: string;
+      extraWidth: number;
+      break?: "never";
+    };
 
 export type RichLineFragment = {
-  className: string
-  text: string
-  leadingGap: number
-}
+  className: string;
+  text: string;
+  leadingGap: number;
+};
 
 export type RichLine = {
-  fragments: RichLineFragment[]
-}
+  fragments: RichLineFragment[];
+};
 
 export type RichNoteLayout = {
-  lineCount: number
-  height: number
-  lines: RichLine[]
-}
+  lineCount: number;
+  height: number;
+  lines: RichLine[];
+};
 
-export function prepareRichInlineFlow(
-  specs: RichInlineSpec[],
-): { prepared: PreparedInlineFlow; classNames: string[] } {
-  const classNames = specs.map(spec => spec.className)
-  const items: InlineFlowItem[] = specs.map(spec => {
-    if (spec.kind === 'chip') {
+export function prepareRichInlineFlow(specs: RichInlineSpec[]): {
+  prepared: PreparedInlineFlow;
+  classNames: string[];
+} {
+  const classNames = specs.map((spec) => spec.className);
+  const items: InlineFlowItem[] = specs.map((spec) => {
+    if (spec.kind === "chip") {
       return {
         text: spec.label,
         font: spec.font,
-        break: spec.break ?? 'never',
+        break: spec.break ?? "never",
         extraWidth: spec.extraWidth,
-      }
+      };
     }
     return {
       text: spec.text,
       font: spec.font,
       extraWidth: spec.extraWidth ?? 0,
-    }
-  })
+    };
+  });
 
   return {
     prepared: prepareInlineFlow(items),
     classNames,
-  }
+  };
 }
 
 export function layoutRichNote(
@@ -144,7 +166,7 @@ export function layoutRichNote(
   maxWidth: number,
   lineHeight: number,
 ): RichNoteLayout {
-  const lines: RichLine[] = []
+  const lines: RichLine[] = [];
   walkInlineFlowLines(prepared, maxWidth, (line) => {
     lines.push({
       fragments: line.fragments.map((fragment: InlineFlowFragment) => ({
@@ -152,14 +174,14 @@ export function layoutRichNote(
         text: fragment.text,
         leadingGap: fragment.gapBefore,
       })),
-    })
-  })
+    });
+  });
 
   return {
     lineCount: lines.length,
     height: lines.length * lineHeight,
     lines,
-  }
+  };
 }
 
 export function fitHeadlineFontSize(
@@ -170,33 +192,37 @@ export function fitHeadlineFontSize(
   minSize = 20,
   maxSize = 92,
 ): { fontSize: number; lineHeight: number; font: string } {
-  let low = minSize
-  let high = maxSize
-  let best = low
-  let bestLineHeight = Math.round(low * 0.93)
-  let bestFont = `${best}px ${fontFamily}`
+  let low = minSize;
+  let high = maxSize;
+  let best = low;
+  let bestLineHeight = Math.round(low * 0.93);
+  let bestFont = `${best}px ${fontFamily}`;
 
   while (low <= high) {
-    const size = Math.floor((low + high) / 2)
-    const lineHeight = Math.round(size * 0.93)
-    const font = `700 ${size}px ${fontFamily}`
-    const prepared = prepareWithSegments(text, font)
+    const size = Math.floor((low + high) / 2);
+    const lineHeight = Math.round(size * 0.93);
+    const font = `700 ${size}px ${fontFamily}`;
+    const prepared = prepareWithSegments(text, font);
 
-    let breaksWord = false
-    const metrics = walkLineRanges(prepared, maxWidth, (line: LayoutLineRange) => {
-      if (line.end.graphemeIndex !== 0) breaksWord = true
-    })
-    const totalHeight = metrics * lineHeight
+    let breaksWord = false;
+    const metrics = walkLineRanges(
+      prepared,
+      maxWidth,
+      (line: LayoutLineRange) => {
+        if (line.end.graphemeIndex !== 0) breaksWord = true;
+      },
+    );
+    const totalHeight = metrics * lineHeight;
 
     if (!breaksWord && totalHeight <= maxHeight) {
-      best = size
-      bestLineHeight = lineHeight
-      bestFont = font
-      low = size + 1
+      best = size;
+      bestLineHeight = lineHeight;
+      bestFont = font;
+      low = size + 1;
     } else {
-      high = size - 1
+      high = size - 1;
     }
   }
 
-  return { fontSize: best, lineHeight: bestLineHeight, font: bestFont }
+  return { fontSize: best, lineHeight: bestLineHeight, font: bestFont };
 }
