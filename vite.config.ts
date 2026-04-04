@@ -1,3 +1,4 @@
+import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig, type Plugin } from 'vite'
@@ -29,6 +30,11 @@ export default defineConfig({
     }),
     removeLazyChunkPreload(),
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   build: {
     chunkSizeWarningLimit: 850,
     rollupOptions: {

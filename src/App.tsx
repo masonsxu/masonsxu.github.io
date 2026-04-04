@@ -1,14 +1,14 @@
 import { lazy, Suspense, useEffect, useRef } from 'react'
 import Architecture from './components/Architecture'
-import ContentHero from './components/ContentHero'
-import Experience from './components/Experience'
+import ExperienceTimeline from './components/ExperienceTimeline'
 import Footer from './components/Footer'
+import HeroEditorial from './components/HeroEditorial'
 import Interlude from './components/Interlude'
 import Navbar from './components/Navbar'
 import OpenSource from './components/OpenSource'
-import Projects from './components/Projects'
-import SiteBackground from './components/SiteBackground'
-import Skills from './components/Skills'
+import ProjectAccordion from './components/ProjectAccordion'
+import SkillsRich from './components/SkillsRich'
+import TypographicASCII from './components/TypographicASCII'
 import { ThemeProvider } from './contexts/ThemeContext'
 
 const Essence = lazy(() => import('./components/Essence'))
@@ -70,17 +70,17 @@ function AppContent() {
     <>
       <SpotlightEffect />
       <div className="relative isolate selection:bg-gold/20 selection:text-gold font-sans">
-        <SiteBackground />
+        <TypographicASCII />
         <div className="relative z-10">
           <Navbar />
           <main className="max-w-5xl 2xl:max-w-6xl mx-auto px-6 lg:px-7 pt-28 lg:pt-30 pb-18 lg:pb-20">
-            <ContentHero />
-            <Projects />
+            <HeroEditorial />
+            <ProjectAccordion />
             <Interlude type="quote" />
             <Architecture />
-            <Skills />
+            <SkillsRich />
             <Interlude type="data" />
-            <Experience />
+            <ExperienceTimeline />
             <Interlude type="keywords" />
             <Suspense fallback={null}>
               <Essence />
