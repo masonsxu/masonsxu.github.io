@@ -130,6 +130,20 @@ interface Props {
   - Backgrounds: `bg-bg`, `bg-surface`, `bg-surface-light`
   - Text: `text-text`, `text-muted`, `text-primary`, `text-accent`
   - Borders: `border-border` (always use opacity modifier: `border-border/20`)
+- **CRITICAL**: shadcn/ui naming conflict陷阱 (LEARNED THE HARD WAY)
+  - shadcn定义: `--muted` = 背景色, `--muted-foreground` = 文字色
+  - 项目定义: `text-muted` 想要的是文字颜色
+  - **解决方案**: 在 `@theme inline` 中覆盖: `--color-muted: hsl(var(--muted-foreground));`
+  - 这样项目的 `text-muted` 类会正确映射到文字颜色，而不是背景色
+- **CRITICAL**: Tailwind v4 dark mode 必须配置 `@custom-variant` (LEARNED THE HARD WAY)
+  - Tailwind v4 默认 `dark:` 响应系统 `prefers-color-scheme`，不响应 `.dark` class
+  - 项目用 `ThemeContext` 通过 `document.documentElement.classList.toggle('dark')` 切换主题
+  - **必须**在 `src/index.css` 顶部添加: `@custom-variant dark (&:is(.dark *));`
+  - 缺少这行会导致所有 `dark:` 前缀的样式不跟随主题切换
+- **CRITICAL**: `@theme` 块会覆盖 Tailwind 默认颜色调色板 (LEARNED THE HARD WAY)
+  - 定义 `@theme {}` 后，Tailwind 的默认颜色（amber, stone, blue 等）不再可用
+  - 需要手动在 `@theme` 中声明使用的颜色: `--color-amber-50: #fffbeb;` 等
+  - 否则 `bg-amber-50`、`text-emerald-400` 等类会静默失效（无报错但无效果）
 - **NEVER** hardcode hex values in JSX - always use semantic color classes
 - **Icons**: Always use `lucide-react`, never inline SVG
 - **Cards**: Use `rounded-lg` + `spotlight-card` class for hover glow effect
@@ -467,3 +481,67 @@ src/
 - Port: Copied `blackhole.js` and `blackhole-shader.js` directly
 - Adapt: Only changed import paths and color scheme
 - Result: Working in 1.2h vs 3.5h (63% time saved, 90% less frustration)
+
+---
+
+## shadcn/ui Color System Integration (Critical Trap!)
+
+**Problem Encountered:**
+After integrating shadcn/ui components, all text became invisible because text color matched background color exactly.
+
+**Root Cause:**
+shadcn/ui uses a different color naming convention than the project:
+
+```css
+/* shadcn/ui naming */
+--muted: 40 20% 96%;              /* BACKGROUND color (light gray) */
+--muted-foreground: 0 0% 42%;     /* TEXT color (dark gray) */
+```
+
+But project components use `text-muted` expecting it to be a **text color**, not a background color. This caused:
+- `text-muted` → maps to `--color-muted` → shadcn's background color → invisible on light backgrounds!
+
+**Solution:**
+Override the mapping in `@theme inline` block:
+
+```css
+@theme inline {
+  /* shadcn/ui standard mapping */
+  --color-muted: hsl(var(--muted));              /* Background */
+  --color-muted-foreground: hsl(var(--muted-foreground));  /* Text */
+
+  /* CRITICAL OVERRIDE: Fix project legacy classes */
+  --color-muted: hsl(var(--muted-foreground));   /* Force text-muted to use text color */
+}
+```
+
+**Key Takeaway:**
+When mixing legacy color utilities (`text-muted`, `text-text`) with shadcn/ui, ALWAYS check:
+1. What does the legacy class expect? (text color? background color?)
+2. What does shadcn's CSS variable provide?
+3. Add override in `@theme inline` if there's a semantic mismatch
+
+**Working Color System:**
+```css
+/* Light theme */
+--background: 0 0% 98%;      /* Main background */
+--foreground: 0 0% 10%;      /* Main text */
+--muted: 40 20% 96%;         /* Secondary background */
+--muted-foreground: 0 0% 42%; /* Secondary text */
+--primary: 45 70% 45%;       /* Brand color (gold) */
+
+/* Dark theme */
+--background: 0 0% 5%;
+--foreground: 0 0% 99%;
+--muted: 0 0% 13%;
+--muted-foreground: 0 0% 63%;
+--primary: 45 80% 65%;
+```
+
+**Integration Checklist for shadcn/ui:**
+- [ ] Review shadcn's color variable naming (`-foreground` suffix = text color)
+- [ ] Map project legacy classes to correct shadcn variables
+- [ ] Add overrides in `@theme inline` for semantic mismatches
+- [ ] Test both light and dark themes
+- [ ] Verify text contrast on all components
+- [ ] Document any custom overrides in AGENTS.md

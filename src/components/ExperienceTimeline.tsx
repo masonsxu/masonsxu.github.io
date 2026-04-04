@@ -20,7 +20,7 @@ const entries: ExperienceEntry[] = [
   {
     id: 'go-architect',
     role: 'Go 后端架构师 / 技术负责人',
-    company: 'Manteia 数据科技',
+    company: '福建自贸试验区厦门片区 Manteia 数据科技有限公司',
     period: '2025.03 - 至今',
     isActive: true,
     highlights: [
@@ -33,7 +33,7 @@ const entries: ExperienceEntry[] = [
   {
     id: 'python-backend',
     role: 'Python 后端开发工程师',
-    company: 'Manteia 数据科技',
+    company: '福建自贸试验区厦门片区 Manteia 数据科技有限公司',
     period: '2021.06 - 2025.03',
     isActive: false,
     highlights: [

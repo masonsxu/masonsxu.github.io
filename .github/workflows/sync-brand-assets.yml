@@ -64,15 +64,8 @@ jobs:
 
           files=(
             "public/favicon.svg"
-            "public/logo.svg"
+            "public/logo-dark.svg"
             "public/logo-circle.svg"
-            "public/logo-options/logo-favicon-16.svg"
-            "public/logo-options/logo-primary-dark.svg"
-            "public/logo-options/logo-primary-light.svg"
-            "public/logo-options/logo-secondary-square.svg"
-            "public/logo-options/logo-mono-black.svg"
-            "public/logo-options/logo-mono-white.svg"
-            "public/logo-options/MXW-BRAND-GUIDELINES.md"
           )
 
           for file in "${files[@]}"; do
@@ -92,16 +85,8 @@ jobs:
         run: |
           changed="$(git status --porcelain -- \
             public/favicon.svg \
-            public/logo.svg \
-            public/logo-light.svg \
-            public/logo-circle.svg \
-            public/logo-options/logo-favicon-16.svg \
-            public/logo-options/logo-primary-dark.svg \
-            public/logo-options/logo-primary-light.svg \
-            public/logo-options/logo-secondary-square.svg \
-            public/logo-options/logo-mono-black.svg \
-            public/logo-options/logo-mono-white.svg \
-            public/logo-options/MXW-BRAND-GUIDELINES.md)"
+            public/logo-dark.svg \
+            public/logo-light.svg"
 
           if [[ -n "${changed}" ]]; then
             echo "has_changes=true" >> "${GITHUB_OUTPUT}"
@@ -140,15 +125,8 @@ jobs:
             - [ ] 人工检查 favicon/logo 渲染
           add-paths: |
             public/favicon.svg
-            public/logo.svg
+            public/logo-dark.svg
             public/logo-circle.svg
-            public/logo-options/logo-favicon-16.svg
-            public/logo-options/logo-primary-dark.svg
-            public/logo-options/logo-primary-light.svg
-            public/logo-options/logo-secondary-square.svg
-            public/logo-options/logo-mono-black.svg
-            public/logo-options/logo-mono-white.svg
-            public/logo-options/MXW-BRAND-GUIDELINES.md
 
       - name: Print result
         if: always()
