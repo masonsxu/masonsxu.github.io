@@ -92,19 +92,23 @@
   <rect x="30" y="30" width="1140" height="570" rx="2" fill="none" stroke="#D4AF37" stroke-opacity="0.06" stroke-width="1"/>
 
   <!-- ── Top bar: Logo + brand name ── -->
-  <!-- Logo badge -->
-  <rect x="56" y="52" width="38" height="38" rx="6" fill="#121214" stroke="#D4AF37" stroke-opacity="0.4" stroke-width="1"/>
-  <text x="75" y="77" text-anchor="middle" font-family="'Courier New', monospace" font-size="11" font-weight="bold" fill="#FCFCFC">
-    <tspan fill="#D4AF37">&lt;</tspan>X<tspan fill="#D4AF37">/&gt;</tspan>
-  </text>
+  <!-- Logo badge - personal brand mark -->
+  <g transform="translate(56, 52)">
+    <rect x="0" y="0" width="38" height="38" rx="6" fill="#0C0C0E" stroke="#D4AF37" stroke-opacity="0.4" stroke-width="1"/>
+    <g fill="none" stroke="#D4AF37" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 28V10L15 19L19 15L23 19L30 10V28"/>
+      <path d="M8 12L15 27L19 21L23 27L30 12"/>
+    </g>
+    <path d="M14 21L26 21M20 15L20 27" fill="none" stroke="#FCFCFC" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  </g>
 
   <!-- Brand name -->
   <text x="106" y="76" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" font-weight="700" letter-spacing="3" fill="#A1A1AA">MASONS.XU</text>
 
-  <!-- Top-right: subtle tag -->
-<rect x="1026" y="52" width="142" height="28" rx="14" fill="#1E1E21" stroke="#D4AF37" stroke-opacity="0.25" stroke-width="1"/>
-<circle cx="1047" cy="66" r="4" fill="#22C55E"/>
-<text x="1068" y="71" font-family="'Courier New', monospace" font-size="11" fill="#A1A1AA" letter-spacing="0.5">Open to Work</text>
+  <!-- Top-right: status tag -->
+  <rect x="986" y="52" width="135" height="28" rx="14" fill="#1E1E21" stroke="#D4AF37" stroke-opacity="0.25" stroke-width="1"/>
+  <circle cx="1004" cy="66" r="4" fill="#F59E0B"/>
+  <text x="1022" y="70" font-family="'Noto Sans SC', 'Courier New', monospace" font-size="11" fill="#A1A1AA">Actively Seeking</text>
 
   <!-- ── Main content block ── -->
   <!-- Chinese name -->
@@ -114,48 +118,48 @@
   <text x="66" y="282" font-family="'Noto Sans SC', sans-serif" font-size="38" font-style="italic" font-weight="400" fill="#D4AF37" fill-opacity="0.75" letter-spacing="1">Masons Xu</text>
 
   <!-- Role title with gradient -->
-  <text x="60" y="348" font-family="'Noto Sans SC', sans-serif" font-size="40" font-weight="700" fill="url(#goldGrad)" letter-spacing="1">后端技术负责人 · 分布式系统架构师</text>
+  <text x="60" y="348" font-family="'Noto Sans SC', sans-serif" font-size="40" font-weight="700" fill="url(#goldGrad)" letter-spacing="1">Go 后端工程师 · 分布式系统 · 云原生基础设施</text>
 
   <!-- ── Divider ── -->
-  <line x1="60" y1="376" x2="760" y2="376" stroke="url(#dividerGrad)" stroke-width="1"/>
+  <line x1="60" y1="376" x2="900" y2="376" stroke="url(#dividerGrad)" stroke-width="1"/>
 
   <!-- ── Three stats ── -->
-  <!-- Stat 1: 5年 -->
+  <!-- Stat 1: 10+ -->
   <g transform="translate(60, 390)">
-    <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">5年</text>
-    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">分布式系统架构</text>
+    <text y="52" font-family="'Courier New', monospace" font-size="48" font-weight="700" fill="#D4AF37">10+</text>
+    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">微服务模块</text>
   </g>
 
   <!-- Vertical separator 1 -->
   <line x1="230" y1="400" x2="230" y2="468" stroke="#D4AF37" stroke-opacity="0.2" stroke-width="1"/>
 
-  <!-- Stat 2: 众多 -->
+  <!-- Stat 2: 数万行 -->
   <g transform="translate(250, 390)">
-    <text y="52" font-family="'Noto Sans SC', monospace" font-size="48" font-weight="700" fill="#D4AF37">众多</text>
-    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">生产环境部署</text>
+    <text y="52" font-family="'Courier New', monospace" font-size="48" font-weight="700" fill="#D4AF37">数万行</text>
+    <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">Go 生产代码</text>
   </g>
 
   <!-- Vertical separator 2 -->
-  <line x1="450" y1="400" x2="450" y2="468" stroke="#D4AF37" stroke-opacity="0.2" stroke-width="1"/>
+  <line x1="480" y1="400" x2="480" y2="468" stroke="#D4AF37" stroke-opacity="0.2" stroke-width="1"/>
 
   <!-- Stat 3: 99.9% -->
-  <g transform="translate(470, 390)">
-    <text y="52" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="48" font-weight="700" fill="#D4AF37">99.9%</text>
+  <g transform="translate(500, 390)">
+    <text y="52" font-family="'Courier New', monospace" font-size="48" font-weight="700" fill="#D4AF37">99.9%</text>
     <text y="74" font-family="'Noto Sans SC', sans-serif" font-size="13" fill="#A1A1AA" letter-spacing="0.5">系统可用性</text>
   </g>
 
   <!-- ── Bottom bar ── -->
   <!-- Bottom-left: status -->
-  <circle cx="66" cy="578" r="5" fill="#22C55E"/>
-  <text x="80" y="583" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="#A1A1AA" letter-spacing="0.5">后端技术负责人 · 分布式系统架构师</text>
+  <circle cx="66" cy="578" r="5" fill="#F59E0B"/>
+  <text x="80" y="583" font-family="'Noto Sans SC', sans-serif" font-size="14" fill="#A1A1AA" letter-spacing="0.5">正在求职 / Go 后端工程师</text>
   <!-- Bottom-center: tech stack -->
-  <circle cx="360" cy="578" r="2" fill="#A1A1AA" fill-opacity="0.4"/>
-  <text x="372" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · CloudWeGo · gRPC · PostgreSQL</text>
+  <circle cx="390" cy="578" r="2" fill="#A1A1AA" fill-opacity="0.4"/>
+  <text x="402" y="583" font-family="'Courier New', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.6" letter-spacing="0.3">Go · Kitex · CloudWeGo · Iceberg</text>
 
   <!-- Bottom-right: URL -->
-  <text x="1144" y="583" text-anchor="end" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.55" letter-spacing="0.5">masonsxu-github-io.pages.dev</text>
+  <text x="1144" y="583" text-anchor="end" font-family="'Courier New', 'JetBrains Mono', monospace" font-size="13" fill="#A1A1AA" fill-opacity="0.55" letter-spacing="0.5">masonsxu.github.io</text>
 
   <!-- Bottom-right decorative accent line -->
-  <line x1="1060" y1="590" x2="1148" y2="590" stroke="#D4AF37" stroke-opacity="0.3" stroke-width="1"/>
+  <line x1="990" y1="590" x2="1148" y2="590" stroke="#D4AF37" stroke-opacity="0.3" stroke-width="1"/>
 
 </svg>
