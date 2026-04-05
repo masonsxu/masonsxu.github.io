@@ -6,18 +6,21 @@ import {
   walkLineRanges,
   measureLineGeometry,
   measureNaturalWidth,
+  materializeLineRange,
   type LayoutCursor,
   type PreparedTextWithSegments,
   type LayoutLineRange,
-} from "@chenglou/pretext";
+} from "./vendor/layout";
 import {
   prepareInlineFlow,
   walkInlineFlowLines,
   measureInlineFlowGeometry,
+  layoutNextInlineFlowLine,
+  layoutNextInlineFlowLineRange,
   type InlineFlowItem,
   type PreparedInlineFlow,
   type InlineFlowFragment,
-} from "@chenglou/pretext/inline-flow";
+} from "./vendor/inline-flow";
 
 export type {
   LayoutCursor,
@@ -34,9 +37,12 @@ export {
   walkLineRanges,
   measureLineGeometry,
   measureNaturalWidth,
+  materializeLineRange,
   prepareInlineFlow,
   walkInlineFlowLines,
   measureInlineFlowGeometry,
+  layoutNextInlineFlowLine,
+  layoutNextInlineFlowLineRange,
 };
 
 export type TextMetrics = {

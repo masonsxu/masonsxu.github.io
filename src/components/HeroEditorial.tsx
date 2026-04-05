@@ -1,9 +1,9 @@
 import { ChevronDown, Download } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { layoutNextLine } from "@chenglou/pretext";
 import {
   fitHeadlineFontSize,
   layoutAllLines,
+  layoutNextLine,
   prepareWithSegments,
 } from "../pretext/layout-utils";
 import {
