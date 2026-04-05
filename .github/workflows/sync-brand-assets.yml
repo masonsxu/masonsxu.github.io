@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: '要同步的品牌资产版本（例如 v1.2.3）'
+        description: "要同步的品牌资产版本（例如 v1.2.3）"
         required: true
         type: string
 
@@ -66,6 +66,8 @@ jobs:
             "public/favicon.svg"
             "public/logo-dark.svg"
             "public/logo-circle.svg"
+            "public/logo-secondary-square.svg"
+            "public/logo-secondary-square-light.svg"
           )
 
           for file in "${files[@]}"; do
@@ -86,7 +88,9 @@ jobs:
           changed="$(git status --porcelain -- \
             public/favicon.svg \
             public/logo-dark.svg \
-            public/logo-light.svg"
+            public/logo-light.svg \
+            public/logo-secondary-square.svg \
+            public/logo-secondary-square-light.svg"
 
           if [[ -n "${changed}" ]]; then
             echo "has_changes=true" >> "${GITHUB_OUTPUT}"
@@ -127,6 +131,8 @@ jobs:
             public/favicon.svg
             public/logo-dark.svg
             public/logo-circle.svg
+            public/logo-secondary-square.svg
+            public/logo-secondary-square-light.svg
 
       - name: Print result
         if: always()
