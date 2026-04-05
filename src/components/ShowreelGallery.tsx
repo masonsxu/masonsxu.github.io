@@ -169,7 +169,7 @@ export default function ShowreelGallery() {
         togglePlay={handleTogglePlay}
       >
         {activeVideo && (
-          <div className="relative w-full h-full">
+          <div className="w-full h-full">
             <Player
               ref={playerRef}
               component={activeVideo.component as any}

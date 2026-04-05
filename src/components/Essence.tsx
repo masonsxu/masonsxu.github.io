@@ -40,7 +40,7 @@ export default function Essence() {
                   compositionHeight={400}
                   durationInFrames={300}
                   fps={30}
-                  style={{ width: '100%', height: '100%' }}
+                  style={{ width: '100%' }}
                   loop
                   autoPlay
                   controls={false}
