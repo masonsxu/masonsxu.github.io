@@ -1,6 +1,6 @@
 import { Code2, Database, Network } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { prepareInlineFlow, walkInlineFlowLines, type InlineFlowLine } from '@chenglou/pretext/inline-flow'
+import { prepareInlineFlow, walkInlineFlowLines, type InlineFlowLine, type InlineFlowFragment } from '../pretext/vendor/inline-flow'
 import ScrollReveal, { StaggerChild } from './ScrollReveal'
 import SectionHeader from './SectionHeader'
 
@@ -203,7 +203,7 @@ function RichInlineFlow({ specs, maxWidth }: { specs: RichSpec[]; maxWidth: numb
     <div ref={containerRef} className="mb-4">
       {lines.map((line, lineIndex) => (
         <div key={lineIndex} className="flex items-center flex-wrap gap-0" style={{ height: `${BODY_LINE_HEIGHT}px`, lineHeight: `${BODY_LINE_HEIGHT}px` }}>
-          {line.fragments.map((fragment, fragIndex) => (
+          {line.fragments.map((fragment: InlineFlowFragment, fragIndex: number) => (
             <span
               key={fragIndex}
               className={classMap[fragment.itemIndex]}
