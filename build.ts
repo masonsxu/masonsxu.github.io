@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import plugin from "bun-plugin-tailwind";
-import { existsSync, cpSync } from "fs";
+import { existsSync, cpSync, writeFileSync } from "fs";
 import { rm } from "fs/promises";
 import path from "path";
 
@@ -148,4 +148,20 @@ const buildTime = (end - start).toFixed(2);
 
 console.log(`\n📦 Copying public/ to ${outdir}/`);
 cpSync("public", outdir, { recursive: true });
+
+// Generate sitemap.xml
+const HOSTNAME = process.env.SITE_URL || "https://masonsxu-github-io.pages.dev";
+const now = new Date().toISOString();
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${HOSTNAME}/</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+writeFileSync(path.join(outdir, "sitemap.xml"), sitemap, "utf-8");
+console.log(`🗺️  Generated sitemap.xml (${now})`);
+
 console.log(`✅ Build completed in ${buildTime}ms\n`);
