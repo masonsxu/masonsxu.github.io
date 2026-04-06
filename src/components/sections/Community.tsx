@@ -4,16 +4,19 @@ const prs = [
   {
     repo: "hertz-contrib/jwt",
     number: "#27",
+    url: "https://github.com/hertz-contrib/jwt/pull/27",
     desc: "修复 RefreshToken 中 orig_iat 被意外重置导致 MaxRefresh 窗口失效的 Bug",
   },
   {
     repo: "hertz-contrib/obs-opentelemetry",
     number: "#67",
+    url: "https://github.com/hertz-contrib/obs-opentelemetry/pull/67",
     desc: "优化可观测性组件，提升链路追踪稳定性与准确性",
   },
   {
     repo: "cloudwego/abcoder",
     number: "#84",
+    url: "https://github.com/cloudwego/abcoder/pull/84",
     desc: "修复 Go 1.25+ 环境下 sonic 依赖版本导致的安装编译错误",
   },
 ];
@@ -83,7 +86,12 @@ export function Community() {
           <div className="space-y-3">
             {prs.map((pr, i) => (
               <ScrollReveal key={pr.number} delay={i * 80}>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-3.5 px-5 rounded-xl border border-white/[0.03] bg-white/[0.01] hover:border-gold/10 transition-colors duration-300">
+                <a
+                  href={pr.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-3.5 px-5 rounded-xl border border-white/[0.03] bg-white/[0.01] hover:border-gold/10 transition-colors duration-300"
+                >
                   <div className="flex items-center gap-2 shrink-0">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-gold/60">
                       <path d="M10 1L3 8L10 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -92,7 +100,7 @@ export function Community() {
                     <span className="text-xs font-mono text-muted-foreground">{pr.number}</span>
                   </div>
                   <span className="text-sm text-foreground/60">{pr.desc}</span>
-                </div>
+                </a>
               </ScrollReveal>
             ))}
           </div>
