@@ -8,6 +8,7 @@ import { Trailer } from "./Trailer";
 import { VIDEO } from "./shared/theme";
 
 const F = VIDEO.fps;
+const TOTAL_DURATION = 60 * F;
 
 export const RemotionRoot = () => {
   return (

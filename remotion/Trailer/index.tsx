@@ -38,7 +38,7 @@ const SCENES = [
   { Component: ArchEvolution, duration: 12 },
   { Component: DataLake, duration: 12 },
   { Component: ContributionHeatmap, duration: 12 },
-  { Component: OSSDashboard, duration: 10 },
+  { Component: OSSDashboard, duration: 12 },
 ];
 
 // 计算每个场景帧数
@@ -62,20 +62,38 @@ export const Trailer: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <TransitionSeries>
-        {SCENES.map((scene, i) => (
-          <React.Fragment key={i}>
-            <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES[i]}>
-              <scene.Component />
-            </TransitionSeries.Sequence>
-            {i < SCENES.length - 1 && (
-              <TransitionSeries.Transition
-                presentation={fade()}
-                timing={linearTiming({ durationInFrames: TRANSITION_DURATION })}
-              />
-            )}
-          </React.Fragment>
-        ))}
+      <TransitionSeries style={{}}>
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES[0]}>
+          <TechCard />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: TRANSITION_DURATION })}
+        />
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES[1]}>
+          <ArchEvolution />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: TRANSITION_DURATION })}
+        />
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES[2]}>
+          <DataLake />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: TRANSITION_DURATION })}
+        />
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES[3]}>
+          <ContributionHeatmap />
+        </TransitionSeries.Sequence>
+        <TransitionSeries.Transition
+          presentation={fade()}
+          timing={linearTiming({ durationInFrames: TRANSITION_DURATION })}
+        />
+        <TransitionSeries.Sequence durationInFrames={SCENE_FRAMES[4]}>
+          <OSSDashboard />
+        </TransitionSeries.Sequence>
       </TransitionSeries>
 
       {/* 收尾定格 (从场景结束后开始) */}
