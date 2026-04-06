@@ -7,56 +7,55 @@
 ## 技术栈
 
 - **React 19** + **TypeScript** — 函数式组件
-- **Vite** — 构建工具，支持 HMR
+- **Bun** — 构建工具与包管理
 - **Tailwind CSS v4** — 样式（CSS `@theme` 配置，无 `tailwind.config.js`）
-- **Three.js** — 3D 动态背景（Obsidian Neural Network 多层效果）
-- **Remotion** — 时间线 SVG 动画（星座效果、视频作品）
-- **framer-motion** — 滚动触发动画
+- **Remotion** — 时间线动画与视频合成
 - **lucide-react** — 图标库
-- 字体：Noto Sans SC（中文）、Playfair Display（衬线）、JetBrains Mono（代码）（通过 `fonts.loli.net` 加载）
+- 字体：Inter、Noto Sans SC、JetBrains Mono（通过 Google Fonts 加载）
 
 ## 项目结构
 
 ```
-├── index.html              # Vite 入口（meta 标签、SEO、JSON-LD）
-├── vite.config.ts          # Vite 配置（React、Tailwind v4、chunk splitting）
-├── tsconfig.json           # TypeScript 项目引用
-├── public/                 # 静态资源（原样复制到 dist/）
+├── build.ts              # Bun 构建脚本（Tailwind 插件 + sitemap 生成）
+├── tsconfig.json         # TypeScript 配置
+├── public/               # 静态资源（构建时复制到 dist/）
 │   ├── favicon.svg
-│   ├── og-image.png / .svg
-│   ├── resume.pdf / .html
-│   ├── robots.txt / sitemap.xml
+│   ├── og-image.png      # 1280×640 Open Graph 封面
+│   ├── robots.txt
 │   ├── CNAME
-│   └── 404.html            # 独立 404 页面
+│   └── 404.html
+├── styles/
+│   └── globals.css       # Tailwind v4 @theme + 全局 CSS 变量
 ├── src/
-│   ├── main.tsx            # React 入口
-│   ├── App.tsx             # 根组件（聚光灯效果、布局）
-│   ├── index.css           # Tailwind v4 @theme + 全局 CSS
+│   ├── index.html        # HTML 入口（SEO meta、JSON-LD）
+│   ├── frontend.tsx      # React 入口（HMR 支持）
+│   ├── index.css         # 动画 keyframes + 工具类
+│   ├── App.tsx           # 根组件（页面布局）
+│   ├── hooks.ts          # 自定义 hooks（useInView、useAnimatedCounter）
 │   ├── components/
-│   │   ├── ThreeBackground.tsx # Three.js 动态背景（星云、流场粒子、网络拓扑、线框几何）
-│   │   ├── Navbar.tsx      # 固定毛玻璃导航栏
-│   │   ├── Hero.tsx        # Hero 区（Remotion 星座动画）
-│   │   ├── Architecture.tsx # 架构能力（Bento Box 网格）
-│   │   ├── Skills.tsx      # 专业技能（标签式展示）
-│   │   ├── Projects.tsx    # 核心项目
-│   │   ├── Experience.tsx  # 职业经历时间线
-│   │   ├── Education.tsx   # 教育背景与奖项
-│   │   ├── Essence.tsx     # 设计哲学 + 星座卡片
-│   │   ├── OpenSource.tsx  # 开源贡献 & PR
-│   │   ├── Footer.tsx
-│   │   ├── SectionHeader.tsx  # 通用区块标题
-│   │   └── ScrollReveal.tsx   # framer-motion 滚动动画
-│   └── remotion/
-│       └── ConstellationAnimation.tsx  # Remotion 动画（spring + interpolate）
+│   │   ├── ScrollReveal.tsx      # IntersectionObserver 滚动揭示
+│   │   ├── ScrollProgressBar.tsx # 顶部滚动进度条（零 re-render）
+│   │   ├── sections/
+│   │   │   ├── Hero.tsx         # 首屏（品牌 Logo + 标语 + 关键指标）
+│   │   │   ├── About.tsx        # 个人简介
+│   │   │   ├── Projects.tsx     # 核心项目（3 个生产级系统）
+│   │   │   ├── Architecture.tsx # 架构能力展示
+│   │   │   ├── Essence.tsx      # 设计哲学
+│   │   │   ├── Showreel.tsx     # Remotion 视频作品
+│   │   │   ├── Timeline.tsx     # 职业经历时间线
+│   │   │   ├── Community.tsx    # 开源贡献（CloudWeGo PR）
+│   │   │   └── Contact.tsx      # 联系方式
+│   │   └── ui/                  # 基础 UI 组件（button、card、input 等）
+│   └── assets/                  # 品牌 Logo（SVG）
+└── remotion/                    # Remotion 视频合成（独立预览）
 ```
 
 ## 本地开发
 
 ```bash
-bun install     # 安装依赖
-bun run dev     # 启动 Vite 开发服务器（HMR）
-bun run build   # 生产构建（TypeScript 检查 + Vite 构建 → dist/）
-bun run preview # 本地预览构建产物
+bun install         # 安装依赖
+bun run dev         # 启动 Bun 开发服务器（HMR）
+bun run build       # 生产构建 → dist/
 ```
 
 ## 部署
@@ -68,23 +67,16 @@ bun run preview # 本地预览构建产物
 
 ## 设计系统
 
-**"Midnight Pearl" 黑金主题**（在 `src/index.css` 的 `@theme` 中定义）：
+**"Midnight Pearl" 黑金主题**（在 `styles/globals.css` 的 `@theme` 中定义）：
 
 | 变量 | 色值 | 用途 |
 |------|------|------|
-| `bg` | `#0C0C0E` | 页面背景 |
-| `surface` | `#121214` | 卡片背景 |
-| `surface-light` | `#1E1E21` | 次级背景 |
-| `border` | `#D4AF37` | 边框（需加 `/20` 透明度） |
-| `primary` | `#D4AF37` | 主色（金） |
-| `accent` | `#F2D288` | 强调色（浅金） |
-| `muted` | `#A1A1AA` | 次要文字 |
-
-**代码规范**：
-- 始终使用语义化 class（`bg-surface`、`border-border/20`、`text-primary`）
-- 禁止硬编码颜色值
-- 图标统一使用 `lucide-react`
-- 卡片统一使用 `rounded-lg` + `spotlight-card`
+| `--background` | `#0C0C0E` | 页面背景 |
+| `--card` | `#111113` | 卡片背景 |
+| `--secondary` | `#1E1E21` | 次级背景 |
+| `--primary` | `#D4AF37` | 主色（金） |
+| `--foreground` | `#FCFCFC` | 主文字 |
+| `--muted-foreground` | `#A1A1AA` | 次要文字 |
 
 ## Commit 规范
 
