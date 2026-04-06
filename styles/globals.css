@@ -1,0 +1,81 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-gold: #D4AF37;
+  --color-gold-light: #F8E7B9;
+  --color-gold-deep: #7A5810;
+  --color-obsidian: #0C0C0E;
+  --color-pearl: #FCFCFC;
+  --color-surface: #1E1E21;
+  --color-surface-elevated: #161618;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.75rem;
+  --background: #0C0C0E;
+  --foreground: #FCFCFC;
+  --card: #111113;
+  --card-foreground: #FCFCFC;
+  --popover: #111113;
+  --popover-foreground: #FCFCFC;
+  --primary: #D4AF37;
+  --primary-foreground: #0C0C0E;
+  --secondary: #1E1E21;
+  --secondary-foreground: #FCFCFC;
+  --muted: #1E1E21;
+  --muted-foreground: #A1A1AA;
+  --accent: #1E1E21;
+  --accent-foreground: #FCFCFC;
+  --destructive: #dc2626;
+  --border: rgba(212, 175, 55, 0.08);
+  --input: rgba(252, 252, 252, 0.06);
+  --ring: rgba(212, 175, 55, 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: rgba(212, 175, 55, 0.25);
+    color: #FCFCFC;
+  }
+}
