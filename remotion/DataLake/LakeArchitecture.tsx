@@ -5,355 +5,261 @@ import {
   useVideoConfig,
   interpolate,
   spring,
-  Easing,
 } from "remotion";
-import { THEME, VIDEO } from "../shared/theme";
+import { THEME } from "../shared/theme";
 import { safeInterpolate, sec } from "../shared/utils";
 
-/**
- * 架构层级定义
- */
 const ARCH_LAYERS = [
   {
     id: "source",
-    label: "数据源层",
-    items: ["MySQL", "MongoDB", "REST API"],
+    label: "Sources",
+    title: "多源输入",
+    items: ["REST API", "MySQL", "MongoDB raw_document"],
     color: THEME.lake.primary,
-    y: 240,
+    y: 260,
   },
   {
     id: "orchestrate",
-    label: "编排层",
-    items: ["Airflow 3.1 DAG", "Config Parser", "Scheduler"],
+    label: "Orchestration",
+    title: "编排与规则",
+    items: ["Airflow 3.1 DAG", "mapping_rules", "DictConfigParser"],
     color: THEME.lake.airflow,
-    y: 370,
+    y: 390,
   },
   {
-    id: "storage",
-    label: "存储层",
-    items: ["Iceberg", "Parquet", "Schema Evolution"],
-    color: THEME.lake.iceberg,
-    y: 500,
-  },
-  {
-    id: "query",
-    label: "查询与计算层",
-    items: ["Trino SQL", "Polars", "BFS JOIN"],
+    id: "compute",
+    label: "Compute & Query",
+    title: "查询与计算",
+    items: ["Iceberg", "Trino", "Polars", "BFS JOIN path"],
     color: THEME.lake.polars,
-    y: 630,
+    y: 520,
   },
   {
-    id: "output",
-    label: "输出层",
-    items: ["API 回传", "字典抽取", "数据验证"],
+    id: "delivery",
+    label: "Delivery",
+    title: "抽取与回传",
+    items: ["two-stage extraction", "FieldCommon0 isolation", "api_payload callback"],
     color: THEME.lake.accent,
-    y: 760,
+    y: 650,
   },
-];
+] as const;
 
 const METRICS = [
-  { value: "4", label: "ETL 阶段", icon: "M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" },
-  { value: "3", label: "数据源", icon: "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" },
-  { value: "5", label: "链式 JOIN", icon: "M4 12h4m4 0h4m4 0h4" },
-  { value: "BFS", label: "路径搜索", icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" },
-];
+  { value: "3", label: "数据源", color: THEME.gold },
+  { value: "4", label: "ETL 阶段", color: THEME.gold },
+  { value: "2", label: "抽取阶段", color: THEME.gold },
+] as const;
 
-/**
- * 场景 5: 架构全景 + 核心指标 (19-25s)
- * 从上到下展示完整数据湖架构，最后定格指标
- */
 export const LakeArchitecture: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   const sceneFadeIn = safeInterpolate(frame, [0, sec(0.5)], [0, 1]);
   const sceneFadeOut = safeInterpolate(frame, [sec(5.3), sec(6)], [1, 0]);
-  const sceneOpacity = sceneFadeIn * sceneFadeOut;
 
   return (
-    <AbsoluteFill style={{ opacity: sceneOpacity }}>
-      {/* 场景标题 */}
-      <SceneHeader
-        title="数据湖架构全景"
-        subtitle="Data Lake Architecture Overview"
-        frame={frame}
-        fps={fps}
-        delay={sec(0.1)}
-      />
-
-      {/* 架构层级 */}
-      {ARCH_LAYERS.map((layer, i) => (
-        <ArchLayer key={layer.id} layer={layer} index={i} />
-      ))}
-
-      {/* 层间连接线 */}
-      <LayerConnections frame={frame} fps={fps} />
-
-      {/* 右侧核心指标 */}
-      <MetricsPanel frame={frame} fps={fps} />
-
-      {/* 收尾品牌 */}
-      <BrandFooter frame={frame} fps={fps} />
+    <AbsoluteFill style={{ opacity: sceneFadeIn * sceneFadeOut }}>
+      <SceneHeader title="回传闭环与架构全景" subtitle="Delivery Loop & System Overview" frame={frame} fps={fps} delay={sec(0.1)} />
+      <ArchitectureStack frame={frame} fps={fps} />
+      <DeliveryLoop frame={frame} fps={fps} />
+      <ClosingSummary frame={frame} fps={fps} />
     </AbsoluteFill>
   );
 };
 
-/**
- * 架构层级
- */
-const ArchLayer: React.FC<{
-  layer: typeof ARCH_LAYERS[number];
-  index: number;
-}> = ({ layer, index }) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+const ArchitectureStack: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => (
+  <div style={{ position: "absolute", left: 100, top: 430, width: 940, display: "flex", flexDirection: "column", gap: 18 }}>
+    {ARCH_LAYERS.map((layer, index) => {
+      const progress = spring({
+        frame,
+        fps,
+        config: { damping: 200 },
+        delay: sec(0.45) + index * 6,
+        durationInFrames: 18,
+      });
 
-  const p = spring({
+      return (
+        <div
+          key={layer.id}
+          style={{
+            opacity: progress,
+            transform: `translateX(${interpolate(progress, [0, 1], [-18, 0])}px)`,
+            display: "grid",
+            gridTemplateColumns: "180px 1fr",
+            gap: 18,
+            alignItems: "center",
+          }}
+        >
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 12, color: layer.color, fontFamily: THEME.fontMono, letterSpacing: "0.12em", textTransform: "uppercase" }}>{layer.label}</div>
+            <div style={{ marginTop: 6, fontSize: 18, color: THEME.pearl, fontWeight: 600 }}>{layer.title}</div>
+          </div>
+
+          <div
+            style={{
+              padding: "14px 18px",
+              borderRadius: 16,
+              background: `${THEME.surfaceElevated}E4`,
+              border: `1px solid ${layer.color}22`,
+              display: "flex",
+              gap: 10,
+              flexWrap: "wrap",
+            }}
+          >
+            {layer.items.map((item) => (
+              <div
+                key={item}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: 16,
+                  background: `${layer.color}12`,
+                  border: `1px solid ${layer.color}22`,
+                  fontSize: 12,
+                  color: layer.color,
+                  fontFamily: THEME.fontMono,
+                }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+);
+
+const DeliveryLoop: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const progress = spring({
     frame,
     fps,
     config: { damping: 200 },
-    delay: sec(0.4) + index * 8,
-    durationInFrames: 25,
+    delay: sec(2.1),
+    durationInFrames: 18,
   });
 
-  const opacity = interpolate(p, [0, 1], [0, 1]);
-  const translateX = interpolate(p, [0, 1], [-40, 0]);
+  const loopLine = safeInterpolate(frame, [sec(2.5), sec(4.2)], [0, 1]);
 
   return (
     <div
       style={{
         position: "absolute",
-        left: 120,
-        top: layer.y,
-        opacity,
-        transform: `translateX(${translateX}px)`,
-        display: "flex",
-        alignItems: "center",
-        gap: 20,
+        right: 110,
+        top: 430,
+        width: 640,
+        height: 420,
+        opacity: progress,
+        transform: `translateX(${interpolate(progress, [0, 1], [18, 0])}px)`,
       }}
     >
-      {/* 层标签 */}
       <div
         style={{
-          width: 140,
-          textAlign: "right",
-          fontSize: 14,
-          fontWeight: 600,
-          color: layer.color,
-          fontFamily: THEME.fontSans,
+          padding: "20px 22px",
+          borderRadius: 18,
+          background: `${THEME.surfaceElevated}E8`,
+          border: `1px solid ${THEME.lake.accent}22`,
         }}
       >
-        {layer.label}
-      </div>
+        <div style={{ fontSize: 11, color: THEME.muted, fontFamily: THEME.fontMono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+          delivery loop
+        </div>
+        <div style={{ marginTop: 12, fontSize: 22, fontWeight: 600, color: THEME.pearl, lineHeight: 1.5 }}>
+          数据湖不是终点，回到业务系统才形成完整闭环。
+        </div>
 
-      {/* 层内容条 */}
-      <div
-        style={{
-          display: "flex",
-          gap: 10,
-          padding: "12px 20px",
-          borderRadius: 10,
-          background: `${THEME.surfaceElevated}CC`,
-          border: `1px solid ${layer.color}20`,
-          minWidth: 420,
-        }}
-      >
-        {layer.items.map((item, i) => {
-          const itemP = spring({
-            frame,
-            fps,
-            config: { damping: 200 },
-            delay: sec(0.6) + index * 8 + i * 3,
-            durationInFrames: 20,
-          });
-
-          return (
+        <div style={{ marginTop: 22, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {[
+            { title: "基础字典", note: "first extraction stage" },
+            { title: "癌种专属", note: "second extraction stage" },
+            { title: "api_payload JSON", note: "batched REST callback" },
+          ].map((item, index) => (
             <div
-              key={item}
+              key={item.title}
               style={{
-                opacity: itemP,
-                transform: `scale(${interpolate(itemP, [0, 1], [0.8, 1])})`,
-                padding: "6px 14px",
-                borderRadius: 8,
-                background: `${layer.color}12`,
-                border: `1px solid ${layer.color}20`,
-                fontSize: 12,
-                fontFamily: THEME.fontMono,
-                color: layer.color,
+                width: 168,
+                padding: "16px 14px",
+                borderRadius: 16,
+                background: `${THEME.surface}CC`,
+                border: `1px solid ${THEME.gold}14`,
               }}
             >
-              {item}
+              <div style={{ fontSize: 15, color: index === 2 ? THEME.lake.accent : THEME.gold, fontWeight: 600 }}>{item.title}</div>
+              <div style={{ marginTop: 8, fontSize: 11, color: THEME.muted, fontFamily: THEME.fontMono, lineHeight: 1.6 }}>{item.note}</div>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
+
+      <svg width="640" height="160" style={{ position: "absolute", left: 0, bottom: -10, pointerEvents: "none" }}>
+        <path d="M90 60 C180 120, 280 120, 350 78 C420 38, 500 38, 570 84" stroke={`${THEME.gold}18`} strokeWidth={2} fill="none" />
+        <path
+          d="M90 60 C180 120, 280 120, 350 78 C420 38, 500 38, 570 84"
+          stroke={THEME.gold}
+          strokeWidth={2.5}
+          fill="none"
+          strokeDasharray={520}
+          strokeDashoffset={interpolate(loopLine, [0, 1], [520, 0])}
+          opacity={0.85}
+        />
+      </svg>
     </div>
   );
 };
 
-/**
- * 层间连接线 - 垂直虚线
- */
-const LayerConnections: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const progress = safeInterpolate(frame, [sec(0.8), sec(2.5)], [0, 1], Easing.out(Easing.quad));
-
-  if (progress <= 0) return null;
-
-  // 每层之间的垂直连线
-  const connections = ARCH_LAYERS.slice(0, -1).map((layer, i) => {
-    const nextLayer = ARCH_LAYERS[i + 1];
-    const x = 400; // 层标签右侧
-    const y1 = layer.y + 25;
-    const y2 = nextLayer.y + 10;
-
-    return { x, y1, y2 };
-  });
-
-  return (
-    <svg
-      width={VIDEO.width}
-      height={VIDEO.height}
-      style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }}
-    >
-      {connections.map((conn, i) => {
-        const length = conn.y2 - conn.y1;
-        const offset = interpolate(progress, [0, 1], [length, 0]);
-
-        return (
-          <line
-            key={i}
-            x1={conn.x}
-            y1={conn.y1}
-            x2={conn.x}
-            y2={conn.y2}
-            stroke={`${THEME.gold}30`}
-            strokeWidth={1}
-            strokeDasharray="4 4"
-          />
-        );
-      })}
-    </svg>
-  );
-};
-
-/**
- * 右侧核心指标面板
- */
-const MetricsPanel: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const panelP = spring({
+const ClosingSummary: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const progress = spring({
     frame,
     fps,
     config: { damping: 200 },
-    delay: sec(2.5),
-    durationInFrames: 25,
+    delay: sec(4.2),
+    durationInFrames: 18,
   });
 
   return (
     <div
       style={{
         position: "absolute",
-        right: 100,
-        top: 260,
-        opacity: panelP,
-        transform: `translateX(${interpolate(panelP, [0, 1], [40, 0])}px)`,
+        left: 110,
+        right: 110,
+        bottom: 48,
         display: "flex",
-        flexDirection: "column",
-        gap: 20,
-        width: 280,
+        alignItems: "center",
+        justifyContent: "space-between",
+        opacity: progress,
+        transform: `translateY(${interpolate(progress, [0, 1], [16, 0])}px)`,
       }}
     >
-      {/* 面板标题 */}
-      <div
-        style={{
-          fontSize: 14,
-          fontWeight: 600,
-          color: THEME.gold,
-          paddingBottom: 10,
-          borderBottom: `1px solid ${THEME.gold}20`,
-          fontFamily: THEME.fontMono,
-        }}
-      >
-        Core Metrics
+      <div>
+        <div style={{ fontSize: 30, fontWeight: 600, background: THEME.goldGradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+          从配置到回传，系统价值在闭环中成立
+        </div>
+        <div style={{ marginTop: 10, fontSize: 13, color: THEME.muted, fontFamily: THEME.fontMono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+          config-driven / cross-source / delivery-oriented
+        </div>
       </div>
 
-      {/* 指标项 */}
-      {METRICS.map((metric, i) => {
-        const mP = spring({
-          frame,
-          fps,
-          config: { damping: 200 },
-          delay: sec(2.8) + i * 5,
-          durationInFrames: 20,
-        });
-
-        return (
+      <div style={{ display: "flex", gap: 14 }}>
+        {METRICS.map((metric) => (
           <div
             key={metric.label}
             style={{
-              opacity: mP,
-              transform: `translateY(${interpolate(mP, [0, 1], [15, 0])}px)`,
-              display: "flex",
-              alignItems: "center",
-              gap: 14,
-              padding: "12px 16px",
-              borderRadius: 10,
-              background: `${THEME.surface}BB`,
-              border: `1px solid ${THEME.gold}10`,
+              minWidth: 110,
+              padding: "12px 14px",
+              borderRadius: 14,
+              background: `${THEME.surface}D2`,
+              border: `1px solid ${THEME.gold}12`,
+              textAlign: "center",
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={THEME.gold} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-              <path d={metric.icon} />
-            </svg>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: THEME.fontMono, color: THEME.gold }}>
-                {metric.value}
-              </div>
-              <div style={{ fontSize: 11, color: THEME.muted }}>{metric.label}</div>
-            </div>
+            <div style={{ fontSize: 22, color: metric.color, fontWeight: 700, fontFamily: THEME.fontMono }}>{metric.value}</div>
+            <div style={{ marginTop: 4, fontSize: 10, color: THEME.muted }}>{metric.label}</div>
           </div>
-        );
-      })}
+        ))}
+      </div>
     </div>
   );
 };
 
-/**
- * 收尾品牌
- */
-const BrandFooter: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const p = spring({
-    frame,
-    fps,
-    config: { damping: 200 },
-    delay: sec(4.0),
-    durationInFrames: 30,
-  });
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        bottom: 60,
-        left: "50%",
-        transform: `translateX(-50%) translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
-        opacity: p,
-        display: "flex",
-        alignItems: "center",
-        gap: 16,
-      }}
-    >
-      <div style={{ height: 1, width: 60, background: THEME.goldDivider }} />
-      <span style={{ fontSize: 13, color: THEME.muted, letterSpacing: "0.15em", fontFamily: THEME.fontMono }}>
-        MASONS.XU — Data Lake Platform
-      </span>
-      <div style={{ height: 1, width: 60, background: THEME.goldDivider }} />
-    </div>
-  );
-};
-
-/**
- * 场景头部标题
- */
 const SceneHeader: React.FC<{
   title: string;
   subtitle: string;
@@ -361,19 +267,13 @@ const SceneHeader: React.FC<{
   fps: number;
   delay?: number;
 }> = ({ title, subtitle, frame, fps, delay = 0 }) => {
-  const progress = spring({
-    frame,
-    fps,
-    config: { damping: 200 },
-    delay,
-    durationInFrames: 20,
-  });
+  const progress = spring({ frame, fps, config: { damping: 200 }, delay, durationInFrames: 20 });
 
   return (
     <div
       style={{
         position: "absolute",
-        top: 80,
+        top: 120,
         left: 80,
         opacity: progress,
         transform: `translateY(${interpolate(progress, [0, 1], [-15, 0])}px)`,
