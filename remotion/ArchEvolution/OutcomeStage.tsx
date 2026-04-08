@@ -44,7 +44,7 @@ export const OutcomeStage: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ position: "absolute", left: 220, right: 220, top: 330, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 22 }}>
+      <div style={{ position: "absolute", left: 220, right: 220, top: 410, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 22 }}>
         {OUTCOMES.map((item, index) => {
           const progress = spring({ frame, fps, config: { damping: 200 }, delay: sec(0.4) + index * 4, durationInFrames: 18 });
           return (

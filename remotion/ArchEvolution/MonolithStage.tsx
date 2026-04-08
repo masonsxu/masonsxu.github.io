@@ -39,8 +39,8 @@ export const MonolithStage: React.FC = () => {
       <div style={{ position: "absolute", top: "56%", left: "50%", transform: "translate(-50%, -50%)" }}>
         <div
           style={{
-            width: 300,
-            height: 200,
+            width: 400,
+            height: 300,
             borderRadius: 20,
             background: `${THEME.surfaceElevated}E8`,
             border: `1.5px solid ${THEME.gold}28`,
@@ -54,7 +54,7 @@ export const MonolithStage: React.FC = () => {
             gap: 12,
           }}
         >
-          <div style={{ fontSize: 26, fontFamily: THEME.fontMono, color: THEME.gold, fontWeight: 700 }}>Python Monolith</div>
+          <div style={{ fontSize: 36, fontFamily: THEME.fontMono, color: THEME.gold, fontWeight: 700 }}>Python Monolith</div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", width: 220 }}>
             {["entry", "auth", "logic", "storage", "job"].map((item) => (
               <div
@@ -64,7 +64,7 @@ export const MonolithStage: React.FC = () => {
                   borderRadius: 999,
                   background: `${THEME.gold}10`,
                   border: `1px solid ${THEME.gold}18`,
-                  fontSize: 11,
+                  fontSize: 17,
                   color: THEME.muted,
                   fontFamily: THEME.fontMono,
                 }}
@@ -92,7 +92,7 @@ export const MonolithStage: React.FC = () => {
                 border: `1px solid ${block.color}28`,
                 color: block.color,
                 fontFamily: THEME.fontMono,
-                fontSize: 14,
+                fontSize: 24,
                 whiteSpace: "nowrap",
               }}
             >

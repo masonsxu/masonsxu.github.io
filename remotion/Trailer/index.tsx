@@ -81,8 +81,6 @@ const TRAILER_SECTIONS = [
   },
 ] as const;
 
-const TOTAL_DURATION = TRAILER_SECTIONS.reduce((sum, section) => sum + section.durationInFrames, 0) - (TRAILER_SECTIONS.length - 1) * TRANSITION_DURATION;
-
 export const Trailer: React.FC = () => {
   const frame = useCurrentFrame();
 
@@ -262,7 +260,7 @@ const ClosingSection: React.FC<{
       <div
         style={{
           position: "absolute",
-          top: 390,
+          top: 410,
           left: 260,
           right: 260,
           display: "grid",

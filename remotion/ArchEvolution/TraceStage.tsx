@@ -33,7 +33,7 @@ export const TraceStage: React.FC = () => {
           {[0, 50, 100, 150, 200, 250].map((ms) => (
             <div
               key={ms}
-              style={{ position: "absolute", left: `${(ms / 250) * 100}%`, top: -10, fontSize: 10, color: THEME.muted, fontFamily: THEME.fontMono }}
+              style={{ position: "absolute", left: `${(ms / 250) * 100}%`, top: -10, fontSize: 20, color: THEME.muted, fontFamily: THEME.fontMono }}
             >
               {ms}ms
             </div>
@@ -56,20 +56,20 @@ export const TraceStage: React.FC = () => {
                 marginBottom: 18,
               }}
             >
-              <div style={{ width: 170, textAlign: "right", fontSize: 11, color: THEME.muted, fontFamily: THEME.fontMono }}>{span.label}</div>
+              <div style={{ width: 170, textAlign: "right", fontSize: 21, color: THEME.muted, fontFamily: THEME.fontMono }}>{span.label}</div>
               <div
                 style={{
                   marginLeft: `${(span.start / 250) * 100}%`,
                   width: `${(span.duration / 250) * 100 * widthProgress}%`,
-                  height: 26,
-                  minWidth: widthProgress > 0 ? 14 : 0,
+                  height: 56,
+                  minWidth: widthProgress > 0 ? 44 : 0,
                   borderRadius: 6,
                   background: `${span.color}${isSlowPoint ? "30" : "24"}`,
                   border: `1px solid ${span.color}${isSlowPoint ? "55" : "38"}`,
                   boxShadow: isSlowPoint ? `0 0 16px ${span.color}24` : undefined,
                 }}
               />
-              <div style={{ fontSize: 10, color: span.color, fontFamily: THEME.fontMono }}>{Math.round(span.duration * widthProgress)}ms</div>
+              <div style={{ fontSize: 20, color: span.color, fontFamily: THEME.fontMono }}>{Math.round(span.duration * widthProgress)}ms</div>
             </div>
           );
         })}
@@ -87,8 +87,8 @@ export const TraceStage: React.FC = () => {
             gap: 10,
           }}
         >
-          <div style={{ width: 8, height: 8, borderRadius: "50%", background: THEME.lake.accent }} />
-          <div style={{ fontSize: 12, color: THEME.muted }}>
+          <div style={{ width: 16, height: 16, borderRadius: "50%", background: THEME.lake.accent }} />
+          <div style={{ fontSize: 16, color: THEME.muted }}>
             trace reveals latency concentration at <span style={{ color: THEME.lake.accent, fontFamily: THEME.fontMono }}>DAL query</span>
           </div>
         </div>

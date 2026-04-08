@@ -11,18 +11,18 @@ import { THEME } from "../shared/theme";
 import { safeInterpolate, sec } from "../shared/utils";
 
 const SOURCE_TABLES = [
-  { id: "mysql-a", label: "MySQL\npatient_base", color: THEME.lake.mysql, x: 180, y: 380 }, // 330 -> 380
-  { id: "mysql-b", label: "MySQL\ndict_small", color: THEME.lake.mysql, x: 180, y: 570 },   // 520 -> 570
-  { id: "mongo", label: "MongoDB\nraw_document", color: THEME.lake.mongodb, x: 180, y: 760 }, // 710 -> 760
+  { id: "mysql-a", label: "MySQL\npatient_base", color: THEME.lake.mysql, x: 180, y: 380 },
+  { id: "mysql-b", label: "MySQL\ndict_small", color: THEME.lake.mysql, x: 180, y: 570 },
+  { id: "mongo", label: "MongoDB\nraw_document", color: THEME.lake.mongodb, x: 180, y: 760 },
 ] as const;
 
 const PATH_NODES = [
-  { label: "interface_code", x: 760, y: 420, color: THEME.gold },      // 290 + 80
-  { label: "BFS path", x: 760, y: 570, color: THEME.gold },            // 430 + 80
-  { label: "Trino", x: 1020, y: 420, color: THEME.lake.trino },        // 保持不变
-  { label: "Polars", x: 1020, y: 720, color: THEME.lake.polars },      // 保持不变
-  { label: "5-table LEFT JOIN", x: 1290, y: 570, color: THEME.gold },  // 430 + 80
-  { label: "FieldCommon0", x: 1590, y: 570, color: THEME.lake.secondary }, // 430 + 80
+  { label: "interface_code", x: 760, y: 420, color: THEME.gold },
+  { label: "BFS path", x: 760, y: 570, color: THEME.gold },
+  { label: "Trino", x: 1020, y: 420, color: THEME.lake.trino },
+  { label: "Polars", x: 1020, y: 720, color: THEME.lake.polars },
+  { label: "5-table LEFT JOIN", x: 1290, y: 570, color: THEME.gold },
+  { label: "FieldCommon0", x: 1590, y: 570, color: THEME.lake.secondary },
 ] as const;
 
 const PATH_EDGES = [

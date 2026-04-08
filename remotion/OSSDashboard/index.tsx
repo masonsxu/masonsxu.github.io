@@ -73,14 +73,14 @@ type TopologyNode = {
 };
 
 const TOPOLOGY_NODES: TopologyNode[] = [
-  { id: "gateway", label: "HTTP Gateway", x: 320, y: 260, color: THEME.gold },
-  { id: "jwt", label: "JWT Middleware", x: 620, y: 260, color: THEME.lake.accent },
-  { id: "rpc", label: "RPC Service", x: 940, y: 260, color: THEME.gold },
-  { id: "otel", label: "OpenTelemetry", x: 780, y: 520, color: THEME.lake.primary },
-  { id: "trace", label: "Trace Pipeline", x: 1120, y: 520, color: THEME.lake.primary },
-  { id: "generator", label: "Code Generator", x: 1320, y: 260, color: THEME.lake.secondary },
-  { id: "deps", label: "Dependency Graph", x: 1500, y: 520, color: THEME.lake.secondary },
-  { id: "toolchain", label: "Go Toolchain", x: 1680, y: 260, color: THEME.lake.secondary },
+  { id: "gateway", label: "HTTP Gateway", x: 320, y: 410, color: THEME.gold },
+  { id: "jwt", label: "JWT Middleware", x: 620, y: 410, color: THEME.lake.accent },
+  { id: "rpc", label: "RPC Service", x: 940, y: 410, color: THEME.gold },
+  { id: "otel", label: "OpenTelemetry", x: 780, y: 670, color: THEME.lake.primary },
+  { id: "trace", label: "Trace Pipeline", x: 1120, y: 670, color: THEME.lake.primary },
+  { id: "generator", label: "Code Generator", x: 1320, y: 410, color: THEME.lake.secondary },
+  { id: "deps", label: "Dependency Graph", x: 1500, y: 670, color: THEME.lake.secondary },
+  { id: "toolchain", label: "Go Toolchain", x: 1680, y: 410, color: THEME.lake.secondary },
 ];
 
 const NODE_MAP = Object.fromEntries(TOPOLOGY_NODES.map((node) => [node.id, node]));
@@ -387,8 +387,8 @@ const TerminalContext: React.FC<{ frame: number; fps: number }> = ({ frame, fps 
           position: "absolute",
           left: 120,
           right: 120,
-          top: 210,
-          padding: "22px 26px",
+          top: 300,
+          padding: "60px 30px",
           borderRadius: 18,
           background: `${THEME.surfaceElevated}E8`,
           border: `1px solid ${THEME.gold}18`,
@@ -549,7 +549,7 @@ const FactCards: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => 
           position: "absolute",
           left: 160,
           right: 160,
-          top: 260,
+          top: 300,
           display: "grid",
           gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
           gap: 24,
@@ -568,7 +568,7 @@ const FactCards: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => 
             <div
               key={card.label}
               style={{
-                padding: "26px 28px",
+                padding: "56px 28px",
                 borderRadius: 20,
                 background: `${THEME.surfaceElevated}DD`,
                 border: `1px solid ${card.color}20`,

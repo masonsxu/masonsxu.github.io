@@ -132,7 +132,7 @@ const IdentityHero: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) 
     <div
       style={{
         position: "absolute",
-        top: 160,
+        top: 350,
         left: 0,
         right: 0,
         textAlign: "center",
@@ -183,7 +183,7 @@ const CapabilityDomains: React.FC<{ frame: number; fps: number }> = ({ frame, fp
         position: "absolute",
         left: 170,
         right: 170,
-        top: 320,
+        top: 410,
         display: "grid",
         gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
         gap: 18,
@@ -253,7 +253,7 @@ const BoundaryStatements: React.FC<{ frame: number; fps: number }> = ({ frame, f
         position: "absolute",
         left: 250,
         right: 250,
-        top: 330,
+        top: 380,
         opacity: fadeIn * fadeOut,
       }}
     >

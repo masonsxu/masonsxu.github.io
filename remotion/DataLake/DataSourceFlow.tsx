@@ -154,7 +154,7 @@ const FlowLanes: React.FC<{ frame: number }> = ({ frame }) => {
 
   const startX = 450; // 卡片右边缘 (90 + 360)
   const targetX = 1070;
-  const targetY = 530; // 对应右侧卡片中心
+  const targetY = 555; // 对应右侧卡片中心
 
   return (
     <AbsoluteFill style={{ pointerEvents: "none" }}>
@@ -231,7 +231,7 @@ const LakeCore: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
       style={{
         position: "absolute",
         left: 1070,
-        top: 380,
+        top: 410,
         width: 520,
         padding: "28px 30px",
         borderRadius: 24,

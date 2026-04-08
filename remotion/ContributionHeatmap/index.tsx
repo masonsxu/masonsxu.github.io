@@ -55,10 +55,10 @@ const REAL_HEATMAP: number[][] = [
 
 const COLS = REAL_HEATMAP.length; // 52
 const ROWS = 7;
-const CELL_SIZE = 14;
+const CELL_SIZE = 25;
 const CELL_GAP = 3;
 const GRID_LEFT = 280;
-const GRID_TOP = 220;
+const GRID_TOP = 400;
 
 // 热力图颜色梯度
 const HEAT_COLORS = [
