@@ -1,4 +1,3 @@
-import logoDark from "../../assets/logo-dark.svg";
 import { contactLinks } from "../../data/site-content";
 import { ScrollReveal } from "../ScrollReveal";
 
@@ -44,7 +43,7 @@ export function Contact() {
       <footer className="mt-24 md:mt-32 border-t border-white/[0.04] pt-10 pb-8">
         <div className="section-container">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <img src={logoDark} alt="MASONS.XU" className="h-8 opacity-40 hover:opacity-60 transition-opacity" />
+            <img src='/logo-dark.svg' alt="MASONS.XU" className="h-8 opacity-40 hover:opacity-60 transition-opacity" />
             <p className="text-xs text-muted-foreground/40 font-mono">
               &copy; 2026 徐俊飞. All rights reserved.
             </p>

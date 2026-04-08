@@ -1,4 +1,3 @@
-import logoDark from "../../assets/logo-dark.svg";
 
 const heroStats = [
   { value: "10+", label: "Microservices" },
@@ -24,7 +23,7 @@ export function Hero() {
         {/* Primary Brand Logo */}
         <div className="opacity-0 animate-[fadeIn_1.5s_0.2s_cubic-bezier(0.16,1,0.3,1)_forwards]">
           <img
-            src={logoDark}
+            src="/logo-dark.svg"
             alt="MASONS.XU — Distributed Systems"
             className="h-12 sm:h-14 md:h-16 lg:h-[72px] mx-auto w-auto"
           />
