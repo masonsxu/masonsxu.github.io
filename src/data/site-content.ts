@@ -58,7 +58,7 @@ export const projects: Project[] = [
     num: "01",
     title: "分布式数据管理平台",
     subtitle: "CloudWeGo 微服务架构",
-    time: "2025.03 — Present",
+    time: "2025.03 — 2026.04",
     summary:
       "独立设计并交付基于 CloudWeGo 生态的分布式数据平台。采用 Kitex RPC + Hertz HTTP 双栈架构，通过 Thrift IDL-First 定义 10+ 微服务契约，使用 Google Wire 编译时依赖注入，构建从 API 网关到 8 个 RPC 微服务的完整分布式系统。",
     highlights: [
@@ -90,7 +90,7 @@ export const projects: Project[] = [
     num: "02",
     title: "数据湖平台",
     subtitle: "Apache Iceberg + Airflow 配置驱动 ETL",
-    time: "2025.03 — Present",
+    time: "2025.03 — 2026.04",
     summary:
       "构建基于 Apache Iceberg 的数据湖平台，将业务系统 REST API、MySQL、MongoDB 多源数据统一入湖。采用 Airflow 3.1 编排 + PyIceberg 直写 + Trino SQL 查询 + Polars 内存 JOIN 的技术栈。",
     highlights: [
@@ -156,7 +156,7 @@ export const career: CareerItem[] = [
   {
     role: "Go 后端架构师 / 技术负责人",
     company: "Manteia 数据科技",
-    time: "2025.03 — 至今",
+    time: "2025.03 — 2026.04",
     points: [
       "独立设计并交付基于 CloudWeGo 生态的分布式数据平台：Kitex RPC + Hertz HTTP 双栈架构，9 模块 go.work 工作区",
       "构建 Apache Iceberg 数据湖平台：Airflow 3.1 编排 + PyIceberg 直读 + Trino 查询 + Polars 内存计算",
