@@ -1,34 +1,5 @@
+import { awards, career, careerKeywords } from "../../data/site-content";
 import { ScrollReveal, SectionLabel } from "../ScrollReveal";
-
-const career = [
-  {
-    role: "Go 后端架构师 / 技术负责人",
-    company: "Manteia 数据科技",
-    time: "2025.03 — 至今",
-    points: [
-      "独立设计并交付基于 CloudWeGo 生态的分布式数据平台：Kitex RPC + Hertz HTTP 双栈架构，9 模块 go.work 工作区",
-      "构建 Apache Iceberg 数据湖平台：Airflow 3.1 编排 + PyIceberg 直读 + Trino 查询 + Polars 内存计算",
-      "设计分布式服务治理体系：Etcd 服务注册发现 + OpenTelemetry + Jaeger 全链路追踪；Casbin RBAC",
-      "建立工程化机制：Google Wire 编译时 DI、6 位结构化错误码体系、DDD 四层架构规范",
-    ],
-  },
-  {
-    role: "Python 后端开发工程师",
-    company: "Manteia 数据科技",
-    time: "2021.06 — 2025.03",
-    points: [
-      "以应届生加入，独立成长为系统实际负责人，主导 Asyncio 性能重构：重写核心链路为异步架构，响应时间降低 50%",
-      "主导 Docker 容器化转型：从手动部署到容器编排，交付时间缩短 87%，建立标准化 CI/CD 流程",
-      "长期主导生产环境部署与排障，积累分布式系统调试经验，驱动后续 Go 微服务架构转型",
-    ],
-  },
-];
-
-const awards = [
-  { icon: "★", text: "国家级单项奖学金 ×2", year: "2018 / 2019" },
-  { icon: "◆", text: "河南省优秀学位论文", detail: "省级荣誉 Top 1%" },
-  { icon: "★", text: "省级单项奖学金", year: "2020" },
-];
 
 export function Timeline() {
   return (
@@ -78,7 +49,7 @@ export function Timeline() {
         {/* Career keywords */}
         <ScrollReveal delay={100}>
           <div className="mt-10 flex flex-wrap gap-2">
-            {["Go", "微服务", "DDD", "CloudWeGo", "OpenTelemetry", "容器化", "AI 辅助开发", "架构决策"].map((kw) => (
+            {careerKeywords.map((kw) => (
               <span key={kw} className="text-[11px] font-mono text-muted-foreground/60 border border-white/[0.04] rounded-full px-3 py-1">
                 {kw}
               </span>

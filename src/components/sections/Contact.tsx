@@ -1,28 +1,6 @@
 import logoDark from "../../assets/logo-dark.svg";
+import { contactLinks } from "../../data/site-content";
 import { ScrollReveal } from "../ScrollReveal";
-
-const links = [
-  {
-    label: "Email",
-    value: "masonsxu@foxmail.com",
-    href: "mailto:masonsxu@foxmail.com",
-  },
-  {
-    label: "GitHub",
-    value: "github.com/masonsxu",
-    href: "https://github.com/masonsxu",
-  },
-  {
-    label: "Resume",
-    value: "下载简历",
-    href: "/resume.pdf",
-  },
-  {
-    label: "Online",
-    value: "masonsxu-github-io.pages.dev",
-    href: "https://masonsxu-github-io.pages.dev",
-  },
-];
 
 export function Contact() {
   return (
@@ -42,7 +20,7 @@ export function Contact() {
         {/* Contact links */}
         <ScrollReveal delay={100}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {links.map((link) => (
+            {contactLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}

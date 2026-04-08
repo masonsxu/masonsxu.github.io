@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import plugin from "bun-plugin-tailwind";
-import { existsSync, cpSync, writeFileSync } from "fs";
+import { existsSync, cpSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "fs";
 import { rm } from "fs/promises";
 import path from "path";
 
@@ -148,6 +148,21 @@ const buildTime = (end - start).toFixed(2);
 
 console.log(`\n📦 Copying public/ to ${outdir}/`);
 cpSync("public", outdir, { recursive: true });
+
+const distIndexPath = path.join(outdir, "index.html");
+if (existsSync(distIndexPath)) {
+  const distIndexHtml = readFileSync(distIndexPath, "utf-8").replace(
+    /href="\.\/favicon-[^"]+\.svg"/,
+    'href="./favicon.svg"'
+  );
+  writeFileSync(distIndexPath, distIndexHtml, "utf-8");
+
+  for (const file of readdirSync(outdir)) {
+    if (/^favicon-[^.]+\.svg$/.test(file)) {
+      unlinkSync(path.join(outdir, file));
+    }
+  }
+}
 
 // Generate sitemap.xml
 const HOSTNAME = process.env.SITE_URL || "https://masonsxu-github-io.pages.dev";
