@@ -55,10 +55,10 @@ const REAL_HEATMAP: number[][] = [
 
 const COLS = REAL_HEATMAP.length; // 52
 const ROWS = 7;
-const CELL_SIZE = 14;
+const CELL_SIZE = 25;
 const CELL_GAP = 3;
 const GRID_LEFT = 280;
-const GRID_TOP = 220;
+const GRID_TOP = 400;
 
 // 热力图颜色梯度
 const HEAT_COLORS = [
@@ -86,21 +86,73 @@ const STREAK_DAYS = (() => {
   return max;
 })();
 
-// 流星击中点 — 选取贡献高峰日
+// 流星击中点 — 选取贡献高峰日并绑定语义事件
 const METEOR_HITS = [
-  { col: 14, row: 5, time: sec(6) },   // 2025-08-01: 26 contributions
-  { col: 47, row: 2, time: sec(7) },   // 2025-12-24: 8 contributions
-  { col: 42, row: 2, time: sec(8) },   // 2026-03-10: 19 contributions
-  { col: 44, row: 6, time: sec(9) },   // 2026-03-21: 25 contributions
-];
+  {
+    col: 14,
+    row: 5,
+    time: sec(6),
+    title: "2025-08 高峰提交",
+    note: "一波集中提交把贡献墙首次点亮。",
+    color: THEME.gold,
+  },
+  {
+    col: 35,
+    row: 3,
+    time: sec(7),
+    title: "CloudWeGo 合并窗口",
+    note: "开源贡献进入可见的 merged PR 节奏。",
+    color: THEME.lake.primary,
+  },
+  {
+    col: 42,
+    row: 2,
+    time: sec(8),
+    title: "2026-03 密集活跃",
+    note: "高频提交把年度热力图推到峰值区间。",
+    color: THEME.lake.secondary,
+  },
+  {
+    col: 44,
+    row: 6,
+    time: sec(9),
+    title: "项目里程碑推进",
+    note: "贡献高峰与个人项目沉淀同步出现。",
+    color: THEME.lake.accent,
+  },
+] as const;
 
-// 成就标签 — 真实数据
+// 事实卡 — 区分数据事实与项目事实
 const ACHIEVEMENTS = [
-  { label: `${TOTAL_CONTRIBUTIONS} Contributions`, color: THEME.gold, delay: sec(10) },
-  { label: "CloudWeGo PRs Merged", color: THEME.lake.primary, delay: sec(10.5) },
-  { label: `最长连续 ${STREAK_DAYS} 天`, color: THEME.lake.secondary, delay: sec(11) },
-  { label: "cloudwego-microservice-demo", color: THEME.lake.accent, delay: sec(11.5) },
-];
+  {
+    title: `${TOTAL_CONTRIBUTIONS}`,
+    label: "Total Contributions",
+    detail: "基于真实 52 周 contribution matrix 统计",
+    color: THEME.gold,
+    delay: sec(10),
+  },
+  {
+    title: `${STREAK_DAYS} 天`,
+    label: "Longest Streak",
+    detail: "连续贡献轨迹形成稳定投入窗口",
+    color: THEME.lake.secondary,
+    delay: sec(10.5),
+  },
+  {
+    title: "CloudWeGo",
+    label: "Merged PR Context",
+    detail: "热力图中的高峰窗口与开源贡献叙事互相印证",
+    color: THEME.lake.primary,
+    delay: sec(11),
+  },
+  {
+    title: "Demo Repo",
+    label: "Project Track",
+    detail: "个人项目与开源贡献共同构成长期技术轨迹",
+    color: THEME.lake.accent,
+    delay: sec(11.5),
+  },
+] as const;
 
 export const ContributionHeatmap: React.FC = () => {
   const frame = useCurrentFrame();
@@ -206,8 +258,11 @@ const SceneHeader: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) =
         GitHub 贡献热力图
       </h2>
       <span style={{ fontSize: 13, color: THEME.muted, fontFamily: THEME.fontMono, letterSpacing: "0.1em" }}>
-        Contribution Heatmap · masonsxu
+        Real 52-Week Contribution Timeline · masonsxu
       </span>
+      <div style={{ marginTop: 10, fontSize: 12, color: THEME.muted, lineHeight: 1.6 }}>
+        基于真实 GitHub contribution matrix，展示 2025-04 至 2026-04 的持续贡献轨迹与里程碑高峰。
+      </div>
     </div>
   );
 };
@@ -283,13 +338,32 @@ const HeatmapGrid: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) =
         ))}
         <span style={{ fontSize: 9, color: THEME.muted, fontFamily: THEME.fontMono }}>More</span>
       </div>
+
+      <div
+        style={{
+          marginTop: 16,
+          marginLeft: 20,
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          color: THEME.muted,
+          fontSize: 11,
+          fontFamily: THEME.fontMono,
+        }}
+      >
+        <span>52 weeks</span>
+        <div style={{ width: 1, height: 10, background: `${THEME.gold}22` }} />
+        <span>{TOTAL_CONTRIBUTIONS} total</span>
+        <div style={{ width: 1, height: 10, background: `${THEME.gold}22` }} />
+        <span>{STREAK_DAYS}d streak</span>
+      </div>
     </div>
   );
 };
 
 /* ──── 流星涟漪 ──── */
 const MeteorRipples: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const ripples = METEOR_HITS.filter((hit) => hit.col < COLS && hit.row < ROWS).map((hit) => {
+  const activeHits = METEOR_HITS.filter((hit) => hit.col < COLS && hit.row < ROWS).map((hit) => {
     const elapsed = frame - hit.time;
     if (elapsed < 0) return null;
 
@@ -299,24 +373,54 @@ const MeteorRipples: React.FC<{ frame: number; fps: number }> = ({ frame, fps })
     const radius = progress * 40;
     const opacity = interpolate(progress, [0, 0.3, 1], [0.8, 0.6, 0]);
 
-    return { x, y, radius, opacity, key: `${hit.col}-${hit.row}` };
-  }).filter(Boolean) as { x: number; y: number; radius: number; opacity: number; key: string }[];
+    return { ...hit, x, y, radius, opacity, elapsed, key: `${hit.col}-${hit.row}` };
+  }).filter(Boolean) as (typeof METEOR_HITS[number] & { x: number; y: number; radius: number; opacity: number; elapsed: number; key: string })[];
 
   return (
-    <svg width="1920" height="1080" style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }}>
-      {ripples.map((r) => (
-        <circle
-          key={r.key}
-          cx={r.x}
-          cy={r.y}
-          r={r.radius}
-          fill="none"
-          stroke={THEME.gold}
-          strokeWidth={1.5}
-          opacity={r.opacity}
-        />
-      ))}
-    </svg>
+    <>
+      <svg width="1920" height="1080" style={{ position: "absolute", top: 0, left: 0, pointerEvents: "none" }}>
+        {activeHits.map((r) => (
+          <circle
+            key={r.key}
+            cx={r.x}
+            cy={r.y}
+            r={r.radius}
+            fill="none"
+            stroke={r.color}
+            strokeWidth={1.5}
+            opacity={r.opacity}
+          />
+        ))}
+      </svg>
+
+      {activeHits.map((hit) => {
+        const cardProgress = safeInterpolate(hit.elapsed, [sec(0.2), sec(0.8)], [0, 1]);
+        if (cardProgress <= 0) return null;
+
+        const isRightSide = hit.col > COLS / 2;
+        return (
+          <div
+            key={`${hit.key}-card`}
+            style={{
+              position: "absolute",
+              left: isRightSide ? hit.x - 320 : hit.x + 26,
+              top: hit.y - 28,
+              width: 280,
+              padding: "12px 14px",
+              borderRadius: 12,
+              background: `${THEME.surfaceElevated}EE`,
+              border: `1px solid ${hit.color}28`,
+              opacity: cardProgress,
+              transform: `translateY(${interpolate(cardProgress, [0, 1], [8, 0])}px)`,
+              pointerEvents: "none",
+            }}
+          >
+            <div style={{ fontSize: 12, color: hit.color, fontFamily: THEME.fontMono, fontWeight: 600 }}>{hit.title}</div>
+            <div style={{ marginTop: 6, fontSize: 12, color: THEME.muted, lineHeight: 1.65 }}>{hit.note}</div>
+          </div>
+        );
+      })}
+    </>
   );
 };
 
@@ -329,12 +433,12 @@ const AchievementLabels: React.FC<{ frame: number; fps: number }> = ({ frame, fp
     <div
       style={{
         position: "absolute",
-        bottom: 180,
-        left: 0,
-        right: 0,
-        display: "flex",
-        justifyContent: "center",
-        gap: 16,
+        left: 150,
+        right: 150,
+        bottom: 155,
+        display: "grid",
+        gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+        gap: 14,
         opacity: fadeIn * fadeOut,
       }}
     >
@@ -352,18 +456,16 @@ const AchievementLabels: React.FC<{ frame: number; fps: number }> = ({ frame, fp
             key={a.label}
             style={{
               opacity: ap,
-              transform: `translateY(${interpolate(ap, [0, 1], [15, 0])}px) scale(${interpolate(ap, [0, 1], [0.8, 1])})`,
-              padding: "10px 20px",
-              borderRadius: 10,
-              background: `${THEME.surfaceElevated}DD`,
+              transform: `translateY(${interpolate(ap, [0, 1], [15, 0])}px) scale(${interpolate(ap, [0, 1], [0.86, 1])})`,
+              padding: "16px 16px 14px",
+              borderRadius: 14,
+              background: `${THEME.surfaceElevated}E8`,
               border: `1px solid ${a.color}25`,
-              fontSize: 14,
-              fontFamily: THEME.fontMono,
-              color: a.color,
-              fontWeight: 500,
             }}
           >
-            {a.label}
+            <div style={{ fontSize: 20, fontFamily: THEME.fontMono, color: a.color, fontWeight: 700 }}>{a.title}</div>
+            <div style={{ marginTop: 6, fontSize: 11, color: THEME.muted, fontFamily: THEME.fontMono, letterSpacing: "0.08em" }}>{a.label}</div>
+            <div style={{ marginTop: 10, fontSize: 11, color: THEME.muted, lineHeight: 1.6 }}>{a.detail}</div>
           </div>
         );
       })}

@@ -1,44 +1,52 @@
 import React from "react";
 import {
   AbsoluteFill,
-  useCurrentFrame,
-  useVideoConfig,
   interpolate,
   spring,
-  Easing,
+  useCurrentFrame,
+  useVideoConfig,
 } from "remotion";
 import { THEME } from "../shared/theme";
 import { safeInterpolate, sec } from "../shared/utils";
 
-/**
- * 场景编排 (15s = 450帧):
- * 0-3s    名字 spring 入场
- * 3-4s    标语淡入
- * 4-8s    核心技术栈标签轮播
- * 8-10s   关键指标展示
- * 10-13s  域名收尾
- * 13-15s  淡出
- */
+const CAPABILITY_DOMAINS = [
+  {
+    title: "Service Architecture",
+    color: THEME.gold,
+    keywords: ["Go", "Hertz", "Kitex", "CloudWeGo"],
+    note: "服务边界、协议入口与 RPC 路径",
+  },
+  {
+    title: "Observability",
+    color: THEME.lake.primary,
+    keywords: ["OpenTelemetry", "Request Path", "Trace Visibility"],
+    note: "把请求链路重新拼成可解释的系统视图",
+  },
+  {
+    title: "Data Platform",
+    color: THEME.lake.polars,
+    keywords: ["Iceberg", "Airflow 3.1", "Trino", "Polars"],
+    note: "把数据流转、编排与计算路径讲清楚",
+  },
+] as const;
 
-const TECH_STACKS = [
-  { label: "Go 1.24+", color: THEME.gold },
-  { label: "Kitex RPC", color: THEME.gold },
-  { label: "Hertz HTTP", color: THEME.gold },
-  { label: "Apache Iceberg", color: THEME.lake.iceberg },
-  { label: "Airflow 3.1", color: THEME.lake.airflow },
-  { label: "Trino", color: THEME.lake.trino },
-  { label: "Polars", color: THEME.lake.polars },
-  { label: "CloudWeGo", color: THEME.gold },
-  { label: "OpenTelemetry", color: THEME.lake.primary },
-  { label: "gRPC", color: THEME.gold },
-];
-
-const METRICS = [
-  { value: "10+", label: "Microservices" },
-  { value: "99.9%", label: "Availability" },
-  { value: "50%", label: "Latency ↓" },
-  { value: "87%", label: "Deploy Faster" },
-];
+const BOUNDARY_STATEMENTS = [
+  {
+    title: "Boundary Split",
+    detail: "把服务边界拆清楚，让职责不再堆在同一层。",
+    color: THEME.gold,
+  },
+  {
+    title: "Observable Path",
+    detail: "让一次请求的链路可追踪、可诊断、可解释。",
+    color: THEME.lake.primary,
+  },
+  {
+    title: "Data Flow Clarity",
+    detail: "把数据流转与计算路径讲明白，再把结果送回业务。",
+    color: THEME.lake.secondary,
+  },
+] as const;
 
 export const TechCard: React.FC = () => {
   const frame = useCurrentFrame();
@@ -56,25 +64,14 @@ export const TechCard: React.FC = () => {
       <BackgroundGlow />
       <VignetteOverlay />
 
-      {/* 名字入场 */}
-      <NameSection frame={frame} fps={fps} />
-
-      {/* 标语 */}
-      <Tagline frame={frame} fps={fps} />
-
-      {/* 技术栈标签轮播 */}
-      <TechStackCarousel frame={frame} fps={fps} />
-
-      {/* 关键指标 */}
-      <MetricsRow frame={frame} fps={fps} />
-
-      {/* 域名收尾 */}
-      <DomainFooter frame={frame} fps={fps} />
+      <IdentityHero frame={frame} fps={fps} />
+      <CapabilityDomains frame={frame} fps={fps} />
+      <BoundaryStatements frame={frame} fps={fps} />
+      <ClosingSignature frame={frame} fps={fps} />
     </AbsoluteFill>
   );
 };
 
-/* ──── 背景氛围 ──── */
 const BackgroundGlow: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -85,21 +82,33 @@ const BackgroundGlow: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          top: "20%",
-          left: "30%",
-          width: 500,
-          height: 500,
+          top: "18%",
+          left: "28%",
+          width: 520,
+          height: 520,
           borderRadius: "50%",
           background: `radial-gradient(circle, rgba(212,175,55,${breathe}) 0%, transparent 70%)`,
-          filter: "blur(100px)",
+          filter: "blur(110px)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          right: 180,
+          bottom: 140,
+          width: 360,
+          height: 360,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, rgba(79,195,247,${breathe * 0.45}) 0%, transparent 72%)`,
+          filter: "blur(90px)",
         }}
       />
       <div
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage: `linear-gradient(rgba(212,175,55,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.02) 1px, transparent 1px)`,
-          backgroundSize: "80px 80px",
+          backgroundImage: `linear-gradient(rgba(212,175,55,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.018) 1px, transparent 1px)`,
+          backgroundSize: "84px 84px",
         }}
       />
     </AbsoluteFill>
@@ -110,126 +119,123 @@ const VignetteOverlay: React.FC = () => (
   <AbsoluteFill
     style={{
       pointerEvents: "none",
-      background: "radial-gradient(ellipse at center, transparent 50%, rgba(12,12,14,0.6) 100%)",
+      background: "radial-gradient(ellipse at center, transparent 50%, rgba(12,12,14,0.68) 100%)",
     }}
   />
 );
 
-/* ──── 名字入场 ──── */
-const NameSection: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const nameProgress = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 30 });
-  const nameOpacity = interpolate(nameProgress, [0, 1], [0, 1]);
-  const nameY = interpolate(nameProgress, [0, 1], [40, 0]);
-
-  // 淡出
-  const fadeOut = safeInterpolate(frame, [sec(12), sec(14.5)], [1, 0]);
+const IdentityHero: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const progress = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 28 });
+  const fadeOut = safeInterpolate(frame, [sec(3.1), sec(4.2)], [1, 0]);
 
   return (
     <div
       style={{
         position: "absolute",
-        top: 180,
+        top: 350,
         left: 0,
         right: 0,
         textAlign: "center",
-        opacity: nameOpacity * fadeOut,
-        transform: `translateY(${nameY}px)`,
+        opacity: progress * fadeOut,
+        transform: `translateY(${interpolate(progress, [0, 1], [28, 0])}px)`,
       }}
     >
-      {/* 中文名 */}
+      <div style={{ fontSize: 13, color: THEME.muted, fontFamily: THEME.fontMono, letterSpacing: "0.16em", textTransform: "uppercase" }}>
+        Technical Identity / Masons Xu
+      </div>
       <h1
         style={{
-          fontSize: 64,
+          fontSize: 66,
           fontWeight: 700,
-          margin: 0,
+          margin: "18px 0 0",
           background: THEME.goldGradient,
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
-          letterSpacing: "-0.02em",
+          letterSpacing: "-0.03em",
         }}
       >
         徐俊飞
       </h1>
-
-      {/* 英文名 + 装饰线 */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginTop: 16 }}>
-        <div style={{ height: 1, width: 60, background: THEME.goldDivider }} />
-        <span style={{ fontSize: 20, color: THEME.muted, letterSpacing: "0.2em", fontFamily: THEME.fontMono }}>
+        <div style={{ height: 1, width: 70, background: THEME.goldDivider }} />
+        <span style={{ fontSize: 19, color: THEME.muted, letterSpacing: "0.18em", fontFamily: THEME.fontMono }}>
           Masons Xu
         </span>
-        <div style={{ height: 1, width: 60, background: THEME.goldDivider }} />
+        <div style={{ height: 1, width: 70, background: THEME.goldDivider }} />
+      </div>
+      <div style={{ marginTop: 22, fontSize: 17, color: THEME.pearl, fontWeight: 500, letterSpacing: "0.04em" }}>
+        Go Backend · Distributed Systems · Cloud Native · Data Platform
+      </div>
+      <div style={{ marginTop: 12, fontSize: 12, color: THEME.muted, lineHeight: 1.7 }}>
+        面向复杂服务协作、可观测诊断闭环与数据平台机制设计的工程实践。
       </div>
     </div>
   );
 };
 
-/* ──── 标语 ──── */
-const Tagline: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const p = spring({ frame, fps, config: { damping: 200 }, delay: sec(2.5), durationInFrames: 25 });
-  const fadeOut = safeInterpolate(frame, [sec(12), sec(14.5)], [1, 0]);
+const CapabilityDomains: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const fadeIn = safeInterpolate(frame, [sec(3.5), sec(4.4)], [0, 1]);
+  const fadeOut = safeInterpolate(frame, [sec(7.8), sec(8.8)], [1, 0]);
 
   return (
     <div
       style={{
         position: "absolute",
-        top: 340,
-        left: 0,
-        right: 0,
-        textAlign: "center",
-        opacity: interpolate(p, [0, 1], [0, 1]) * fadeOut,
-        transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
+        left: 170,
+        right: 170,
+        top: 410,
+        display: "grid",
+        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+        gap: 18,
+        opacity: fadeIn * fadeOut,
       }}
     >
-      <p style={{ fontSize: 18, color: THEME.muted, fontWeight: 300, letterSpacing: "0.15em", margin: 0 }}>
-        Go 后端工程师 · 分布式系统 · 云原生基础设施
-      </p>
-    </div>
-  );
-};
-
-/* ──── 技术栈标签轮播 ──── */
-const TechStackCarousel: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const fadeIn = safeInterpolate(frame, [sec(3.5), sec(4.5)], [0, 1]);
-  const fadeOut = safeInterpolate(frame, [sec(8), sec(9)], [1, 0]);
-  const opacity = fadeIn * fadeOut;
-
-  // 每个标签显示 0.5s，交错入场
-  return (
-    <div
-      style={{
-        position: "absolute",
-        top: 440,
-        left: 0,
-        right: 0,
-        display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        gap: 10,
-        padding: "0 200px",
-        opacity,
-      }}
-    >
-      {TECH_STACKS.map((tech, i) => {
-        const tagDelay = sec(3.5) + i * 2; // 每个标签错 2 帧
-        const tagP = spring({ frame, fps, config: { damping: 200 }, delay: tagDelay, durationInFrames: 15 });
-        const tagScale = interpolate(tagP, [0, 1], [0.7, 1]);
+      {CAPABILITY_DOMAINS.map((domain, index) => {
+        const p = spring({
+          frame,
+          fps,
+          config: { damping: 200 },
+          delay: sec(3.7) + index * 4,
+          durationInFrames: 20,
+        });
 
         return (
           <div
-            key={tech.label}
+            key={domain.title}
             style={{
-              opacity: tagP,
-              transform: `scale(${tagScale})`,
-              padding: "8px 18px",
-              borderRadius: 20,
-              background: `${tech.color}10`,
-              border: `1px solid ${tech.color}25`,
-              fontSize: 14,
-              fontFamily: THEME.fontMono,
-              color: tech.color,
+              opacity: p,
+              transform: `translateY(${interpolate(p, [0, 1], [18, 0])}px) scale(${interpolate(p, [0, 1], [0.9, 1])})`,
+              padding: "18px 18px 16px",
+              borderRadius: 16,
+              background: `${THEME.surfaceElevated}E8`,
+              border: `1px solid ${domain.color}28`,
+              boxShadow: `0 0 22px ${domain.color}12`,
             }}
           >
-            {tech.label}
+            <div style={{ fontSize: 12, color: domain.color, fontFamily: THEME.fontMono, fontWeight: 600, letterSpacing: "0.08em" }}>
+              {domain.title}
+            </div>
+            <div style={{ marginTop: 12, display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {domain.keywords.map((keyword) => (
+                <div
+                  key={keyword}
+                  style={{
+                    padding: "6px 10px",
+                    borderRadius: 999,
+                    background: `${domain.color}10`,
+                    border: `1px solid ${domain.color}22`,
+                    fontSize: 11,
+                    color: domain.color,
+                    fontFamily: THEME.fontMono,
+                  }}
+                >
+                  {keyword}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 14, fontSize: 11, color: THEME.muted, lineHeight: 1.7 }}>
+              {domain.note}
+            </div>
           </div>
         );
       })}
@@ -237,87 +243,88 @@ const TechStackCarousel: React.FC<{ frame: number; fps: number }> = ({ frame, fp
   );
 };
 
-/* ──── 关键指标 ──── */
-const MetricsRow: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const fadeIn = safeInterpolate(frame, [sec(9), sec(10)], [0, 1]);
-  const fadeOut = safeInterpolate(frame, [sec(12), sec(14.5)], [1, 0]);
-  const opacity = fadeIn * fadeOut;
+const BoundaryStatements: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const fadeIn = safeInterpolate(frame, [sec(8.1), sec(9)], [0, 1]);
+  const fadeOut = safeInterpolate(frame, [sec(11.7), sec(12.8)], [1, 0]);
 
   return (
     <div
       style={{
         position: "absolute",
-        top: 600,
-        left: 0,
-        right: 0,
-        display: "flex",
-        justifyContent: "center",
-        gap: 80,
-        opacity,
+        left: 250,
+        right: 250,
+        top: 380,
+        opacity: fadeIn * fadeOut,
       }}
     >
-      {METRICS.map((m, i) => {
-        const mp = spring({ frame, fps, config: { damping: 200 }, delay: sec(9.2) + i * 4, durationInFrames: 20 });
-        return (
-          <div
-            key={m.label}
-            style={{
-              opacity: mp,
-              transform: `translateY(${interpolate(mp, [0, 1], [20, 0])}px)`,
-              textAlign: "center",
-            }}
-          >
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <div style={{ fontSize: 13, color: THEME.muted, fontFamily: THEME.fontMono, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+          problem framing over vanity metrics
+        </div>
+        <div style={{ marginTop: 10, fontSize: 26, color: THEME.pearl, fontWeight: 600 }}>
+          关注的不是口号式指标，而是系统机制是否被讲清楚。
+        </div>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 16 }}>
+        {BOUNDARY_STATEMENTS.map((item, index) => {
+          const p = spring({
+            frame,
+            fps,
+            config: { damping: 200 },
+            delay: sec(8.3) + index * 5,
+            durationInFrames: 18,
+          });
+
+          return (
             <div
+              key={item.title}
               style={{
-                fontSize: 36,
-                fontWeight: 700,
-                fontFamily: THEME.fontMono,
-                background: THEME.goldGradient,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
+                opacity: p,
+                transform: `translateY(${interpolate(p, [0, 1], [18, 0])}px)`,
+                padding: "18px 18px 16px",
+                borderRadius: 16,
+                background: `${THEME.surface}EA`,
+                border: `1px solid ${item.color}2A`,
               }}
             >
-              {m.value}
+              <div style={{ fontSize: 13, color: item.color, fontFamily: THEME.fontMono, fontWeight: 600 }}>
+                {item.title}
+              </div>
+              <div style={{ marginTop: 12, fontSize: 12, color: THEME.muted, lineHeight: 1.75 }}>
+                {item.detail}
+              </div>
             </div>
-            <div style={{ fontSize: 12, color: THEME.muted, marginTop: 4, letterSpacing: "0.1em" }}>
-              {m.label}
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
 
-/* ──── 域名收尾 ──── */
-const DomainFooter: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
-  const p = spring({ frame, fps, config: { damping: 200 }, delay: sec(11), durationInFrames: 25 });
-  const fadeOut = safeInterpolate(frame, [sec(14), sec(15)], [1, 0]);
+const ClosingSignature: React.FC<{ frame: number; fps: number }> = ({ frame, fps }) => {
+  const p = spring({ frame, fps, config: { damping: 200 }, delay: sec(12), durationInFrames: 24 });
+  const fadeOut = safeInterpolate(frame, [sec(14.1), sec(15)], [1, 0]);
 
   return (
     <div
       style={{
         position: "absolute",
-        bottom: 100,
         left: 0,
         right: 0,
+        bottom: 108,
         textAlign: "center",
-        opacity: interpolate(p, [0, 1], [0, 1]) * fadeOut,
-        transform: `translateY(${interpolate(p, [0, 1], [20, 0])}px)`,
+        opacity: p * fadeOut,
+        transform: `translateY(${interpolate(p, [0, 1], [18, 0])}px)`,
       }}
     >
-      <div style={{ height: 1, width: 100, margin: "0 auto 16px", background: THEME.goldDivider }} />
-      <span
-        style={{
-          fontSize: 16,
-          fontFamily: THEME.fontMono,
-          color: THEME.gold,
-          letterSpacing: "0.1em",
-        }}
-      >
+      <div style={{ fontSize: 18, color: THEME.pearl, fontWeight: 500, letterSpacing: "0.02em" }}>
+        用清晰边界、可观测链路与真实系统经验构建后端能力。
+      </div>
+      <div style={{ height: 1, width: 120, margin: "18px auto 14px", background: THEME.goldDivider }} />
+      <div style={{ fontSize: 15, color: THEME.gold, fontFamily: THEME.fontMono, letterSpacing: "0.1em" }}>
         masonsxu-github-io.pages.dev
-      </span>
-      <div style={{ height: 1, width: 100, margin: "16px auto 0", background: THEME.goldDivider }} />
+      </div>
     </div>
   );
 };

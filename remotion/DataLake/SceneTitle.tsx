@@ -5,83 +5,65 @@ import {
   useVideoConfig,
   interpolate,
   spring,
-  Easing,
 } from "remotion";
 import { THEME } from "../shared/theme";
 import { safeInterpolate, sec } from "../shared/utils";
 
-/**
- * 场景 1: 标题入场 (0-3s)
- * "Data Lake Platform" + 副标题 + 技术标签
- */
+const TECH_BADGES = [
+  { label: "Apache Iceberg", color: THEME.lake.iceberg },
+  { label: "Airflow 3.1", color: THEME.lake.airflow },
+  { label: "Trino", color: THEME.lake.trino },
+  { label: "Polars", color: THEME.lake.polars },
+  { label: "PyIceberg", color: THEME.gold },
+] as const;
+
+const GHOST_LAYERS = [
+  { label: "Sources", x: 280, y: 560, color: THEME.lake.primary },
+  { label: "Orchestration", x: 620, y: 560, color: THEME.lake.airflow },
+  { label: "Compute & Query", x: 990, y: 560, color: THEME.lake.polars },
+  { label: "Delivery", x: 1370, y: 560, color: THEME.lake.accent },
+] as const;
+
 export const SceneTitle: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // 主标题 - 平滑 spring 入场
-  const titleProgress = spring({
-    frame,
-    fps,
-    config: { damping: 200 },
-    durationInFrames: 25,
-  });
-
-  const titleOpacity = interpolate(titleProgress, [0, 1], [0, 1]);
-  const titleY = interpolate(titleProgress, [0, 1], [30, 0]);
-
-  // 副标题 - 延迟入场
-  const subtitleProgress = spring({
-    frame,
-    fps,
-    config: { damping: 200 },
-    delay: sec(0.4),
-    durationInFrames: 25,
-  });
-
-  const subtitleOpacity = interpolate(subtitleProgress, [0, 1], [0, 1]);
-  const subtitleY = interpolate(subtitleProgress, [0, 1], [20, 0]);
-
-  // 分隔线 - 从中间展开
-  const lineProgress = spring({
-    frame,
-    fps,
-    config: { damping: 200 },
-    delay: sec(0.6),
-    durationInFrames: 20,
-  });
-  const lineWidth = interpolate(lineProgress, [0, 1], [0, 200]);
-
-  // 技术标签 - 交错入场
-  const techs = ["Apache Iceberg", "Airflow 3.1", "Trino", "Polars", "PyIceberg"];
-  const techColors = [THEME.lake.iceberg, THEME.lake.airflow, THEME.lake.trino, THEME.lake.polars, THEME.lake.parquet];
-
-  // 整体淡出
-  const fadeOut = safeInterpolate(frame, [sec(2.4), sec(3)], [1, 0]);
+  const titleProgress = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 24 });
+  const subtitleProgress = spring({ frame, fps, config: { damping: 200 }, delay: sec(0.25), durationInFrames: 22 });
+  const framingProgress = spring({ frame, fps, config: { damping: 200 }, delay: sec(0.55), durationInFrames: 22 });
+  const fadeOut = safeInterpolate(frame, [sec(2.8), sec(3.5)], [1, 0]);
 
   return (
-    <AbsoluteFill
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        opacity: fadeOut,
-      }}
-    >
-      {/* 主标题 */}
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", opacity: fadeOut }}>
+      <GhostSystemOutline />
+
       <div
         style={{
-          opacity: titleOpacity,
-          transform: `translateY(${titleY}px)`,
+          opacity: interpolate(titleProgress, [0, 1], [0, 1]),
+          transform: `translateY(${interpolate(titleProgress, [0, 1], [28, 0])}px)`,
+          textAlign: "center",
         }}
       >
+        <div
+          style={{
+            fontSize: 18,
+            color: THEME.muted,
+            fontFamily: THEME.fontMono,
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            marginBottom: 16,
+          }}
+        >
+          Config-Driven Data Lake Pipeline
+        </div>
         <h1
           style={{
-            fontSize: 72,
+            fontSize: 70,
             fontWeight: 700,
-            fontFamily: THEME.fontSans,
             background: THEME.goldGradient,
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            letterSpacing: "-0.02em",
+            letterSpacing: "-0.03em",
             margin: 0,
           }}
         >
@@ -89,70 +71,115 @@ export const SceneTitle: React.FC = () => {
         </h1>
       </div>
 
-      {/* 分隔线 */}
       <div
         style={{
-          width: lineWidth,
+          marginTop: 22,
+          width: interpolate(subtitleProgress, [0, 1], [0, 260]),
           height: 1,
           background: THEME.goldDivider,
-          margin: "20px 0",
         }}
       />
 
-      {/* 副标题 */}
       <div
         style={{
-          opacity: subtitleOpacity,
-          transform: `translateY(${subtitleY}px)`,
+          marginTop: 22,
+          opacity: interpolate(subtitleProgress, [0, 1], [0, 1]),
+          transform: `translateY(${interpolate(subtitleProgress, [0, 1], [18, 0])}px)`,
+          textAlign: "center",
         }}
       >
         <p
           style={{
             fontSize: 24,
             color: THEME.muted,
-            fontFamily: THEME.fontSans,
             fontWeight: 300,
-            letterSpacing: "0.1em",
+            letterSpacing: "0.08em",
             margin: 0,
           }}
         >
-          Apache Iceberg + Airflow + Trino + Polars
+          不是把数据搬进湖里，而是把规则变成流水线
         </p>
       </div>
 
-      {/* 技术标签 */}
-      <div style={{ display: "flex", gap: 12, marginTop: 40 }}>
-        {techs.map((tech, i) => {
-          const tagProgress = spring({
+      <div
+        style={{
+          marginTop: 40,
+          display: "flex",
+          gap: 12,
+          flexWrap: "wrap",
+          justifyContent: "center",
+          maxWidth: 1100,
+        }}
+      >
+        {TECH_BADGES.map((badge, index) => {
+          const progress = spring({
             frame,
             fps,
             config: { damping: 200 },
-            delay: sec(0.8) + i * 4,
-            durationInFrames: 20,
+            delay: sec(0.9) + index * 4,
+            durationInFrames: 18,
           });
-          const tagOpacity = interpolate(tagProgress, [0, 1], [0, 1]);
-          const tagScale = interpolate(tagProgress, [0, 1], [0.8, 1]);
 
           return (
             <div
-              key={tech}
+              key={badge.label}
               style={{
-                opacity: tagOpacity,
-                transform: `scale(${tagScale})`,
+                opacity: progress,
+                transform: `scale(${interpolate(progress, [0, 1], [0.82, 1])})`,
                 fontSize: 13,
                 fontFamily: THEME.fontMono,
-                color: techColors[i],
-                background: `${techColors[i]}10`,
-                border: `1px solid ${techColors[i]}30`,
-                padding: "6px 16px",
+                color: badge.color,
+                background: `${badge.color}12`,
+                border: `1px solid ${badge.color}30`,
+                padding: "7px 16px",
                 borderRadius: 20,
               }}
             >
-              {tech}
+              {badge.label}
             </div>
           );
         })}
       </div>
+
+      <div
+        style={{
+          marginTop: 26,
+          opacity: interpolate(framingProgress, [0, 1], [0, 1]),
+          transform: `translateY(${interpolate(framingProgress, [0, 1], [16, 0])}px)`,
+          fontSize: 13,
+          color: THEME.muted,
+          fontFamily: THEME.fontMono,
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
+      >
+        Sources → Orchestration → Compute → Delivery
+      </div>
     </AbsoluteFill>
   );
 };
+
+const GhostSystemOutline: React.FC = () => (
+  <AbsoluteFill style={{ pointerEvents: "none", opacity: 0.22 }}>
+    {GHOST_LAYERS.map((layer) => (
+      <div
+        key={layer.label}
+        style={{
+          position: "absolute",
+          left: layer.x,
+          top: layer.y,
+          width: 220,
+          padding: "14px 18px",
+          borderRadius: 14,
+          border: `1px solid ${layer.color}22`,
+          background: `${THEME.surfaceElevated}88`,
+          textAlign: "center",
+        }}
+      >
+        <div style={{ color: layer.color, fontFamily: THEME.fontMono, fontSize: 12, letterSpacing: "0.1em" }}>
+          {layer.label}
+        </div>
+      </div>
+    ))}
+  </AbsoluteFill>
+);
