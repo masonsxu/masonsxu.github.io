@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
 import { Player } from "@remotion/player";
 import { VIDEO } from "../../../remotion/shared/theme";
-import { showreelVideos, type VideoConfig } from "../../data/showreel-content";
+import { showreelVideos, type ShowreelVideo } from "../../data/showreel-registry";
 import { ScrollReveal, SectionLabel } from "../ScrollReveal";
 
 export function Showreel() {
-  const [activeVideo, setActiveVideo] = useState<VideoConfig | null>(null);
+  const [activeVideo, setActiveVideo] = useState<ShowreelVideo | null>(null);
 
-  const openVideo = useCallback((video: VideoConfig) => {
+  const openVideo = useCallback((video: ShowreelVideo) => {
     setActiveVideo(video);
     document.body.style.overflow = "hidden";
   }, []);
@@ -53,7 +53,7 @@ function VideoCard({
   video,
   onPlay,
 }: {
-  video: VideoConfig;
+  video: ShowreelVideo;
   onPlay: () => void;
 }) {
   return (
@@ -115,7 +115,7 @@ function VideoModal({
   video,
   onClose,
 }: {
-  video: VideoConfig;
+  video: ShowreelVideo;
   onClose: () => void;
 }) {
   const [isPlaying, setIsPlaying] = useState(true);
