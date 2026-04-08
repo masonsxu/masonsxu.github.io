@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build",
+    "dev": "vite",
+    "build": "vite build",
     "remotion:preview": "remotion studio remotion/Root.tsx"
   },
   "dependencies": {

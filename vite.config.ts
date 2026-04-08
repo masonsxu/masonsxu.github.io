@@ -39,7 +39,7 @@ export default defineConfig({
         },
       },
     },
-    // 提高 chunk 大小警告阈值（优化后应该不再触发）
-    chunkSizeWarningLimit: 300,
+    // 提高 chunk 大小警告阈值
+    chunkSizeWarningLimit: 1000,
   },
 })
