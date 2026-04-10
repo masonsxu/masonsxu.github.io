@@ -1,15 +1,19 @@
 import { awards, career, careerKeywords } from "../../data/site-content";
+import { useTranslation } from "../../i18n";
 import { ScrollReveal, SectionLabel } from "../ScrollReveal";
 
 export function Timeline() {
+  const { t } = useTranslation();
+  const tl = t.timeline;
+
   return (
     <section className="section-padding relative">
       <div className="section-container">
         {/* Career */}
         <ScrollReveal>
-          <SectionLabel>职业经历 / Career</SectionLabel>
+          <SectionLabel>{tl.careerLabel}</SectionLabel>
           <h2 className="text-3xl md:text-4xl font-semibold mt-1">
-            成长<span className="gold-text">轨迹</span>
+            {tl.careerTitle}<span className="gold-text">{tl.careerAccent}</span>
           </h2>
         </ScrollReveal>
 
@@ -27,13 +31,13 @@ export function Timeline() {
                   </div>
 
                   <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-4">
-                    <h3 className="text-lg md:text-xl font-semibold">{job.role}</h3>
+                    <h3 className="text-lg md:text-xl font-semibold">{tl.careerItems[i].role}</h3>
                     <span className="text-sm text-gold/70 font-mono">{job.company}</span>
                     <span className="text-xs text-muted-foreground font-mono ml-auto">{job.time}</span>
                   </div>
 
                   <ul className="space-y-2.5">
-                    {job.points.map((p, j) => (
+                    {tl.careerItems[i].points.map((p, j) => (
                       <li key={j} className="flex gap-2.5 items-start text-sm text-foreground/60 leading-relaxed">
                         <span className="text-gold/40 mt-1 shrink-0">›</span>
                         <span>{p}</span>
@@ -49,7 +53,7 @@ export function Timeline() {
         {/* Career keywords */}
         <ScrollReveal delay={100}>
           <div className="mt-10 flex flex-wrap gap-2">
-            {careerKeywords.map((kw) => (
+            {tl.careerKeywords.map((kw) => (
               <span key={kw} className="text-[11px] font-mono text-muted-foreground/60 border border-white/[0.04] rounded-full px-3 py-1">
                 {kw}
               </span>
@@ -60,16 +64,16 @@ export function Timeline() {
         {/* ── Education ── */}
         <div className="mt-24">
           <ScrollReveal>
-            <SectionLabel>教育背景 / Education</SectionLabel>
+            <SectionLabel>{tl.educationLabel}</SectionLabel>
           </ScrollReveal>
 
           <ScrollReveal delay={100}>
             <div className="mt-6 flex flex-col md:flex-row md:items-start gap-8 md:gap-16">
               {/* School info */}
               <div className="shrink-0">
-                <h3 className="text-lg font-semibold">河南城建学院</h3>
+                <h3 className="text-lg font-semibold">{tl.school}</h3>
                 <p className="text-sm text-muted-foreground mt-1">
-                  信息管理与信息系统（大数据方向）· 本科
+                  {tl.major}
                 </p>
                 <p className="text-xs font-mono text-muted-foreground/60 mt-1">2017 — 2021</p>
               </div>
@@ -77,7 +81,7 @@ export function Timeline() {
               {/* Awards: HORIZONTAL flowing badges */}
               <div className="flex-1">
                 <p className="text-xs text-muted-foreground/60 uppercase tracking-wider mb-3 font-mono">
-                  Honors & Awards
+                  {tl.honorsLabel}
                 </p>
                 <div className="flex flex-wrap gap-2.5">
                   {awards.map((a, i) => (
@@ -86,13 +90,13 @@ export function Timeline() {
                       className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/[0.12] bg-gold/[0.03] hover:border-gold/25 hover:bg-gold/[0.06] transition-all duration-300 group"
                     >
                       <span className="text-gold text-sm">{a.icon}</span>
-                      <span className="text-sm text-foreground/80 whitespace-nowrap">{a.text}</span>
+                      <span className="text-sm text-foreground/80 whitespace-nowrap">{tl.awards[i].text}</span>
                       {a.year && (
                         <span className="text-[10px] font-mono text-muted-foreground/60">{a.year}</span>
                       )}
-                      {a.detail && (
+                      {tl.awards[i].detail && (
                         <span className="text-[10px] font-mono text-gold/50 border-l border-gold/10 pl-2">
-                          {a.detail}
+                          {tl.awards[i].detail}
                         </span>
                       )}
                     </div>

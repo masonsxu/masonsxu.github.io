@@ -1,12 +1,8 @@
-
-const heroStats = [
-  { value: "10+", label: "Microservices" },
-  { value: "99.9%", label: "Availability" },
-  { value: "50%", label: "Latency Reduced" },
-  { value: "87%", label: "Deploy Faster" },
-] as const;
+import { useTranslation } from "../../i18n";
 
 export function Hero() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Atmospheric orbs */}
@@ -38,18 +34,17 @@ export function Hero() {
 
         {/* Tagline */}
         <p className="text-muted-foreground text-sm md:text-base tracking-[0.18em] uppercase font-light opacity-0 animate-[fadeInUp_1s_1.1s_forwards]">
-          Go 后端工程师 · 分布式系统 · 云原生基础设施
+          {t.hero.tagline}
         </p>
 
         {/* Hero description */}
         <p className="text-foreground/60 text-sm md:text-base max-w-2xl mx-auto mt-6 leading-relaxed opacity-0 animate-[fadeInUp_1s_1.3s_forwards]">
-          5 年 Go 后端开发经验，主导 Python → CloudWeGo 微服务架构转型，
-          独立设计 10+ 微服务分布式数据平台
+          {t.hero.description}
         </p>
 
         {/* Key metrics */}
         <div className="flex flex-wrap gap-8 md:gap-14 justify-center mt-14 opacity-0 animate-[fadeInUp_1s_1.6s_forwards]">
-          {heroStats.map((stat) => (
+          {t.hero.stats.map((stat) => (
             <div key={stat.label} className="text-center group">
               <div className="text-2xl md:text-3xl font-semibold font-mono gold-text transition-transform duration-300 group-hover:scale-110">
                 {stat.value}
@@ -65,7 +60,7 @@ export function Hero() {
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 animate-[scrollHint_2.5s_ease-in-out_infinite] flex flex-col items-center gap-2">
         <span className="text-[10px] text-muted-foreground/40 tracking-[0.3em] uppercase">
-          Scroll
+          {t.hero.scroll}
         </span>
         <svg width="14" height="20" viewBox="0 0 14 20" fill="none" className="text-gold/30">
           <path d="M7 2V18M7 18L1 12M7 18L13 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
