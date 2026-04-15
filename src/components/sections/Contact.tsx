@@ -1,17 +1,20 @@
 import { contactLinks } from "../../data/site-content";
+import { useTranslation } from "../../i18n";
 import { ScrollReveal } from "../ScrollReveal";
 
 export function Contact() {
+  const { t } = useTranslation();
+
   return (
     <section className="section-padding relative">
       <div className="section-container">
         <ScrollReveal>
           <div className="text-center mb-14">
             <span className="text-xs font-mono text-gold tracking-[0.3em] uppercase block mb-4">
-              联系方式 / Contact
+              {t.contact.label}
             </span>
             <h2 className="text-3xl md:text-4xl font-semibold">
-              Let's <span className="gold-text">Connect</span>
+              {t.contact.title} <span className="gold-text">{t.contact.accent}</span>
             </h2>
           </div>
         </ScrollReveal>
@@ -31,7 +34,7 @@ export function Contact() {
                   {link.label}
                 </span>
                 <span className="text-sm text-foreground/80 group-hover:text-gold transition-colors duration-300">
-                  {link.value}
+                  {link.label === "Resume" ? t.contact.resumeValue : link.value}
                 </span>
               </a>
             ))}
@@ -45,7 +48,7 @@ export function Contact() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <img src='/logo-dark.svg' alt="MASONS.XU" className="h-8 opacity-40 hover:opacity-60 transition-opacity" />
             <p className="text-xs text-muted-foreground/40 font-mono">
-              &copy; 2026 徐俊飞. All rights reserved.
+              {t.contact.copyright}
             </p>
           </div>
         </div>

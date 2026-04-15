@@ -98,23 +98,32 @@ export const Trailer: React.FC = () => {
       <GridOverlay size={88} color="rgba(212,175,55,0.016)" />
 
       <TransitionSeries>
-        {TRAILER_SECTIONS.map((section, index) => (
-          <React.Fragment key={section.id}>
-            <TransitionSeries.Sequence durationInFrames={section.durationInFrames}>
+        {TRAILER_SECTIONS.flatMap((section, index) => {
+          const elements = [
+            <TransitionSeries.Sequence
+              key={section.id}
+              durationInFrames={section.durationInFrames}
+            >
               {"Component" in section ? (
                 <NarrativeSection section={section} />
               ) : (
                 <ClosingSection section={section} />
               )}
-            </TransitionSeries.Sequence>
-            {index < TRAILER_SECTIONS.length - 1 && (
+            </TransitionSeries.Sequence>,
+          ];
+
+          if (index < TRAILER_SECTIONS.length - 1) {
+            elements.push(
               <TransitionSeries.Transition
+                key={`${section.id}-fade`}
                 presentation={fade()}
                 timing={linearTiming({ durationInFrames: TRANSITION_DURATION })}
-              />
-            )}
-          </React.Fragment>
-        ))}
+              />,
+            );
+          }
+
+          return elements;
+        })}
       </TransitionSeries>
 
       <ChapterRail frame={frame} />

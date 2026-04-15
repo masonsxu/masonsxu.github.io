@@ -7,12 +7,17 @@
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { I18nProvider } from "./i18n";
+import { LanguageSwitch } from "./components/LanguageSwitch";
 import App from "./App.tsx";
 
 const elem = document.getElementById("root")!;
 const app = (
   <StrictMode>
-    <App />
+    <I18nProvider>
+      <LanguageSwitch />
+      <App />
+    </I18nProvider>
   </StrictMode>
 );
 

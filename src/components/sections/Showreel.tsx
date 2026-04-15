@@ -2,9 +2,11 @@ import { useCallback, useState } from "react";
 import { Player } from "@remotion/player";
 import { VIDEO } from "../../../remotion/shared/theme";
 import { showreelVideos, type ShowreelVideo } from "../../data/showreel-registry";
+import { useTranslation } from "../../i18n";
 import { ScrollReveal, SectionLabel } from "../ScrollReveal";
 
 export function Showreel() {
+  const { t } = useTranslation();
   const [activeVideo, setActiveVideo] = useState<ShowreelVideo | null>(null);
 
   const openVideo = useCallback((video: ShowreelVideo) => {
@@ -21,12 +23,12 @@ export function Showreel() {
     <section className="section-padding relative">
       <div className="section-container">
         <ScrollReveal>
-          <SectionLabel>技术演示影集 / Technical Showreel</SectionLabel>
+          <SectionLabel>{t.showreel.label}</SectionLabel>
           <h2 className="text-3xl md:text-4xl font-semibold mt-1">
-            让技术作品集<span className="gold-text">可见</span>
+            {t.showreel.title}<span className="gold-text">{t.showreel.accent}</span>
           </h2>
           <p className="text-muted-foreground mt-3 max-w-xl text-sm leading-relaxed">
-            通过可视化视频演示展示 Go 微服务架构、分布式系统演进、GitHub 开源贡献与数据平台实践
+            {t.showreel.description}
           </p>
         </ScrollReveal>
 
@@ -34,7 +36,7 @@ export function Showreel() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {showreelVideos.map((v, i) => (
             <ScrollReveal key={v.titleEn} delay={i * 100}>
-              <VideoCard video={v} onPlay={() => openVideo(v)} />
+              <VideoCard video={v} index={i} onPlay={() => openVideo(v)} />
             </ScrollReveal>
           ))}
         </div>
@@ -42,7 +44,7 @@ export function Showreel() {
 
       {/* Full-screen video modal */}
       {activeVideo && (
-        <VideoModal video={activeVideo} onClose={closeVideo} />
+        <VideoModal video={activeVideo} index={showreelVideos.indexOf(activeVideo)} onClose={closeVideo} />
       )}
     </section>
   );
@@ -51,11 +53,16 @@ export function Showreel() {
 /* ──── 视频卡片 ──── */
 function VideoCard({
   video,
+  index,
   onPlay,
 }: {
   video: ShowreelVideo;
+  index: number;
   onPlay: () => void;
 }) {
+  const { t } = useTranslation();
+  const vt = t.showreel.videos[index];
+
   return (
     <button
       type="button"
@@ -66,7 +73,7 @@ function VideoCard({
       <div className="relative aspect-video bg-surface overflow-hidden">
         <img
           src={video.preview}
-          alt={video.title}
+          alt={vt.title}
           className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
           loading="lazy"
         />
@@ -87,13 +94,13 @@ function VideoCard({
       {/* Info */}
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex items-baseline gap-2 mb-2">
-          <h3 className="text-sm font-semibold">{video.title}</h3>
+          <h3 className="text-sm font-semibold">{vt.title}</h3>
           <span className="text-[10px] text-muted-foreground/50 font-mono">
             {video.titleEn}
           </span>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed flex-1">
-          {video.desc}
+          {vt.desc}
         </p>
         <div className="flex flex-wrap gap-1.5 mt-3">
           {video.techs.map((t) => (
@@ -113,19 +120,23 @@ function VideoCard({
 /* ──── 全屏视频模态框 ──── */
 function VideoModal({
   video,
+  index,
   onClose,
 }: {
   video: ShowreelVideo;
+  index: number;
   onClose: () => void;
 }) {
+  const { t } = useTranslation();
   const [isPlaying, setIsPlaying] = useState(true);
+  const vt = t.showreel.videos[index];
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
-      aria-label={`播放 ${video.title}`}
+      aria-label={`Play ${vt.title}`}
     >
       {/* Backdrop */}
       <div
@@ -141,7 +152,7 @@ function VideoModal({
           type="button"
           onClick={onClose}
           className="absolute -top-12 right-0 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="关闭"
+          aria-label={t.showreel.label === "Technical Showreel" ? "Close" : "关闭"}
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <path d="M18 6L6 18M6 6l12 12" />
@@ -150,7 +161,7 @@ function VideoModal({
 
         {/* Video title */}
         <div className="flex items-baseline gap-3 mb-4">
-          <h3 className="text-lg font-semibold gold-text">{video.title}</h3>
+          <h3 className="text-lg font-semibold gold-text">{vt.title}</h3>
           <span className="text-xs text-muted-foreground/60 font-mono tracking-wider">
             {video.titleEn}
           </span>
