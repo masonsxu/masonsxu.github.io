@@ -1,4 +1,4 @@
-import { awards, career, careerKeywords } from "../../data/site-content";
+import { awards, career } from "../../data/site-content";
 import { useTranslation } from "../../i18n";
 import { ScrollReveal, SectionLabel } from "../ScrollReveal";
 
@@ -22,28 +22,47 @@ export function Timeline() {
           <div className="absolute left-[11px] top-2 bottom-2 w-px bg-gradient-to-b from-gold/30 via-gold/15 to-transparent hidden md:block" />
 
           <div className="space-y-10">
-            {career.map((job, i) => (
-              <ScrollReveal key={i} delay={i * 150}>
+            {career.map((comp, ci) => (
+              <ScrollReveal key={ci} delay={ci * 150}>
                 <div className="md:pl-10 relative">
                   {/* Timeline dot */}
                   <div className="absolute left-0 top-1.5 w-[23px] h-[23px] rounded-full border-2 border-gold/40 bg-obsidian hidden md:flex items-center justify-center">
                     <div className="w-2 h-2 rounded-full bg-gold/70" />
                   </div>
 
-                  <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-4">
-                    <h3 className="text-lg md:text-xl font-semibold">{tl.careerItems[i].role}</h3>
-                    <span className="text-sm text-gold/70 font-mono">{job.company}</span>
-                    <span className="text-xs text-muted-foreground font-mono ml-auto">{job.time}</span>
+                  {/* Company header */}
+                  <div className="mb-6">
+                    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                      <h3 className="text-lg md:text-xl font-semibold">{tl.careerItems[ci].company}</h3>
+                      <span className="text-xs text-muted-foreground font-mono ml-auto">{comp.time}</span>
+                    </div>
+                    {tl.careerItems[ci].subtitle && (
+                      <p className="text-sm text-gold/70 mt-1">{tl.careerItems[ci].subtitle}</p>
+                    )}
                   </div>
 
-                  <ul className="space-y-2.5">
-                    {tl.careerItems[i].points.map((p, j) => (
-                      <li key={j} className="flex gap-2.5 items-start text-sm text-foreground/60 leading-relaxed">
-                        <span className="text-gold/40 mt-1 shrink-0">›</span>
-                        <span>{p}</span>
-                      </li>
+                  {/* Roles */}
+                  <div className="space-y-8 border-l-2 border-gold/10 ml-3 pl-6">
+                    {tl.careerItems[ci].roles.map((role, ri) => (
+                      <div key={ri}>
+                        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mb-3">
+                          <h4 className="text-base font-semibold text-foreground">{role.role}</h4>
+                          <span className="text-xs text-muted-foreground font-mono">{comp.roles[ri].time}</span>
+                        </div>
+                        {role.context && (
+                          <p className="text-sm text-foreground/50 italic mb-3">{role.context}</p>
+                        )}
+                        <ul className="space-y-2.5">
+                          {role.points.map((p, j) => (
+                            <li key={j} className="flex gap-2.5 items-start text-sm text-foreground/60 leading-relaxed">
+                              <span className="text-gold/40 mt-1 shrink-0">›</span>
+                              <span>{p}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </ScrollReveal>
             ))}

@@ -59,7 +59,15 @@ export interface TranslationSet {
     careerLabel: string;
     careerTitle: string;
     careerAccent: string;
-    careerItems: readonly { role: string; points: readonly string[] }[];
+    careerItems: readonly {
+      company: string;
+      subtitle?: string;
+      roles: readonly {
+        role: string;
+        context?: string;
+        points: readonly string[];
+      }[];
+    }[];
     careerKeywords: readonly string[];
     educationLabel: string;
     school: string;

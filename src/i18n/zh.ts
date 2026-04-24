@@ -134,6 +134,36 @@ export const zh: TranslationSet = {
           "25+ 第三方系统对接",
         ],
       },
+      {
+        title: "CloudWeGo 微服务模板与开源贡献",
+        subtitle: "生产级架构实践 · 开源贡献者",
+        time: "2025 — 至今",
+        summary:
+          "基于生产经验沉淀 CloudWeGo 微服务标准架构模板，覆盖网关接入、服务发现、可观测、容器化与工程规范。系统性落地 AI 辅助开发流程，参与 CloudWeGo 生态组件问题修复与贡献。",
+        highlights: [
+          {
+            title: "生产级微服务模板",
+            desc: "提炼 Radius 项目实践经验，开源 CloudWeGo 标准架构模板，覆盖 Kitex/Hertz 双栈、DDD 分层、Wire DI、可观测性等完整工程规范",
+          },
+          {
+            title: "AI 辅助开发体系",
+            desc: "建立 AGENTS.md 架构规范文档、Custom Skills 开发流程脚本与 AI 驱动 GitHub Actions 工作流，提升端到端交付效率",
+          },
+          {
+            title: "生态组件贡献",
+            desc: "修复 hertz-contrib/jwt RefreshToken 窗口失效 Bug；优化可观测性组件稳定性；修复 Go 1.25+ 编译兼容性问题",
+          },
+        ],
+        metrics: [
+          { value: "3", label: "Merged PRs" },
+          { value: "330+", label: "AGENTS.md Lines" },
+        ],
+        extras: [
+          "开源架构模板",
+          "AI 辅助开发工作流",
+          "生产级工程规范",
+        ],
+      },
     ],
   },
   architecture: {
@@ -223,20 +253,29 @@ export const zh: TranslationSet = {
     careerAccent: "轨迹",
     careerItems: [
       {
-        role: "Go 后端架构师 / 技术负责人",
-        points: [
-          "独立设计并交付基于 CloudWeGo 生态的分布式数据平台：Kitex RPC + Hertz HTTP 双栈架构，9 模块 go.work 工作区",
-          "构建 Apache Iceberg 数据湖平台：Airflow 3.1 编排 + PyIceberg 直读 + Trino 查询 + Polars 内存计算",
-          "设计分布式服务治理体系：Etcd 服务注册发现 + OpenTelemetry + Jaeger 全链路追踪；Casbin RBAC",
-          "建立工程化机制：Google Wire 编译时 DI、6 位结构化错误码体系、DDD 四层架构规范",
-        ],
-      },
-      {
-        role: "Python 后端开发工程师",
-        points: [
-          "以应届生加入，独立成长为系统实际负责人，主导 Asyncio 性能重构：重写核心链路为异步架构，响应时间降低 50%",
-          "主导 Docker 容器化转型：从手动部署到容器编排，交付时间缩短 87%，建立标准化 CI/CD 流程",
-          "长期主导生产环境部署与排障，积累分布式系统调试经验，驱动后续 Go 微服务架构转型",
+        company: "福建自贸试验区厦门片区 Manteia 数据科技有限公司",
+        subtitle: "核心业务研发与后端架构体系演进",
+        roles: [
+          {
+            role: "Go 后端架构师 / 技术负责人",
+            context:
+              "基于前期在核心业务重构与工程提效上的突出表现，晋升主导新一代微服务架构升级与技术团队规范建设",
+            points: [
+              "主导后端服务化升级，完成 8 RPC + 1 API Gateway 的 9 服务体系建设，支撑多模块独立演进与部署",
+              "统一 IDL-First 开发流程、分层架构约束与 Wire 依赖注入规范，将服务研发从「个人经验驱动」升级为「标准体系驱动」",
+              "建设 OTel、Jaeger 与 trace / request_id 传播链路，打通网关到核心 RPC 的排障路径",
+              "推动 8 人研发协作机制标准化，沉淀结构化技术资产，降低跨模块协作成本",
+            ],
+          },
+          {
+            role: "Python 后端开发工程师",
+            points: [
+              "以应届生加入，独立成长为系统实际负责人，主导 Asyncio 性能重构：重写核心链路为异步架构，查询效率提升 50%，数据加载响应提升 35%",
+              "推动核心服务从 Shell 方式迁移至容器化工程流程，部署时间从 4 小时缩短至 30 分钟，交付效率提升 87.5%",
+              "通过链路治理与变更风险收敛，故障率下降 45%，系统可用性提升至 99.9%",
+              "多次在核心链路故障中实现当日快速恢复，兼顾极速止损与根因修复",
+            ],
+          },
         ],
       },
     ],

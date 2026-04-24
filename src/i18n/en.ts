@@ -136,6 +136,36 @@ export const en: TranslationSet = {
           "25+ third-party integrations",
         ],
       },
+      {
+        title: "CloudWeGo Microservices Template & Open Source Contributions",
+        subtitle: "Production-Grade Architecture Practice · Open Source Contributor",
+        time: "2025 — Present",
+        summary:
+          "Distilled from production experience into a CloudWeGo standard microservices template, covering gateway integration, service discovery, observability, containerization and engineering conventions. Systematically implementing AI-assisted development workflows and contributing to the CloudWeGo ecosystem.",
+        highlights: [
+          {
+            title: "Production-Grade Microservices Template",
+            desc: "Distilled from the Radius project, open-sourced a CloudWeGo standard architecture template covering Kitex/Hertz dual-stack, DDD layering, Wire DI, and observability engineering conventions",
+          },
+          {
+            title: "AI-Assisted Development System",
+            desc: "Built AGENTS.md architecture spec, Custom Skills development workflow scripts, and AI-driven GitHub Actions workflows to improve end-to-end delivery efficiency",
+          },
+          {
+            title: "Ecosystem Component Contributions",
+            desc: "Fixed hertz-contrib/jwt RefreshToken window invalidation bug; improved observability component stability; resolved Go 1.25+ build compatibility issues",
+          },
+        ],
+        metrics: [
+          { value: "3", label: "Merged PRs" },
+          { value: "330+", label: "AGENTS.md Lines" },
+        ],
+        extras: [
+          "Open-source architecture template",
+          "AI-assisted dev workflow",
+          "Production-grade engineering specs",
+        ],
+      },
     ],
   },
   architecture: {
@@ -225,20 +255,29 @@ export const en: TranslationSet = {
     careerAccent: "Trajectory",
     careerItems: [
       {
-        role: "Go Backend Architect / Tech Lead",
-        points: [
-          "Independently designed and delivered a CloudWeGo-based distributed data platform: Kitex RPC + Hertz HTTP dual-stack, 9-module go.work workspace",
-          "Built an Apache Iceberg data lake platform: Airflow 3.1 orchestration + PyIceberg direct reads + Trino queries + Polars in-memory compute",
-          "Designed distributed service governance: Etcd service discovery + OpenTelemetry + Jaeger full-chain tracing; Casbin RBAC",
-          "Established engineering standards: Google Wire compile-time DI, 6-digit structured error code system, DDD four-layer architecture conventions",
-        ],
-      },
-      {
-        role: "Python Backend Developer",
-        points: [
-          "Joined as a fresh graduate, independently grew into the de facto system owner. Led Asyncio performance refactoring: rewrote core paths to async, reducing response time by 50%",
-          "Led Docker containerization: from manual deployment to container orchestration, cutting delivery time by 87% and establishing standardized CI/CD",
-          "Led production deployment and troubleshooting long-term, accumulating distributed systems debugging experience that drove the subsequent Go microservices transformation",
+        company: "Manteia Data Technology Co., Ltd. (Xiamen Free Trade Zone)",
+        subtitle: "Core Business R&D & Backend Architecture Evolution",
+        roles: [
+          {
+            role: "Go Backend Architect / Tech Lead",
+            context:
+              "Promoted to lead the next-generation microservices architecture upgrade and team engineering standards, based on outstanding performance in core business refactoring and engineering efficiency",
+            points: [
+              "Led backend service-oriented upgrade, delivering 8 RPC + 1 API Gateway microservices system supporting independent module evolution and deployment",
+              "Unified IDL-First development workflow, layered architecture constraints and Wire dependency injection conventions, upgrading from \"individual-experience-driven\" to \"standard-system-driven\"",
+              "Built OTel, Jaeger and trace/request_id propagation pipeline, enabling end-to-end troubleshooting from gateway to core RPC services",
+              "Standardized 8-person R&D collaboration, accumulating structured technical assets to reduce cross-module coordination costs",
+            ],
+          },
+          {
+            role: "Python Backend Developer",
+            points: [
+              "Joined as a fresh graduate, grew into de facto system owner. Led Asyncio performance refactoring: rewrote core paths to async, improving query efficiency by 50% and data loading response by 35%",
+              "Drove migration from Shell-based deployment to containerized engineering workflow, reducing deploy time from 4 hours to 30 minutes — an 87.5% efficiency gain",
+              "Through pipeline governance and change risk convergence, reduced failure rate by 45% and improved system availability to 99.9%",
+              "Achieved same-day rapid recovery in multiple core pipeline incidents, balancing swift mitigation with root-cause fixes",
+            ],
+          },
         ],
       },
     ],

@@ -16,11 +16,14 @@ export interface Project {
   extras: string[];
 }
 
-export interface CareerItem {
-  role: string;
+export interface CareerRole {
+  time: string;
+}
+
+export interface CareerCompany {
   company: string;
   time: string;
-  points: string[];
+  roles: CareerRole[];
 }
 
 export interface AwardItem {
@@ -150,28 +153,43 @@ export const projects: Project[] = [
     ],
     extras: ["4 层嵌套组件树引擎", "跨表单实时数据联动", "25+ 第三方系统对接"],
   },
+  {
+    num: "04",
+    title: "CloudWeGo 微服务模板与开源贡献",
+    subtitle: "生产级架构实践 · 开源贡献者",
+    time: "2025 — 至今",
+    summary:
+      "基于生产经验沉淀 CloudWeGo 微服务标准架构模板，覆盖网关接入、服务发现、可观测、容器化与工程规范。系统性落地 AI 辅助开发流程，参与 CloudWeGo 生态组件问题修复与贡献。",
+    highlights: [
+      {
+        title: "生产级微服务模板",
+        desc: "提炼 Radius 项目实践经验，开源 CloudWeGo 标准架构模板，覆盖 Kitex/Hertz 双栈、DDD 分层、Wire DI、可观测性等完整工程规范",
+      },
+      {
+        title: "AI 辅助开发体系",
+        desc: "建立 AGENTS.md 架构规范文档、Custom Skills 开发流程脚本与 AI 驱动 GitHub Actions 工作流，提升端到端交付效率",
+      },
+      {
+        title: "生态组件贡献",
+        desc: "修复 hertz-contrib/jwt RefreshToken 窗口失效 Bug；优化可观测性组件稳定性；修复 Go 1.25+ 编译兼容性问题",
+      },
+    ],
+    techs: ["CloudWeGo", "Kitex", "Hertz", "GitHub Actions", "Claude Code"],
+    metrics: [
+      { value: "3", label: "Merged PRs" },
+      { value: "330+", label: "AGENTS.md Lines" },
+    ],
+    extras: ["开源架构模板", "AI 辅助开发工作流", "生产级工程规范"],
+  },
 ];
 
-export const career: CareerItem[] = [
+export const career: CareerCompany[] = [
   {
-    role: "Go 后端架构师 / 技术负责人",
     company: "Manteia 数据科技",
-    time: "2025.03 — 2026.04",
-    points: [
-      "独立设计并交付基于 CloudWeGo 生态的分布式数据平台：Kitex RPC + Hertz HTTP 双栈架构，9 模块 go.work 工作区",
-      "构建 Apache Iceberg 数据湖平台：Airflow 3.1 编排 + PyIceberg 直读 + Trino 查询 + Polars 内存计算",
-      "设计分布式服务治理体系：Etcd 服务注册发现 + OpenTelemetry + Jaeger 全链路追踪；Casbin RBAC",
-      "建立工程化机制：Google Wire 编译时 DI、6 位结构化错误码体系、DDD 四层架构规范",
-    ],
-  },
-  {
-    role: "Python 后端开发工程师",
-    company: "Manteia 数据科技",
-    time: "2021.06 — 2025.03",
-    points: [
-      "以应届生加入，独立成长为系统实际负责人，主导 Asyncio 性能重构：重写核心链路为异步架构，响应时间降低 50%",
-      "主导 Docker 容器化转型：从手动部署到容器编排，交付时间缩短 87%，建立标准化 CI/CD 流程",
-      "长期主导生产环境部署与排障，积累分布式系统调试经验，驱动后续 Go 微服务架构转型",
+    time: "2021.06 — 2026.04",
+    roles: [
+      { time: "2025.03 — 2026.04" },
+      { time: "2021.06 — 2025.03" },
     ],
   },
 ];
