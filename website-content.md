@@ -8,7 +8,7 @@
 
 **标签行：** Go 后端工程师 · 分布式系统 · 云原生基础设施
 
-**简介：** 5 年 Go 后端开发经验，主导 Python → CloudWeGo 微服务架构转型，独立设计 10+ 微服务分布式数据平台
+**简介：** 5 年 Go 后端开发经验，横跨分布式微服务架构、数据湖平台建设与云原生工程效能，具备从 0 到 1 独立交付复杂系统的全链路能力。
 
 **关键指标：**
 - 10+ Microservices
@@ -21,13 +21,13 @@
 ## 个人简介 / About
 
 **亮点：**
-- 主导 Python 单体到 CloudWeGo 微服务架构的整体转型
+- 主导 Python 单体到 CloudWeGo 微服务架构的整体转型，6 个月内完成 Radius 项目设计、开发与测试闭环
 - 独立设计并交付 10+ 微服务的分布式数据平台
-- 构建 Apache Iceberg + Airflow 数据湖平台
-- 向 CloudWeGo 开源项目提交 3 个已合并 PR
+- 仅用 5 个月完成 Apache Iceberg + Airflow 数据湖平台从设计到生产投入使用
+- 向 CloudWeGo 开源项目提交 3 个已合并 PR，持续贡献 RPC/HTTP 框架生态
 
 **自述：**
-5 年 Go 后端开发经验，深耕**分布式系统架构**与**云原生基础设施**。从应届生成长为系统实际负责人，主导表单引擎设计、跨表单数据联动、性能重构、容器化转型与 25+ 第三方系统对接，长期主导生产环境部署与排障，积累大量分布式系统调试经验。
+5 年 Go 后端开发经验，深耕分布式系统架构与云原生基础设施。从应届生加入，独立成长为系统实际负责人，主导表单引擎设计、跨表单数据联动、性能重构、容器化转型与 25+ 第三方系统对接，长期主导生产环境部署与排障，积累大量分布式系统调试与治理经验。
 
 > "架构不是设计出来的，而是在解决真实问题的过程中自然涌现的"
 > — 工程哲学
@@ -38,12 +38,11 @@
 
 ### 01. 分布式数据管理平台 — CloudWeGo 微服务架构
 
-**时间：** 2025.03 — 2026.04
+**时间：** 2025.03 — 2026.04（6 个月交付并持续迭代）
 
 **摘要：** 独立设计并交付基于 CloudWeGo 生态的分布式数据平台。采用 Kitex RPC + Hertz HTTP 双栈架构，通过 Thrift IDL-First 定义 10+ 微服务契约，使用 Google Wire 编译时依赖注入，构建从 API 网关到 8 个 RPC 微服务的完整分布式系统。
 
 **核心亮点：**
-
 - **DDD 四层架构**：Handler → Logic → DAL → Model 严格分层，业务逻辑与框架零耦合，仓储模式隔离数据访问
 - **分布式服务治理**：Etcd 服务注册发现 + 通告地址解决容器网络映射；Kitex metainfo 全链路 RequestID 传播
 - **可观测性体系**：OpenTelemetry + Jaeger 分布式追踪，中间件链路自动标记 >100ms 慢调用为 Warn 级别
@@ -53,7 +52,7 @@
 
 **规模：**
 - 10+ Services
-- 数万行 Go Code
+- 数万行 Go Code（6 个月独立交付）
 
 **其他亮点：**
 - 6 位结构化错误码体系
@@ -64,12 +63,11 @@
 
 ### 02. 数据湖平台 — Apache Iceberg + Airflow 配置驱动 ETL
 
-**时间：** 2025.03 — 2026.04
+**时间：** 2025.03 — 2026.04（5 个月投产并持续迭代）
 
-**摘要：** 构建基于 Apache Iceberg 的数据湖平台，将业务系统 REST API、MySQL、MongoDB 多源数据统一入湖。采用 Airflow 3.1 编排 + PyIceberg 直写 + Trino SQL 查询 + Polars 内存 JOIN 的技术栈。
+**摘要：** 构建基于 Apache Iceberg 的数据湖平台，将业务系统 REST API、MySQL、MongoDB 多源数据统一入湖。采用 Airflow 3.1 编排 + PyIceberg 直写 + Trino SQL 查询 + Polars 内存 JOIN 的技术栈，5 个月内完成从设计到生产投入使用。
 
 **核心亮点：**
-
 - **配置驱动 SQL 引擎**：DictConfigParser 自动解析 interface_code 编码，BFS 图搜索找到最优 JOIN 路径
 - **多源异构数据入湖**：MySQL SSDictCursor 流式游标，MongoDB raw_document JSON 三列 schema，统一写入 Iceberg Parquet
 - **跨源 JOIN 与字典抽取**：Polars 解析 JSON 提取字段，Trino 查询小表，Polars 内存执行 5 表链式 LEFT JOIN
@@ -80,6 +78,7 @@
 **规模：**
 - 4 ETL Steps
 - 3 Data Sources
+- 5 个月从设计到投产
 
 **其他亮点：**
 - BFS 图搜索最优 JOIN 路径
@@ -90,12 +89,11 @@
 
 ### 03. 放疗流程管理系统 — 表单引擎与流程编排核心开发
 
-**时间：** 2021.06 — 2025.03
+**时间：** 2021.06 — 2025.03（近 4 年持续迭代）
 
-**摘要：** 作为系统主程（累计提交 4,000+ commits），独立负责 Flask + MySQL + MongoDB + Redis 架构的放疗流程管理系统。从应届生成长为系统实际负责人。
+**摘要：** 作为系统主程（累计提交 4,000+ commits），独立负责 Flask + MySQL + MongoDB + Redis 架构的放疗流程管理系统。从应届生成长为系统实际负责人，历时近 4 年主导表单引擎设计、跨表单数据联动、性能重构、容器化转型与 25+ 第三方系统对接，是该系统整个生命周期的技术核心。
 
 **核心亮点：**
-
 - **自定义表单引擎**：MongoDB 文档嵌套树实现 4 层深度组件树，支持 30+ 组件类型；三层模型分离
 - **跨表单数据联动**：三元引用模型实现跨表单、跨工作流实时数据同步；MongoDB array_filters 3 层嵌套精准更新
 - **工作流引擎**：JSON 驱动流程节点拓扑，支持 NEXT/PREVIOUS/REJECT 三种推进模式
@@ -105,7 +103,7 @@
 
 **规模：**
 - 4,000+ Commits
-- 4 年 System Ownership
+- 近 4 年系统所有权
 
 **其他亮点：**
 - 4 层嵌套组件树引擎
@@ -121,7 +119,6 @@
 **摘要：** 基于生产经验沉淀 CloudWeGo 微服务标准架构模板，覆盖网关接入、服务发现、可观测、容器化与工程规范。系统性落地 AI 辅助开发流程，参与 CloudWeGo 生态组件问题修复与贡献。
 
 **核心亮点：**
-
 - **生产级微服务模板**：提炼 Radius 项目实践经验，开源 CloudWeGo 标准架构模板，覆盖 Kitex/Hertz 双栈、DDD 分层、Wire DI、可观测性等完整工程规范
 - **AI 辅助开发体系**：建立 AGENTS.md 架构规范文档、Custom Skills 开发流程脚本与 AI 驱动 GitHub Actions 工作流，提升端到端交付效率
 - **生态组件贡献**：修复 hertz-contrib/jwt RefreshToken 窗口失效 Bug；优化可观测性组件稳定性；修复 Go 1.25+ 编译兼容性问题
@@ -147,7 +144,7 @@
 独立完成从技术选型到系统交付的全链路设计，掌握 RPC 框架、服务治理、可观测性体系
 
 #### 2. 数据湖与 ETL
-构建 Iceberg 数据湖平台，多源异构数据统一入湖，配置驱动 SQL 生成与跨源 JOIN
+构建 Iceberg 数据湖平台，多源异构数据统一入湖，配置驱动 SQL 生成与跨源 JOIN，5 个月投产
 
 #### 3. 云原生工程效能
 IDL-First 流程 + Google Wire 编译时 DI + CI/CD 自动化，构建标准化开发工作流
@@ -203,65 +200,53 @@ Go、微服务、DDD、CloudWeGo、OpenTelemetry、容器化、AI 辅助开发�
 
 ## 灵魂底色 / The Essence
 
-设计与架构的**华丽交响**
+**可靠与精工，是工程师最好的艺术。**
 
-我认为，一段优雅的代码应当如顶级奢侈品般，在隐秘处追求极致的细节。Midnight Pearl 不仅仅是一套配色方案，它代表了我对系统架构的追求：深邃、稳定且散发着理性的光芒。
+我追求系统如同打磨一件精密仪器——在可见处表现从容，在不可见处苛求细节。Midnight Pearl 代表了这种理念：**Obsidian 的稳健**承载一切，**Pearl 的纯粹**保持逻辑透明，**Gold 的卓越**在关键路径上闪耀。
 
-### 设计理念
-
-- **Obsidian** — Stability / 稳健：如同分布式系统的基石，沉稳可靠，承载一切
-- **Pearl** — Clarity / 纯粹：代码的纯净与逻辑的透明，每一行都经得起审视
-- **Gold** — Excellence / 卓越：对细节的极致追求，在隐秘处散发理性的光芒
-
-### 星座象征
-
-**Taurus 金牛座 / 4.20 - 5.20**
-
-> "Luxury is balance of design and function, much like steady heart of the Bull."
-
-特质：Reliable（可靠）· Artistic（艺术感）
+作为金牛座工程师，我把**可靠**看作最高赞誉，把**艺术感**藏在每一行干净、可维护的代码里。
 
 ---
 
 ## 技术演示影集 / Technical Showreel
 
-通过可视化视频演示展示 Go 微服务架构、分布式系统演进、GitHub 开源贡献与数据平台实践。
+使用 Remotion 框架构建，用可视化叙事呈现真实的技术身份、架构演进与贡献轨迹。
 
 ### 1. 技术身份短片 (Tech Card)
 
-围绕真实技术身份与能力边界重构的 15 秒短叙事片。以 Go、CloudWeGo、OpenTelemetry 与数据平台栈为线索，呈现技术定位、能力域和问题边界，而非虚构 KPI。
+围绕真实技术身份与能力边界重构的 15 秒 Remotion 短片。以 Go、CloudWeGo、OpenTelemetry 与数据平台栈为线索，呈现技术定位、能力域和问题边界。
 
-**时长：** 15s | **技术：** Go Backend、CloudWeGo、Observability、Data Platform
+**时长：** 15s | **技术：** Remotion、Go Backend、CloudWeGo、Observability
 
 ### 2. 开源项目看板 (Open Source Dashboard)
 
-围绕真实 CloudWeGo 贡献重构的技术叙事片。通过终端上下文、贡献事实卡与作用域拓扑，展示 jwt 修复、可观测性稳定性与 Go 1.25+ 兼容性问题。
+围绕真实 CloudWeGo 贡献的 Remotion 技术叙事片。通过终端上下文、贡献事实卡与作用域拓扑，展示 jwt 修复、可观测性稳定性与 Go 1.25+ 兼容性问题。
 
-**时长：** 20s | **技术：** CloudWeGo PRs、Contribution Facts、Scope Topology
+**时长：** 20s | **技术：** Remotion、CloudWeGo PRs、Contribution Facts
 
 ### 3. 架构演进历程 (Architecture Evolution)
 
-围绕真实请求路径的架构演进叙事。展示单体职责拆分、Hertz/Kitex 调用链显式化、服务内分层组织，以及 trace 驱动的诊断闭环。
+围绕真实请求路径的 Remotion 架构演进叙事。展示单体职责拆分、Hertz/Kitex 调用链显式化、服务内分层组织，以及 trace 驱动的诊断闭环。
 
-**时长：** 25s | **技术：** Boundary Split、Hertz + Kitex、Service Layering、Trace Visibility
+**时长：** 25s | **技术：** Remotion、Boundary Split、Hertz + Kitex、Trace Visibility
 
 ### 4. 数据湖平台 (Data Lake Platform)
 
-围绕真实配置驱动 ETL 重构的机制叙事片。展示多源异构入湖、mapping_rules 到 DAG 的转换、BFS 最优 JOIN 路径，以及两阶段抽取后的 api_payload 回传闭环。
+围绕真实配置驱动 ETL 的 Remotion 机制叙事片。展示多源异构入湖、mapping_rules 到 DAG 的转换、BFS 最优 JOIN 路径，以及两阶段抽取后的 api_payload 回传闭环。
 
-**时长：** 25s | **技术：** Config-Driven ETL、BFS Join Path、Delivery Loop
+**时长：** 25s | **技术：** Remotion、Config-Driven ETL、BFS Join Path
 
 ### 5. GitHub 贡献热力图 (Contribution Heatmap)
 
-围绕真实 52 周 GitHub contribution matrix 重构的贡献轨迹叙事片。展示年度贡献墙生长、高峰格子对应的关键事件，以及总贡献数与连续贡献窗口等事实卡。
+围绕真实 52 周 GitHub contribution matrix 的 Remotion 贡献轨迹叙事片。展示年度贡献墙生长、高峰格子对应的关键事件，以及总贡献数与连续贡献窗口等事实卡。
 
-**时长：** 20s | **技术：** 52-Week Timeline、Contribution Facts、Milestone Mapping
+**时长：** 20s | **技术：** Remotion、52-Week Timeline、Contribution Facts
 
 ### 6. 作品集总叙事片 (Portfolio Trailer)
 
-围绕真实技术身份、系统机制、开源证据与长期贡献轨迹重组的 60 秒总叙事片。通过跨视频 excerpt 与全局桥接层，把作品集从片段轮播升级为完整技术画像。
+围绕真实技术身份、系统机制、开源证据与长期贡献轨迹重组的 60 秒 Remotion 总叙事片。通过跨视频 excerpt 与全局桥接层，把作品集从片段轮播升级为完整技术画像。
 
-**时长：** 60s | **技术：** Narrative Excerpts、System Proof、Contribution Track、Closing Statement
+**时长：** 60s | **技术：** Remotion、Narrative Excerpts、System Proof、Contribution Track
 
 ---
 
