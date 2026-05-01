@@ -3,7 +3,8 @@ import { Player } from "@remotion/player";
 import { VIDEO } from "../../../remotion/shared/theme";
 import { showreelVideos, type ShowreelVideo } from "../../data/showreel-registry";
 import { useTranslation } from "../../i18n";
-import { ScrollReveal, SectionLabel } from "../ScrollReveal";
+import { ScrollReveal } from "../ScrollReveal";
+import { SmdTag } from "../chip/SmdTag";
 
 export function Showreel() {
   const { t } = useTranslation();
@@ -23,34 +24,37 @@ export function Showreel() {
     <section className="section-padding relative">
       <div className="section-container">
         <ScrollReveal>
-          <SectionLabel>{t.showreel.label}</SectionLabel>
-          <h2 className="text-3xl md:text-4xl font-semibold mt-1">
-            {t.showreel.title}<span className="gold-text">{t.showreel.accent}</span>
+          <div className="silicon-eyebrow mb-3">0x00F0 · {t.showreel.label}</div>
+          <h2 className="font-display font-medium text-3xl md:text-5xl tracking-[-0.035em] leading-[0.95]">
+            {t.showreel.title}
+            <span className="text-gold">{t.showreel.accent}</span>
           </h2>
-          <p className="text-muted-foreground mt-3 max-w-xl text-sm leading-relaxed">
+          <p className="mt-4 max-w-xl text-foreground/55 text-[14.5px] leading-relaxed">
             {t.showreel.description}
           </p>
         </ScrollReveal>
 
-        {/* Video grid */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {showreelVideos.map((v, i) => (
-            <ScrollReveal key={v.titleEn} delay={i * 100}>
+            <ScrollReveal key={v.titleEn} delay={i * 90}>
               <VideoCard video={v} index={i} onPlay={() => openVideo(v)} />
             </ScrollReveal>
           ))}
         </div>
       </div>
 
-      {/* Full-screen video modal */}
       {activeVideo && (
-        <VideoModal video={activeVideo} index={showreelVideos.indexOf(activeVideo)} onClose={closeVideo} />
+        <VideoModal
+          video={activeVideo}
+          index={showreelVideos.indexOf(activeVideo)}
+          onClose={closeVideo}
+        />
       )}
     </section>
   );
 }
 
-/* ──── 视频卡片 ──── */
+/* ──── IC-package video card ──── */
 function VideoCard({
   video,
   index,
@@ -62,54 +66,91 @@ function VideoCard({
 }) {
   const { t } = useTranslation();
   const vt = t.showreel.videos[index];
+  const partNo = `MX-S${String(index + 1).padStart(2, "0")}-${video.duration.replace("s", "")}S`;
 
   return (
     <button
       type="button"
       onClick={onPlay}
-      className="group rounded-2xl border border-white/[0.04] bg-surface-elevated/30 overflow-hidden transition-all duration-500 gold-border-glow h-full flex flex-col text-left w-full cursor-pointer"
+      className="group text-left w-full cursor-pointer rounded-md overflow-hidden transition-all duration-500 hover:bg-white/[0.02]"
+      style={{ boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.16)" }}
     >
-      {/* Preview area */}
-      <div className="relative aspect-video bg-surface overflow-hidden">
+      {/* Preview as die area */}
+      <div
+        className="relative aspect-video overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #001324, #000)",
+        }}
+      >
         <img
           src={video.preview}
           alt={vt.title}
-          className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+          className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
           loading="lazy"
         />
-        {/* Duration badge */}
-        <div className="absolute top-3 right-3 text-[10px] font-mono text-gold/90 bg-obsidian/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-gold/15">
+        {/* Atmos grid overlay */}
+        <div
+          className="absolute inset-0 atmos-grid pointer-events-none"
+          style={{ opacity: 0.4 }}
+        />
+        {/* Top-left silk: part number */}
+        <div className="absolute top-3 left-3 font-mono text-[10px] tracking-[0.18em] uppercase text-gold/85">
+          {partNo}
+        </div>
+        {/* Top-right silk: duration */}
+        <div className="absolute top-3 right-3 font-mono text-[10px] tracking-[0.16em] text-gold/80 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-sm">
           {video.duration}
         </div>
+        {/* Side pins (SOIC look) */}
+        <div className="absolute -top-0.5 left-12 right-16 flex justify-evenly pointer-events-none">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span
+              key={i}
+              className="block w-0.5 h-1.5 bg-blue/45"
+              style={{ boxShadow: "0 0 4px rgba(0, 153, 255, 0.4)" }}
+            />
+          ))}
+        </div>
+        <div className="absolute -bottom-0.5 left-12 right-16 flex justify-evenly pointer-events-none">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <span key={i} className="block w-0.5 h-1.5 bg-blue/45" />
+          ))}
+        </div>
+
         {/* Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-14 h-14 rounded-full bg-gold/20 backdrop-blur-sm flex items-center justify-center border border-gold/30 scale-90 group-hover:scale-100 transition-transform duration-300">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center scale-90 group-hover:scale-100 transition-transform duration-300"
+            style={{
+              background: "rgba(212, 175, 55, 0.18)",
+              boxShadow:
+                "0 0 0 1px rgba(212, 175, 55, 0.45), 0 0 24px rgba(212, 175, 55, 0.18)",
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
               <path d="M6 4L16 10L6 16V4Z" fill="#D4AF37" />
             </svg>
           </div>
         </div>
       </div>
 
-      {/* Info */}
-      <div className="p-5 flex-1 flex flex-col">
-        <div className="flex items-baseline gap-2 mb-2">
-          <h3 className="text-sm font-semibold">{vt.title}</h3>
-          <span className="text-[10px] text-muted-foreground/50 font-mono">
+      {/* Body */}
+      <div className="p-4 space-y-2.5">
+        <div className="flex items-baseline gap-2">
+          <h3 className="font-display text-[15px] font-medium tracking-[-0.01em] text-foreground">
+            {vt.title}
+          </h3>
+          <span className="font-mono text-[10px] text-foreground/35">
             {video.titleEn}
           </span>
         </div>
-        <p className="text-xs text-muted-foreground leading-relaxed flex-1">
+        <p className="text-[12.5px] leading-[1.55] text-foreground/55 line-clamp-2">
           {vt.desc}
         </p>
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {video.techs.map((t) => (
-            <span
-              key={t}
-              className="text-[10px] font-mono text-gold/50 bg-gold/[0.04] px-2 py-0.5 rounded-full"
-            >
-              {t}
-            </span>
+        <div className="flex flex-wrap gap-1">
+          {video.techs.slice(0, 4).map((tag) => (
+            <SmdTag key={tag}>{tag}</SmdTag>
           ))}
         </div>
       </div>
@@ -117,7 +158,7 @@ function VideoCard({
   );
 }
 
-/* ──── 全屏视频模态框 ──── */
+/* ──── Logic-analyzer modal ──── */
 function VideoModal({
   video,
   index,
@@ -128,7 +169,6 @@ function VideoModal({
   onClose: () => void;
 }) {
   const { t } = useTranslation();
-  const [isPlaying, setIsPlaying] = useState(true);
   const vt = t.showreel.videos[index];
 
   return (
@@ -138,42 +178,60 @@ function VideoModal({
       aria-modal="true"
       aria-label={`Play ${vt.title}`}
     >
-      {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-obsidian/95 backdrop-blur-md"
+        className="absolute inset-0 bg-black/95 backdrop-blur-md"
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
 
-      {/* Content */}
       <div className="relative z-10 w-full max-w-6xl mx-4 animate-[fadeInUp_0.4s_cubic-bezier(0.16,1,0.3,1)_forwards]">
-        {/* Close button */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute -top-12 right-0 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label={t.showreel.label === "Technical Showreel" ? "Close" : "关闭"}
+        {/* Header bar — analyzer style */}
+        <div
+          className="flex items-center gap-4 px-4 py-2.5 rounded-t-md font-mono text-[10.5px] tracking-[0.16em] uppercase text-foreground/65"
+          style={{
+            background: "rgba(255, 255, 255, 0.025)",
+            boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.16)",
+          }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
-        </button>
+          <span
+            className="inline-block w-1.5 h-1.5 rounded-full bg-gold/90 shrink-0"
+            style={{
+              boxShadow: "0 0 6px rgba(212, 175, 55, 0.6)",
+              animation: "clkBlink 1.2s steps(1) infinite",
+            }}
+          />
+          <span className="text-gold">CH1 · ANALYZER</span>
+          <span className="text-foreground/35">·</span>
+          <span className="text-blue">{video.titleEn}</span>
+          <span className="ml-auto text-foreground/40">T:{video.duration}</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="ml-3 text-foreground/55 hover:text-gold transition-colors"
+            aria-label="Close"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-        {/* Video title */}
-        <div className="flex items-baseline gap-3 mb-4">
-          <h3 className="text-lg font-semibold gold-text">{vt.title}</h3>
-          <span className="text-xs text-muted-foreground/60 font-mono tracking-wider">
+        {/* Title row */}
+        <div className="flex items-baseline gap-3 px-1 mt-3 mb-3">
+          <h3 className="font-display text-lg font-medium gold-text">{vt.title}</h3>
+          <span className="font-mono text-[10.5px] text-foreground/35 tracking-[0.16em]">
             {video.titleEn}
-          </span>
-          <span className="text-[10px] font-mono text-gold/50 bg-gold/[0.06] px-2 py-0.5 rounded-full ml-auto">
-            {video.duration}
           </span>
         </div>
 
-        {/* Player container */}
+        {/* Player frame */}
         <div
-          className="relative rounded-xl overflow-hidden border border-white/[0.06]"
-          style={{ aspectRatio: `${VIDEO.width} / ${VIDEO.height}` }}
+          className="relative rounded-md overflow-hidden"
+          style={{
+            aspectRatio: `${VIDEO.width} / ${VIDEO.height}`,
+            boxShadow:
+              "inset 0 0 0 1px rgba(0, 153, 255, 0.22), 0 0 60px rgba(0, 153, 255, 0.06)",
+          }}
         >
           <Player
             component={video.component}
@@ -181,25 +239,20 @@ function VideoModal({
             fps={VIDEO.fps}
             compositionWidth={VIDEO.width}
             compositionHeight={VIDEO.height}
-            autoPlay={isPlaying}
+            autoPlay
             controls
             style={{
               width: "100%",
               height: "100%",
-              backgroundColor: "#0C0C0E",
+              backgroundColor: "#000000",
             }}
           />
         </div>
 
-        {/* Tech tags */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {video.techs.map((t) => (
-            <span
-              key={t}
-              className="text-[10px] font-mono text-gold/40 bg-gold/[0.03] px-2.5 py-1 rounded-full border border-gold/[0.06]"
-            >
-              {t}
-            </span>
+        {/* Footer tags */}
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {video.techs.map((tag) => (
+            <SmdTag key={tag}>{tag}</SmdTag>
           ))}
         </div>
       </div>

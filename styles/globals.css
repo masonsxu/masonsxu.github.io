@@ -1,9 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* ============================================================
+   Silicon Fabric — Midnight Pearl on Pure Black
+   bg #000000 + Framer Blue #0099ff + Pearl Gold #d4af37
+   ============================================================ */
+
 @theme inline {
   --font-sans: "Inter", "Noto Sans SC", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Cabinet Grotesk", "Inter", "Noto Sans SC", sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -27,10 +33,13 @@
   --color-gold: #D4AF37;
   --color-gold-light: #F8E7B9;
   --color-gold-deep: #7A5810;
-  --color-obsidian: #0C0C0E;
+  --color-blue: #0099FF;
+  --color-blue-soft: rgba(0, 153, 255, 0.15);
+  --color-blue-dim: rgba(0, 153, 255, 0.06);
+  --color-obsidian: #000000;
   --color-pearl: #FCFCFC;
-  --color-surface: #1E1E21;
-  --color-surface-elevated: #161618;
+  --color-surface: #0A0A0A;
+  --color-surface-elevated: #101012;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -40,24 +49,24 @@
 
 :root {
   --radius: 0.75rem;
-  --background: #0C0C0E;
+  --background: #000000;
   --foreground: #FCFCFC;
-  --card: #111113;
+  --card: #050507;
   --card-foreground: #FCFCFC;
-  --popover: #111113;
+  --popover: #050507;
   --popover-foreground: #FCFCFC;
   --primary: #D4AF37;
-  --primary-foreground: #0C0C0E;
-  --secondary: #1E1E21;
+  --primary-foreground: #000000;
+  --secondary: #0A0A0A;
   --secondary-foreground: #FCFCFC;
-  --muted: #1E1E21;
+  --muted: #0A0A0A;
   --muted-foreground: #A1A1AA;
-  --accent: #1E1E21;
+  --accent: #0A0A0A;
   --accent-foreground: #FCFCFC;
   --destructive: #dc2626;
-  --border: rgba(212, 175, 55, 0.08);
+  --border: rgba(0, 153, 255, 0.12);
   --input: rgba(252, 252, 252, 0.06);
-  --ring: rgba(212, 175, 55, 0.4);
+  --ring: rgba(0, 153, 255, 0.4);
 }
 
 @layer base {
@@ -72,10 +81,282 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     overflow-x: hidden;
+    background: #000000;
   }
 
   ::selection {
     background: rgba(212, 175, 55, 0.25);
     color: #FCFCFC;
+  }
+}
+
+/* ====================================================================
+   Silicon Atoms
+   ==================================================================== */
+
+/* Chip eyebrow: monospaced address line preceding section titles */
+.silicon-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+.silicon-eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* SMD-style pill tag */
+.smd-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 0 0 1px rgba(0, 153, 255, 0.22);
+  color: rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+}
+.smd-tag-gold {
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.32);
+  color: var(--color-gold);
+}
+
+/* Solder pad — used on cards to glow on hover */
+.solder-pad {
+  --pad-glow: 0;
+  position: relative;
+  isolation: isolate;
+}
+.solder-pad::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--pad-glow);
+  background:
+    radial-gradient(circle at var(--pad-x, 50%) var(--pad-y, 50%),
+      rgba(212, 175, 55, 0.18),
+      transparent 40%);
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+.solder-pad:hover {
+  --pad-glow: 1;
+}
+
+/* Buttons — pill-shaped, three variants */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+.btn-pill:hover { transform: scale(1.02); }
+.btn-pill:active { transform: scale(0.98); }
+
+.btn-solid {
+  background: #fff;
+  color: #000;
+  padding: 14px 28px;
+}
+.btn-solid:hover {
+  box-shadow: 0 0 32px rgba(255, 255, 255, 0.22);
+}
+
+.btn-frost {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 11px 22px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+.btn-frost:hover { background: rgba(255, 255, 255, 0.1); }
+
+.btn-gold {
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  padding: 11px 24px;
+  background: transparent;
+}
+.btn-gold:hover {
+  background: rgba(212, 175, 55, 0.07);
+  box-shadow: 0 0 36px rgba(212, 175, 55, 0.18);
+}
+
+/* ====================================================================
+   Keyframes
+   ==================================================================== */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+@keyframes scrollHint {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 0.7; transform: translateX(-50%) translateY(8px); }
+}
+
+/* Trace pulse — for SVG strokeDashoffset driven by CSS when scroll-free */
+@keyframes traceFlow {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -32; }
+}
+
+/* Pad ignite — solder pad first activation when card enters viewport */
+@keyframes padIgnite {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+    box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+  }
+  60% {
+    opacity: 1;
+    box-shadow: 0 0 14px 2px rgba(212, 175, 55, 0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px 1px rgba(212, 175, 55, 0.3);
+  }
+}
+
+/* Clock blink — for ClockBar LED idle state */
+@keyframes clkBlink {
+  0%, 49% { opacity: 0.25; }
+  50%, 100% { opacity: 1; }
+}
+
+/* Boot-line scan — for terminal log lines on first load */
+@keyframes bootScan {
+  from { clip-path: inset(0 100% 0 0); opacity: 0.4; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+/* Pin energize — IC pins lighting up sequentially */
+@keyframes pinEnergize {
+  0% {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 rgba(212, 175, 55, 0);
+  }
+  100% {
+    background: rgba(212, 175, 55, 0.85);
+    box-shadow: 0 0 6px rgba(212, 175, 55, 0.5);
+  }
+}
+
+/* ====================================================================
+   Reveal — preserved from prior system
+   ==================================================================== */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====================================================================
+   Brand utilities
+   ==================================================================== */
+
+.gold-text {
+  background: linear-gradient(135deg, #F8E7B9 0%, #D4AF37 50%, #7A5810 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #D4AF37, #F8E7B9, #D4AF37, #F8E7B9, #D4AF37);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.gold-glow {
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.06);
+}
+
+.gold-border-glow:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.08), 0 0 80px rgba(212, 175, 55, 0.03);
+}
+
+.atmos-grid {
+  background-image:
+    linear-gradient(rgba(0, 153, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 153, 255, 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.section-container {
+  @apply max-w-6xl mx-auto px-6 md:px-8;
+}
+
+.section-padding {
+  @apply py-24 md:py-32;
+}
+
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+}
+
+/* ====================================================================
+   Reduced motion
+   ==================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

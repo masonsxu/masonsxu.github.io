@@ -1,56 +1,88 @@
 import { useTranslation } from "../../i18n";
-import { ScrollReveal, SectionLabel } from "../ScrollReveal";
+import { ScrollReveal } from "../ScrollReveal";
 
 export function About() {
   const { t } = useTranslation();
-
   const parts = t.about.paragraph.split(/\{(\d)\}/);
 
   return (
     <section className="section-padding relative">
       <div className="section-container">
+        {/* Section silk header */}
         <ScrollReveal>
-          <SectionLabel>{t.about.label}</SectionLabel>
+          <div className="silicon-eyebrow mb-3">0x00A0 · {t.about.label}</div>
+          <h2 className="font-display font-medium text-3xl md:text-5xl tracking-[-0.035em] leading-[0.95] max-w-3xl">
+            {t.about.label}
+            <span className="text-gold">.</span>
+          </h2>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 mt-4">
-          {/* Left: highlights */}
+        <div className="mt-14 grid grid-cols-1 lg:grid-cols-[5fr_7fr] gap-12 lg:gap-16">
+          {/* Left — register file: R0..R3 */}
           <ScrollReveal delay={100}>
-            <div className="space-y-6">
+            <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-blue/55 mb-5">
+              register file · highlights
+            </div>
+            <div
+              className="rounded-md overflow-hidden"
+              style={{
+                boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.14)",
+              }}
+            >
               {t.about.highlights.map((item, i) => (
-                <div key={i} className="flex gap-3 items-start group">
-                  <div className="w-1 h-1 rounded-full bg-gold mt-2.5 shrink-0 group-hover:scale-150 transition-transform" />
-                  <p className="text-foreground/80 text-sm leading-relaxed">{item}</p>
+                <div
+                  key={i}
+                  className="grid grid-cols-[64px_1fr] items-start gap-3 px-4 py-4 border-b last:border-b-0 border-blue/8 transition-colors hover:bg-white/[0.02]"
+                >
+                  <div className="font-mono text-[11px] tracking-[0.18em] text-gold pt-0.5">
+                    R{i}
+                  </div>
+                  <p className="text-[14px] leading-[1.65] text-foreground/80">
+                    {item}
+                  </p>
                 </div>
               ))}
             </div>
           </ScrollReveal>
 
-          {/* Right: paragraph + quote */}
-          <ScrollReveal delay={250}>
-            <div>
-              <p className="text-muted-foreground leading-[1.8] text-[15px]">
-                {parts.map((part, i) => {
-                  const idx = Number(part);
-                  if (i % 2 === 1 && idx % 2 === 0) {
-                    return <span key={i} className="text-foreground font-medium">{parts[i + 1]}</span>;
-                  }
-                  if (i % 2 === 1) return null;
-                  return <span key={i}>{part}</span>;
-                })}
-              </p>
-
-              {/* Pull quote */}
-              <blockquote className="mt-10 pl-5 border-l-2 border-gold/40 relative">
-                <div className="absolute -left-[7px] top-0 w-3 h-3 rounded-full bg-obsidian border-2 border-gold/60" />
-                <p className="text-foreground/70 italic text-[15px] leading-relaxed">
-                  "{t.about.quote}"
-                </p>
-                <cite className="text-xs text-muted-foreground mt-2 block not-italic font-mono tracking-wider">
-                  {t.about.cite}
-                </cite>
-              </blockquote>
+          {/* Right — datasheet body + quote */}
+          <ScrollReveal delay={220}>
+            <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-blue/55 mb-5">
+              datasheet · narrative
             </div>
+            <p className="text-foreground/70 text-[15.5px] leading-[1.85]">
+              {parts.map((part, i) => {
+                if (i % 2 === 1) return null;
+                const next = parts[i + 1];
+                if (next != null) {
+                  return (
+                    <span key={i}>
+                      {part}
+                      <span className="text-foreground font-medium">
+                        {parts[i + 2]}
+                      </span>
+                    </span>
+                  );
+                }
+                return <span key={i}>{part}</span>;
+              })}
+            </p>
+
+            <blockquote
+              className="mt-9 relative pl-6 py-5 pr-5"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(212, 175, 55, 0.04), transparent 70%)",
+                boxShadow: "inset 2px 0 0 0 rgba(212, 175, 55, 0.6)",
+              }}
+            >
+              <p className="text-foreground italic text-[15.5px] leading-[1.55] font-display tracking-[-0.005em]">
+                "{t.about.quote}"
+              </p>
+              <cite className="block mt-3 font-mono text-[10.5px] tracking-[0.2em] uppercase text-gold/85 not-italic">
+                {t.about.cite}
+              </cite>
+            </blockquote>
           </ScrollReveal>
         </div>
       </div>

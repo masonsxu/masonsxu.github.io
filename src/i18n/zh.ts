@@ -323,7 +323,7 @@ export const zh: TranslationSet = {
     label: "联系方式",
     title: "Let's",
     accent: "Connect",
-    resumeValue: "下载简历",
+    resumeValue: "Download Resume",
     copyright: "© 2026 徐俊飞. All rights reserved.",
   },
 };

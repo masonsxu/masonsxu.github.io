@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Hero } from "./components/sections/Hero";
 import { About } from "./components/sections/About";
 import { Projects } from "./components/sections/Projects";
@@ -7,15 +7,15 @@ import { Timeline } from "./components/sections/Timeline";
 import { Essence } from "./components/sections/Essence";
 import { Community } from "./components/sections/Community";
 import { Contact } from "./components/sections/Contact";
-import { GoldDivider } from "./components/ScrollReveal";
 import { ScrollProgressBar } from "./components/ScrollProgressBar";
+import { ChipFabricBG } from "./components/ChipFabricBG";
+import { ClockBar } from "./components/chip/ClockBar";
+import { BootSequence } from "./components/chip/BootSequence";
+import { PcbTrace } from "./components/chip/PcbTrace";
 import "./index.css";
 
-// 懒加载重型组件：Showreel（含 @remotion/player ~100KB）
 const Showreel = lazy(() =>
-  import("./components/sections/Showreel").then(m => ({
-    default: m.Showreel,
-  }))
+  import("./components/sections/Showreel").then(m => ({ default: m.Showreel })),
 );
 
 function ShowreelSkeleton() {
@@ -40,30 +40,69 @@ function ShowreelSkeleton() {
 }
 
 export function App() {
-  return (
-    <div className="relative">
-      <ScrollProgressBar />
+  const [bootDone, setBootDone] = useState(false);
 
-      <Hero />
-      <GoldDivider />
-      <About />
-      <GoldDivider />
-      <Projects />
-      <GoldDivider />
-      <Architecture />
-      <GoldDivider />
-      <Essence />
-      <GoldDivider />
-      <Suspense fallback={<ShowreelSkeleton />}>
-        <Showreel />
-      </Suspense>
-      <GoldDivider />
-      <Timeline />
-      <GoldDivider />
-      <Community />
-      <GoldDivider />
-      <Contact />
-    </div>
+  return (
+    <>
+      <BootSequence onDone={() => setBootDone(true)} />
+      <ChipFabricBG />
+      <ScrollProgressBar />
+      <ClockBar />
+
+      <main
+        className="relative z-10 pt-12"
+        style={{
+          opacity: bootDone ? 1 : 0,
+          transition: "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+        }}
+      >
+        <div id="hero">
+          <Hero />
+        </div>
+        <PcbTrace variant="straight" height={64} />
+
+        <div id="about">
+          <About />
+        </div>
+        <PcbTrace variant="elbow-r" height={88} />
+
+        <div id="projects">
+          <Projects />
+        </div>
+        <PcbTrace variant="double" height={88} />
+
+        <div id="architecture">
+          <Architecture />
+        </div>
+        <PcbTrace variant="elbow-l" height={88} />
+
+        <div id="essence">
+          <Essence />
+        </div>
+        <PcbTrace variant="straight" height={64} />
+
+        <div id="showreel">
+          <Suspense fallback={<ShowreelSkeleton />}>
+            <Showreel />
+          </Suspense>
+        </div>
+        <PcbTrace variant="elbow-r" height={88} />
+
+        <div id="timeline">
+          <Timeline />
+        </div>
+        <PcbTrace variant="straight" height={64} />
+
+        <div id="community">
+          <Community />
+        </div>
+        <PcbTrace variant="elbow-l" height={88} />
+
+        <div id="contact">
+          <Contact />
+        </div>
+      </main>
+    </>
   );
 }
 
