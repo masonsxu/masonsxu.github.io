@@ -46,7 +46,7 @@ export const contactLinks: ContactLink[] = [
   },
   {
     label: "Resume",
-    value: "下载简历",
+    value: "Download Resume",
     href: "/resume.pdf",
   },
   {

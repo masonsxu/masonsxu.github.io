@@ -1,79 +1,131 @@
 import { projects, type Project } from "../../data/site-content";
 import { useTranslation } from "../../i18n";
-import { ScrollReveal, SectionLabel } from "../ScrollReveal";
+import { ScrollReveal } from "../ScrollReveal";
+import { SmdTag } from "../chip/SmdTag";
+import { ProjectDiagram } from "../diagrams/ProjectDiagram";
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const { t } = useTranslation();
   const tr = t.projects.items[index];
+  const reverse = index % 2 === 1;
 
   return (
-    <ScrollReveal delay={index * 150}>
-      <article className="rounded-2xl border border-white/[0.04] bg-surface-elevated/40 p-6 md:p-10 transition-all duration-500 gold-border-glow hover:bg-surface-elevated/60 group">
-        {/* Header */}
-        <div className="flex flex-wrap items-start gap-4 mb-6">
-          <span className="text-4xl md:text-5xl font-mono font-bold gold-text opacity-25 leading-none select-none">
-            {project.num}
-          </span>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-xl md:text-2xl font-semibold text-foreground leading-tight">
-              {tr.title}
-            </h3>
-            <p className="text-sm text-muted-foreground mt-1">{tr.subtitle}</p>
-          </div>
-          <span className="text-[11px] font-mono text-gold/70 border border-gold/15 rounded-full px-3 py-1.5 whitespace-nowrap">
-            {project.time}
-          </span>
-        </div>
+    <ScrollReveal delay={index * 120}>
+      <article
+        className="grid grid-cols-1 lg:grid-cols-[5fr_7fr] rounded-md overflow-hidden transition-all duration-500 hover:bg-white/[0.02]"
+        style={{
+          boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.16)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.003))",
+        }}
+      >
+        {/* INFO column */}
+        <div
+          className={`relative p-7 md:p-9 lg:p-11 ${reverse ? "lg:order-2" : ""}`}
+        >
+          {/* Vertical separator (desktop only) */}
+          <div
+            className={`hidden lg:block absolute top-10 bottom-10 w-px ${
+              reverse ? "left-0" : "right-0"
+            }`}
+            style={{
+              background:
+                "linear-gradient(180deg, transparent, rgba(0, 153, 255, 0.18), transparent)",
+            }}
+          />
 
-        {/* Summary */}
-        <p className="text-sm text-foreground/60 leading-relaxed mb-8">{tr.summary}</p>
-
-        {/* Highlights grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
-          {tr.highlights.map((h, i) => (
-            <div
-              key={i}
-              className="rounded-xl bg-white/[0.02] border border-white/[0.03] p-4 transition-colors duration-300 hover:border-gold/10"
-            >
-              <h4 className="text-sm font-medium text-foreground mb-1.5">{h.title}</h4>
-              <p className="text-xs text-muted-foreground leading-relaxed">{h.desc}</p>
+          {/* Top silk row */}
+          <div className="flex items-baseline justify-between gap-3 flex-wrap mb-6">
+            <div className="font-mono text-[10px] tracking-[0.22em] text-gold uppercase">
+              PART · {project.num}
             </div>
-          ))}
-        </div>
+            <div className="font-mono text-[10px] tracking-[0.16em] text-foreground/35">
+              {project.time}
+            </div>
+          </div>
 
-        {/* Tech stack */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.techs.map((t) => (
-            <span
-              key={t}
-              className="text-[11px] font-mono px-3 py-1 rounded-full bg-gold/[0.06] text-gold-light/80 border border-gold/[0.08]"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
+          <h3 className="font-display font-medium text-2xl md:text-[28px] tracking-[-0.025em] leading-[1.1] text-foreground">
+            {tr.title}
+          </h3>
+          <p className="mt-2 text-[13.5px] text-foreground/55 leading-relaxed">
+            {tr.subtitle}
+          </p>
 
-        {/* Bottom row: metrics + extras */}
-        <div className="flex flex-wrap items-end justify-between gap-6 pt-6 border-t border-white/[0.04]">
-          <div className="flex gap-8">
+          <p className="mt-5 text-[14px] leading-[1.7] text-foreground/65">
+            {tr.summary}
+          </p>
+
+          {/* Highlights — bullet list w/ blue diodes */}
+          <ul className="mt-6 space-y-3">
+            {tr.highlights.map((h, i) => (
+              <li key={i} className="flex gap-3 items-start">
+                <span
+                  className="mt-2 inline-block w-1.5 h-1.5 rounded-full bg-blue shrink-0"
+                  style={{ boxShadow: "0 0 6px rgba(0, 153, 255, 0.5)" }}
+                  aria-hidden
+                />
+                <span className="text-[13px] leading-[1.55] text-foreground/75">
+                  <b className="text-foreground font-medium">{h.title}</b>
+                  <span className="text-foreground/40 mx-1.5">·</span>
+                  {h.desc}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          {/* Tech stack */}
+          <div className="mt-6 flex flex-wrap gap-1.5">
+            {project.techs.map((t) => (
+              <SmdTag key={t} variant="gold">
+                {t}
+              </SmdTag>
+            ))}
+          </div>
+
+          {/* Bottom — metrics + extras */}
+          <div
+            className="mt-6 pt-5 grid grid-cols-3 gap-3"
+            style={{
+              boxShadow: "inset 0 1px 0 0 rgba(255, 255, 255, 0.04)",
+            }}
+          >
             {tr.metrics.map((m) => (
               <div key={m.label}>
-                <div className="text-lg font-mono font-semibold text-gold">{m.value}</div>
-                <div className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
+                <div className="font-display font-medium text-[22px] text-gold leading-none tabular-nums tracking-tight">
+                  {m.value}
+                </div>
+                <div className="mt-1.5 font-mono text-[9.5px] tracking-[0.16em] uppercase text-foreground/40">
                   {m.label}
                 </div>
               </div>
             ))}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {tr.extras.map((e) => (
-              <span
-                key={e}
-                className="text-[10px] text-muted-foreground/70 border border-white/[0.04] rounded-full px-2.5 py-1"
-              >
-                {e}
-              </span>
+              <SmdTag key={e}>{e}</SmdTag>
             ))}
+          </div>
+        </div>
+
+        {/* DIAGRAM column */}
+        <div
+          className={`relative min-h-[320px] lg:min-h-[460px] flex items-center justify-center p-6 ${
+            reverse ? "lg:order-1" : ""
+          }`}
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(0, 153, 255, 0.04), rgba(212, 175, 55, 0.018))",
+          }}
+        >
+          {/* Grid backdrop */}
+          <div
+            className="absolute inset-0 pointer-events-none atmos-grid"
+            style={{ opacity: 0.6 }}
+          />
+          <ProjectDiagram variant={index} />
+          <div className="absolute bottom-3 left-5 right-5 flex justify-between font-mono text-[9.5px] tracking-[0.18em] uppercase text-foreground/35 pointer-events-none">
+            <span className="text-blue/70">SCOPE · BOARD-{project.num}</span>
+            <span>0x{(0xc000 + index * 0x10).toString(16).toUpperCase()}</span>
           </div>
         </div>
       </article>
@@ -88,16 +140,17 @@ export function Projects() {
     <section className="section-padding relative">
       <div className="section-container">
         <ScrollReveal>
-          <SectionLabel>{t.projects.label}</SectionLabel>
-          <h2 className="text-3xl md:text-4xl font-semibold mt-1">
-            {t.projects.title}<span className="gold-text">{t.projects.accent}</span>
+          <div className="silicon-eyebrow mb-3">0x00C0 · {t.projects.label}</div>
+          <h2 className="font-display font-medium text-3xl md:text-5xl tracking-[-0.035em] leading-[0.95]">
+            {t.projects.title}
+            <span className="text-gold">{t.projects.accent}</span>
           </h2>
-          <p className="text-muted-foreground mt-3 max-w-xl text-sm leading-relaxed">
+          <p className="mt-4 max-w-xl text-foreground/55 text-[14.5px] leading-relaxed">
             {t.projects.description}
           </p>
         </ScrollReveal>
 
-        <div className="mt-14 space-y-8">
+        <div className="mt-12 space-y-6">
           {projects.map((p, i) => (
             <ProjectCard key={p.num} project={p} index={i} />
           ))}
