@@ -4,20 +4,9 @@ import { ChipFrame } from "../chip/ChipFrame";
 
 interface DipPin {
   idx: string;
-  value: string;
-  suffix: string;
   num: number;
+  suffix: string;
   label: string;
-}
-
-const PIN_REGEX = /^(\d+(?:\.\d+)?)/;
-
-function parseStat(value: string): { num: number; suffix: string } {
-  const m = value.match(PIN_REGEX);
-  if (!m) return { num: 0, suffix: value };
-  const num = parseFloat(m[1]);
-  const suffix = value.slice(m[1].length);
-  return { num, suffix };
 }
 
 function MetricPin({ pin, delay }: { pin: DipPin; delay: number }) {
@@ -53,16 +42,12 @@ function MetricPin({ pin, delay }: { pin: DipPin; delay: number }) {
 
 export function Hero() {
   const { t } = useTranslation();
-  const pins: DipPin[] = t.hero.stats.map((s, i) => {
-    const { num, suffix } = parseStat(s.value);
-    return {
-      idx: String(i + 1).padStart(2, "0"),
-      value: s.value,
-      suffix,
-      num,
-      label: s.label,
-    };
-  });
+  const pins: DipPin[] = t.hero.stats.map((s, i) => ({
+    idx: String(i + 1).padStart(2, "0"),
+    num: s.num,
+    suffix: s.suffix,
+    label: s.label,
+  }));
 
   return (
     <section className="relative min-h-[88vh] flex items-center justify-center px-6 md:px-10">

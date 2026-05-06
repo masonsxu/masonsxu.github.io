@@ -2,23 +2,23 @@ import { useTranslation } from "../../i18n";
 import { ScrollReveal } from "../ScrollReveal";
 import { SmdTag } from "../chip/SmdTag";
 
-const prMeta = [
-  {
+const prMeta: Record<string, { repo: string; number: string; url: string }> = {
+  "jwt-refresh": {
     repo: "hertz-contrib/jwt",
     number: "#27",
     url: "https://github.com/hertz-contrib/jwt/pull/27",
   },
-  {
+  "obs-otel": {
     repo: "hertz-contrib/obs-opentelemetry",
     number: "#67",
     url: "https://github.com/hertz-contrib/obs-opentelemetry/pull/67",
   },
-  {
+  "abcoder-go125": {
     repo: "cloudwego/abcoder",
     number: "#84",
     url: "https://github.com/cloudwego/abcoder/pull/84",
   },
-];
+};
 
 const communityTechs = [
   "Kitex RPC",
@@ -118,40 +118,43 @@ export function Community() {
             </div>
           </ScrollReveal>
           <div className="space-y-2">
-            {prMeta.map((pr, i) => (
-              <ScrollReveal key={pr.number} delay={i * 75}>
-                <a
-                  href={pr.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-5 px-5 py-4 rounded-md transition-colors duration-300 hover:bg-white/[0.025]"
-                  style={{
-                    boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.12)",
-                  }}
-                >
-                  {/* Status LED + repo */}
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span
-                      className="inline-block w-1.5 h-1.5 rounded-full bg-gold"
-                      style={{ boxShadow: "0 0 8px rgba(212, 175, 55, 0.65)" }}
-                      aria-hidden
-                    />
-                    <span className="font-mono text-[12px] text-gold/85 tracking-[0.06em]">
-                      {pr.repo}
+            {c.prs.map((pr, i) => {
+              const meta = prMeta[pr.id];
+              return (
+                <ScrollReveal key={pr.id} delay={i * 75}>
+                  <a
+                    href={meta.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-3 md:gap-5 px-5 py-4 rounded-md transition-colors duration-300 hover:bg-white/[0.025]"
+                    style={{
+                      boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.12)",
+                    }}
+                  >
+                    {/* Status LED + repo */}
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span
+                        className="inline-block w-1.5 h-1.5 rounded-full bg-gold"
+                        style={{ boxShadow: "0 0 8px rgba(212, 175, 55, 0.65)" }}
+                        aria-hidden
+                      />
+                      <span className="font-mono text-[12px] text-gold/85 tracking-[0.06em]">
+                        {meta.repo}
+                      </span>
+                      <span className="font-mono text-[11px] text-foreground/45">
+                        {meta.number}
+                      </span>
+                    </div>
+                    <span className="text-[13px] text-foreground/65 leading-snug">
+                      {pr.desc}
                     </span>
-                    <span className="font-mono text-[11px] text-foreground/45">
-                      {pr.number}
+                    <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-blue/55 group-hover:text-gold transition-colors">
+                      MERGED →
                     </span>
-                  </div>
-                  <span className="text-[13px] text-foreground/65 leading-snug">
-                    {c.prs[i].desc}
-                  </span>
-                  <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-blue/55 group-hover:text-gold transition-colors">
-                    MERGED →
-                  </span>
-                </a>
-              </ScrollReveal>
-            ))}
+                  </a>
+                </ScrollReveal>
+              );
+            })}
           </div>
         </div>
       </div>

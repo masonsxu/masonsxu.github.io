@@ -1,3 +1,5 @@
+import type { ShowreelId } from "../data/showreel-content";
+
 export type Locale = "zh" | "en";
 
 export interface TranslationSet {
@@ -5,12 +7,12 @@ export interface TranslationSet {
     tagline: string;
     description: string;
     scroll: string;
-    stats: readonly { value: string; label: string }[];
+    stats: readonly { num: number; suffix: string; label: string }[];
   };
   about: {
     label: string;
     highlights: readonly string[];
-    paragraph: string;
+    paragraph: readonly { text: string; highlight?: boolean }[];
     quote: string;
     cite: string;
   };
@@ -32,12 +34,12 @@ export interface TranslationSet {
     label: string;
     title: string;
     accent: string;
-    competencies: readonly { title: string; desc: string }[];
+    competencies: readonly { id: string; title: string; desc: string }[];
     performanceBefore: string;
     performanceAfter: string;
-    metrics: readonly string[];
+    metrics: readonly { id: string; label: string }[];
     domainsLabel: string;
-    domains: readonly string[];
+    domains: readonly { id: string; title: string }[];
   };
   essence: {
     label: string;
@@ -53,7 +55,7 @@ export interface TranslationSet {
     title: string;
     accent: string;
     description: string;
-    videos: readonly { title: string; desc: string }[];
+    videos: Readonly<Record<ShowreelId, { title: string; desc: string }>>;
   };
   timeline: {
     careerLabel: string;
@@ -84,7 +86,7 @@ export interface TranslationSet {
     featuredDesc: string;
     featuredStats: readonly { value: string; unit: string; label: string }[];
     prTitle: string;
-    prs: readonly { desc: string }[];
+    prs: readonly { id: string; desc: string }[];
   };
   contact: {
     label: string;

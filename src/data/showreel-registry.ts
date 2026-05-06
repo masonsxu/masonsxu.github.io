@@ -6,38 +6,19 @@ import { OSSDashboard } from "../../remotion/OSSDashboard";
 import { TechCard } from "../../remotion/TechCard";
 import { Trailer } from "../../remotion/Trailer";
 import { VIDEO } from "../../remotion/shared/theme";
-import { showreelContent, type ShowreelContentItem } from "./showreel-content";
+import {
+  showreelContent,
+  type ShowreelContentItem,
+  type ShowreelId,
+} from "./showreel-content";
 
-type ShowreelRuntimeConfig = {
-  component: React.FC;
-  durationInFrames: number;
-};
-
-const showreelRuntimeRegistry: Record<ShowreelContentItem["id"], ShowreelRuntimeConfig> = {
-  "tech-card": {
-    component: TechCard,
-    durationInFrames: 15 * VIDEO.fps,
-  },
-  "oss-dashboard": {
-    component: OSSDashboard,
-    durationInFrames: 20 * VIDEO.fps,
-  },
-  "arch-evolution": {
-    component: ArchEvolution,
-    durationInFrames: 25 * VIDEO.fps,
-  },
-  "data-lake": {
-    component: DataLake,
-    durationInFrames: 25 * VIDEO.fps,
-  },
-  "contribution-heatmap": {
-    component: ContributionHeatmap,
-    durationInFrames: 20 * VIDEO.fps,
-  },
-  "portfolio-trailer": {
-    component: Trailer,
-    durationInFrames: 60 * VIDEO.fps,
-  },
+const showreelComponents: Record<ShowreelId, React.FC> = {
+  "tech-card": TechCard,
+  "oss-dashboard": OSSDashboard,
+  "arch-evolution": ArchEvolution,
+  "data-lake": DataLake,
+  "contribution-heatmap": ContributionHeatmap,
+  "portfolio-trailer": Trailer,
 };
 
 export interface ShowreelVideo extends ShowreelContentItem {
@@ -47,5 +28,6 @@ export interface ShowreelVideo extends ShowreelContentItem {
 
 export const showreelVideos: ShowreelVideo[] = showreelContent.map((item) => ({
   ...item,
-  ...showreelRuntimeRegistry[item.id],
+  component: showreelComponents[item.id],
+  durationInFrames: item.durationSeconds * VIDEO.fps,
 }));
