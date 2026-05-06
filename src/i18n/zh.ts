@@ -7,10 +7,10 @@ export const zh: TranslationSet = {
       "5 年 Go 后端开发经验，主导 Python → CloudWeGo 微服务架构转型，独立设计 10+ 微服务分布式数据平台",
     scroll: "Scroll",
     stats: [
-      { value: "10+", label: "Microservices" },
-      { value: "99.9%", label: "Availability" },
-      { value: "50%", label: "Latency Reduced" },
-      { value: "87%", label: "Deploy Faster" },
+      { num: 10, suffix: "+", label: "Microservices" },
+      { num: 99.9, suffix: "%", label: "Availability" },
+      { num: 50, suffix: "%", label: "Latency Reduced" },
+      { num: 87, suffix: "%", label: "Deploy Faster" },
     ],
   },
   about: {
@@ -21,8 +21,13 @@ export const zh: TranslationSet = {
       "构建 Apache Iceberg + Airflow 数据湖平台",
       "向 CloudWeGo 开源项目提交 3 个已合并 PR",
     ],
-    paragraph:
-      "5 年 Go 后端开发经验，深耕{0}分布式系统架构{1}与{2}云原生基础设施{3}。从应届生成长为系统实际负责人，主导表单引擎设计、跨表单数据联动、性能重构、容器化转型与 25+ 第三方系统对接，长期主导生产环境部署与排障，积累大量分布式系统调试经验。",
+    paragraph: [
+      { text: "5 年 Go 后端开发经验，深耕" },
+      { text: "分布式系统架构", highlight: true },
+      { text: "与" },
+      { text: "云原生基础设施", highlight: true },
+      { text: "。从应届生成长为系统实际负责人，主导表单引擎设计、跨表单数据联动、性能重构、容器化转型与 25+ 第三方系统对接，长期主导生产环境部署与排障，积累大量分布式系统调试经验。" },
+    ],
     quote: "架构不是设计出来的，而是在解决真实问题的过程中自然涌现的",
     cite: "— 工程哲学",
   },
@@ -172,23 +177,35 @@ export const zh: TranslationSet = {
     accent: "竞争力",
     competencies: [
       {
+        id: "distributed",
         title: "分布式系统落地",
         desc: "独立完成从技术选型到系统交付的全链路设计，掌握 RPC 框架、服务治理、可观测性体系",
       },
       {
+        id: "data-lake",
         title: "数据湖与 ETL",
         desc: "构建 Iceberg 数据湖平台，多源异构数据统一入湖，配置驱动 SQL 生成与跨源 JOIN",
       },
       {
+        id: "cloud-native",
         title: "云原生工程效能",
         desc: "IDL-First 流程 + Google Wire 编译时 DI + CI/CD 自动化，构建标准化开发工作流",
       },
     ],
     performanceBefore: "数据说话 —",
     performanceAfter: "性能指标",
-    metrics: ["系统可用性", "响应时间降低", "微服务模块", "部署时间缩短"],
+    metrics: [
+      { id: "availability", label: "系统可用性" },
+      { id: "latency", label: "响应时间降低" },
+      { id: "modules", label: "微服务模块" },
+      { id: "deploy", label: "部署时间缩短" },
+    ],
     domainsLabel: "技术域",
-    domains: ["Go 分布式系统", "数据湖与 ETL", "云原生与工程化"],
+    domains: [
+      { id: "go-distributed", title: "Go 分布式系统" },
+      { id: "data-etl", title: "数据湖与 ETL" },
+      { id: "cloud-eng", title: "云原生与工程化" },
+    ],
   },
   essence: {
     label: "灵魂底色",
@@ -220,32 +237,32 @@ export const zh: TranslationSet = {
     accent: "可见",
     description:
       "通过可视化视频演示展示 Go 微服务架构、分布式系统演进、GitHub 开源贡献与数据平台实践",
-    videos: [
-      {
+    videos: {
+      "tech-card": {
         title: "技术身份短片",
         desc: "围绕真实技术身份与能力边界重构的 15 秒短叙事片。以 Go、CloudWeGo、OpenTelemetry 与数据平台栈为线索，呈现技术定位、能力域和问题边界，而非虚构 KPI。",
       },
-      {
+      "oss-dashboard": {
         title: "开源项目看板",
         desc: "围绕真实 CloudWeGo 贡献重构的技术叙事片。通过终端上下文、贡献事实卡与作用域拓扑，展示 jwt 修复、可观测性稳定性与 Go 1.25+ 兼容性问题。",
       },
-      {
+      "arch-evolution": {
         title: "架构演进历程",
         desc: "围绕真实请求路径的架构演进叙事。展示单体职责拆分、Hertz/Kitex 调用链显式化、服务内分层组织，以及 trace 驱动的诊断闭环。",
       },
-      {
+      "data-lake": {
         title: "数据湖平台",
         desc: "围绕真实配置驱动 ETL 重构的机制叙事片。展示多源异构入湖、mapping_rules 到 DAG 的转换、BFS 最优 JOIN 路径，以及两阶段抽取后的 api_payload 回传闭环。",
       },
-      {
+      "contribution-heatmap": {
         title: "GitHub 贡献热力图",
         desc: "围绕真实 52 周 GitHub contribution matrix 重构的贡献轨迹叙事片。展示年度贡献墙生长、高峰格子对应的关键事件，以及总贡献数与连续贡献窗口等事实卡。",
       },
-      {
+      "portfolio-trailer": {
         title: "作品集总叙事片",
         desc: "围绕真实技术身份、系统机制、开源证据与长期贡献轨迹重组的 60 秒总叙事片。通过跨视频 excerpt 与全局桥接层，把作品集从片段轮播升级为完整技术画像。",
       },
-    ],
+    },
   },
   timeline: {
     careerLabel: "职业经历",
@@ -314,9 +331,9 @@ export const zh: TranslationSet = {
     ],
     prTitle: "Pull Requests 贡献",
     prs: [
-      { desc: "修复 RefreshToken 中 orig_iat 被意外重置导致 MaxRefresh 窗口失效的 Bug" },
-      { desc: "优化可观测性组件，提升链路追踪稳定性与准确性" },
-      { desc: "修复 Go 1.25+ 环境下 sonic 依赖版本导致的安装编译错误" },
+      { id: "jwt-refresh", desc: "修复 RefreshToken 中 orig_iat 被意外重置导致 MaxRefresh 窗口失效的 Bug" },
+      { id: "obs-otel", desc: "优化可观测性组件，提升链路追踪稳定性与准确性" },
+      { id: "abcoder-go125", desc: "修复 Go 1.25+ 环境下 sonic 依赖版本导致的安装编译错误" },
     ],
   },
   contact: {

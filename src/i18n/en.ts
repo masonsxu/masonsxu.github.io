@@ -7,10 +7,10 @@ export const en: TranslationSet = {
       "5 years of Go backend experience. Led the Python → CloudWeGo microservices transformation. Independently designed a distributed data platform with 10+ microservices.",
     scroll: "Scroll",
     stats: [
-      { value: "10+", label: "Microservices" },
-      { value: "99.9%", label: "Availability" },
-      { value: "50%", label: "Latency Reduced" },
-      { value: "87%", label: "Deploy Faster" },
+      { num: 10, suffix: "+", label: "Microservices" },
+      { num: 99.9, suffix: "%", label: "Availability" },
+      { num: 50, suffix: "%", label: "Latency Reduced" },
+      { num: 87, suffix: "%", label: "Deploy Faster" },
     ],
   },
   about: {
@@ -21,8 +21,13 @@ export const en: TranslationSet = {
       "Built an Apache Iceberg + Airflow data lake platform",
       "Submitted 3 merged PRs to the CloudWeGo open-source project",
     ],
-    paragraph:
-      "5 years of Go backend experience, specializing in {0}distributed systems architecture{1} and {2}cloud-native infrastructure{3}. Grew from a fresh graduate to the de facto system owner — leading form engine design, cross-form data linking, performance refactoring, containerization, and integration with 25+ third-party systems. Extensive hands-on experience in production deployment and distributed systems debugging.",
+    paragraph: [
+      { text: "5 years of Go backend experience, specializing in " },
+      { text: "distributed systems architecture", highlight: true },
+      { text: " and " },
+      { text: "cloud-native infrastructure", highlight: true },
+      { text: ". Grew from a fresh graduate to the de facto system owner — leading form engine design, cross-form data linking, performance refactoring, containerization, and integration with 25+ third-party systems. Extensive hands-on experience in production deployment and distributed systems debugging." },
+    ],
     quote:
       "Architecture is not designed — it emerges naturally from solving real problems",
     cite: "— Engineering Philosophy",
@@ -174,23 +179,35 @@ export const en: TranslationSet = {
     accent: "Competencies",
     competencies: [
       {
+        id: "distributed",
         title: "Distributed Systems",
         desc: "Full-lifecycle design from tech selection to system delivery. Proficient in RPC frameworks, service governance, and observability",
       },
       {
+        id: "data-lake",
         title: "Data Lake & ETL",
         desc: "Built an Iceberg data lake for unified multi-source ingestion, config-driven SQL generation, and cross-source JOINs",
       },
       {
+        id: "cloud-native",
         title: "Cloud Native Engineering",
         desc: "IDL-First workflow + Google Wire compile-time DI + CI/CD automation for standardized development processes",
       },
     ],
     performanceBefore: "By the numbers —",
     performanceAfter: "Performance Metrics",
-    metrics: ["System Availability", "Latency Reduction", "Microservice Modules", "Deploy Time Reduced"],
+    metrics: [
+      { id: "availability", label: "System Availability" },
+      { id: "latency", label: "Latency Reduction" },
+      { id: "modules", label: "Microservice Modules" },
+      { id: "deploy", label: "Deploy Time Reduced" },
+    ],
     domainsLabel: "Domains",
-    domains: ["Go Distributed Systems", "Data Lake & ETL", "Cloud Native & Engineering"],
+    domains: [
+      { id: "go-distributed", title: "Go Distributed Systems" },
+      { id: "data-etl", title: "Data Lake & ETL" },
+      { id: "cloud-eng", title: "Cloud Native & Engineering" },
+    ],
   },
   essence: {
     label: "The Essence",
@@ -222,32 +239,32 @@ export const en: TranslationSet = {
     accent: "Visible",
     description:
       "Visual video demonstrations showcasing Go microservices architecture, distributed system evolution, GitHub open-source contributions, and data platform practices",
-    videos: [
-      {
+    videos: {
+      "tech-card": {
         title: "Tech Identity Card",
         desc: "A 15-second narrative short reconstructed around real technical identity and capability boundaries. Using Go, CloudWeGo, OpenTelemetry and data platform stack as threads, presenting technical positioning, capability domains, and problem boundaries — not fabricated KPIs.",
       },
-      {
+      "oss-dashboard": {
         title: "Open Source Dashboard",
         desc: "A technical narrative reconstructed around real CloudWeGo contributions. Through terminal context, contribution fact cards, and scope topology, showcasing jwt fixes, observability stability, and Go 1.25+ compatibility issues.",
       },
-      {
+      "arch-evolution": {
         title: "Architecture Evolution",
         desc: "An architecture evolution narrative around real request paths. Demonstrating monolith responsibility splitting, Hertz/Kitex call chain explicitization, intra-service layering, and trace-driven diagnostic loops.",
       },
-      {
+      "data-lake": {
         title: "Data Lake Platform",
         desc: "A mechanism narrative around real config-driven ETL. Showcasing multi-source heterogeneous ingestion, mapping_rules to DAG transformation, BFS optimal JOIN paths, and the two-phase extraction api_payload backfill loop.",
       },
-      {
+      "contribution-heatmap": {
         title: "GitHub Contribution Heatmap",
         desc: "A contribution trajectory narrative around a real 52-week GitHub contribution matrix. Showcasing annual contribution wall growth, peak cells mapped to key events, and fact cards for total contributions and consecutive windows.",
       },
-      {
+      "portfolio-trailer": {
         title: "Portfolio Trailer",
         desc: "A 60-second master narrative reconstructed around real technical identity, system mechanisms, open-source evidence, and long-term contribution trajectory. Upgrading the portfolio from a clip reel to a complete technical portrait through cross-video excerpts and global bridging layers.",
       },
-    ],
+    },
   },
   timeline: {
     careerLabel: "Career",
@@ -316,9 +333,9 @@ export const en: TranslationSet = {
     ],
     prTitle: "Pull Requests",
     prs: [
-      { desc: "Fixed RefreshToken orig_iat being unexpectedly reset, causing MaxRefresh window invalidation" },
-      { desc: "Improved observability components, enhancing tracing stability and accuracy" },
-      { desc: "Fixed sonic dependency version causing build errors on Go 1.25+" },
+      { id: "jwt-refresh", desc: "Fixed RefreshToken orig_iat being unexpectedly reset, causing MaxRefresh window invalidation" },
+      { id: "obs-otel", desc: "Improved observability components, enhancing tracing stability and accuracy" },
+      { id: "abcoder-go125", desc: "Fixed sonic dependency version causing build errors on Go 1.25+" },
     ],
   },
   contact: {

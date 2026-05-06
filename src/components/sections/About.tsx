@@ -3,7 +3,6 @@ import { ScrollReveal } from "../ScrollReveal";
 
 export function About() {
   const { t } = useTranslation();
-  const parts = t.about.paragraph.split(/\{(\d)\}/);
 
   return (
     <section className="section-padding relative">
@@ -51,21 +50,15 @@ export function About() {
               datasheet · narrative
             </div>
             <p className="text-foreground/70 text-[15.5px] leading-[1.85]">
-              {parts.map((part, i) => {
-                if (i % 2 === 1) return null;
-                const next = parts[i + 1];
-                if (next != null) {
-                  return (
-                    <span key={i}>
-                      {part}
-                      <span className="text-foreground font-medium">
-                        {parts[i + 2]}
-                      </span>
-                    </span>
-                  );
-                }
-                return <span key={i}>{part}</span>;
-              })}
+              {t.about.paragraph.map((seg, i) =>
+                seg.highlight ? (
+                  <span key={i} className="text-foreground font-medium">
+                    {seg.text}
+                  </span>
+                ) : (
+                  <span key={i}>{seg.text}</span>
+                )
+              )}
             </p>
 
             <blockquote

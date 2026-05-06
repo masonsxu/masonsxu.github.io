@@ -3,40 +3,53 @@ import { ScrollReveal } from "../ScrollReveal";
 import { useInView, useAnimatedCounter } from "../../hooks";
 import { SmdTag } from "../chip/SmdTag";
 
-const competencyTechs = [
-  ["Kitex", "Hertz", "etcd", "OpenTelemetry"],
-  ["Iceberg", "Airflow", "Trino", "Polars"],
-  ["CloudWeGo", "Docker", "Wire DI", "OpenTelemetry"],
-];
+const competencyMeta: Record<string, { code: string; techs: string[] }> = {
+  distributed: {
+    code: "ALU",
+    techs: ["Kitex", "Hertz", "etcd", "OpenTelemetry"],
+  },
+  "data-lake": {
+    code: "DMA",
+    techs: ["Iceberg", "Airflow", "Trino", "Polars"],
+  },
+  "cloud-native": {
+    code: "NOC",
+    techs: ["CloudWeGo", "Docker", "Wire DI", "OpenTelemetry"],
+  },
+};
 
-const blockCodes = ["ALU", "DMA", "NOC"];
+const metricMeta: Record<string, { num: number; suffix: string }> = {
+  availability: { num: 99, suffix: ".9%" },
+  latency: { num: 50, suffix: "%" },
+  modules: { num: 10, suffix: "+" },
+  deploy: { num: 87, suffix: "%" },
+};
 
-const domainTags = [
-  ["Go 1.24+", "Kitex RPC", "Hertz HTTP", "gRPC", "GORM", "Google Wire", "Thrift IDL", "Casbin RBAC"],
-  ["Apache Iceberg", "Airflow 3.1", "Trino", "Polars", "PyIceberg", "PyArrow", "Schema Evolution"],
-  ["Docker", "Podman", "Kubernetes", "etcd", "OpenTelemetry", "Jaeger", "PostgreSQL", "Redis"],
-];
-
-const metricData = [
-  { value: 99, suffix: ".9%" },
-  { value: 50, suffix: "%" },
-  { value: 10, suffix: "+" },
-  { value: 87, suffix: "%" },
-];
+const domainMeta: Record<string, { tags: string[] }> = {
+  "go-distributed": {
+    tags: ["Go 1.24+", "Kitex RPC", "Hertz HTTP", "gRPC", "GORM", "Google Wire", "Thrift IDL", "Casbin RBAC"],
+  },
+  "data-etl": {
+    tags: ["Apache Iceberg", "Airflow 3.1", "Trino", "Polars", "PyIceberg", "PyArrow", "Schema Evolution"],
+  },
+  "cloud-eng": {
+    tags: ["Docker", "Podman", "Kubernetes", "etcd", "OpenTelemetry", "Jaeger", "PostgreSQL", "Redis"],
+  },
+};
 
 function MetricCell({
-  value,
+  num,
   suffix,
   label,
   idx,
 }: {
-  value: number;
+  num: number;
   suffix: string;
   label: string;
   idx: number;
 }) {
   const { ref, inView } = useInView();
-  const count = useAnimatedCounter(value, inView, 1700);
+  const count = useAnimatedCounter(num, inView, 1700);
 
   return (
     <div
@@ -123,17 +136,20 @@ export function Architecture() {
 
         {/* Functional blocks */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-14 items-stretch">
-          {a.competencies.map((c, i) => (
-            <ScrollReveal key={c.title} delay={i * 110} className="h-full">
-              <FunctionalBlock
-                num={String(i + 1).padStart(2, "0")}
-                code={blockCodes[i]}
-                title={c.title}
-                desc={c.desc}
-                techs={competencyTechs[i]}
-              />
-            </ScrollReveal>
-          ))}
+          {a.competencies.map((c, i) => {
+            const meta = competencyMeta[c.id];
+            return (
+              <ScrollReveal key={c.id} delay={i * 110} className="h-full">
+                <FunctionalBlock
+                  num={String(i + 1).padStart(2, "0")}
+                  code={meta.code}
+                  title={c.title}
+                  desc={c.desc}
+                  techs={meta.techs}
+                />
+              </ScrollReveal>
+            );
+          })}
         </div>
 
         {/* Performance register file */}
@@ -151,19 +167,22 @@ export function Architecture() {
             className="grid grid-cols-2 md:grid-cols-4 rounded-md overflow-hidden"
             style={{ boxShadow: "inset 0 0 0 1px rgba(0, 153, 255, 0.14)" }}
           >
-            {metricData.map((m, i) => (
-              <div
-                key={i}
-                className="border-r border-b md:border-b-0 last:border-r-0 border-blue/8"
-              >
-                <MetricCell
-                  value={m.value}
-                  suffix={m.suffix}
-                  label={a.metrics[i]}
-                  idx={i + 1}
-                />
-              </div>
-            ))}
+            {a.metrics.map((m, i) => {
+              const meta = metricMeta[m.id];
+              return (
+                <div
+                  key={m.id}
+                  className="border-r border-b md:border-b-0 last:border-r-0 border-blue/8"
+                >
+                  <MetricCell
+                    num={meta.num}
+                    suffix={meta.suffix}
+                    label={m.label}
+                    idx={i + 1}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -173,30 +192,33 @@ export function Architecture() {
             <div className="silicon-eyebrow mb-6">{a.domainsLabel}</div>
           </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-            {a.domains.map((title, i) => (
-              <ScrollReveal key={title} delay={i * 90} className="h-full">
-                <div
-                  className="h-full flex flex-col p-5 rounded-md"
-                  style={{
-                    boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.04)",
-                  }}
-                >
-                  <div className="flex items-baseline gap-2 mb-4">
-                    <span className="font-mono text-[10px] text-blue/65 tracking-[0.18em]">
-                      BANK {String(i + 1).padStart(2, "0")}
-                    </span>
+            {a.domains.map((d, i) => {
+              const meta = domainMeta[d.id];
+              return (
+                <ScrollReveal key={d.id} delay={i * 90} className="h-full">
+                  <div
+                    className="h-full flex flex-col p-5 rounded-md"
+                    style={{
+                      boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.04)",
+                    }}
+                  >
+                    <div className="flex items-baseline gap-2 mb-4">
+                      <span className="font-mono text-[10px] text-blue/65 tracking-[0.18em]">
+                        BANK {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <h4 className="font-display text-base font-medium text-foreground mb-4 tracking-[-0.01em]">
+                      {d.title}
+                    </h4>
+                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                      {meta.tags.map((tag) => (
+                        <SmdTag key={tag}>{tag}</SmdTag>
+                      ))}
+                    </div>
                   </div>
-                  <h4 className="font-display text-base font-medium text-foreground mb-4 tracking-[-0.01em]">
-                    {title}
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5 mt-auto">
-                    {domainTags[i].map((tag) => (
-                      <SmdTag key={tag}>{tag}</SmdTag>
-                    ))}
-                  </div>
-                </div>
-              </ScrollReveal>
-            ))}
+                </ScrollReveal>
+              );
+            })}
           </div>
         </div>
       </div>

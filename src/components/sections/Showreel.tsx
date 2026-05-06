@@ -46,7 +46,6 @@ export function Showreel() {
       {activeVideo && (
         <VideoModal
           video={activeVideo}
-          index={showreelVideos.indexOf(activeVideo)}
           onClose={closeVideo}
         />
       )}
@@ -65,8 +64,8 @@ function VideoCard({
   onPlay: () => void;
 }) {
   const { t } = useTranslation();
-  const vt = t.showreel.videos[index];
-  const partNo = `MX-S${String(index + 1).padStart(2, "0")}-${video.duration.replace("s", "")}S`;
+  const vt = t.showreel.videos[video.id];
+  const partNo = `MX-S${String(index + 1).padStart(2, "0")}-${video.durationSeconds}S`;
 
   return (
     <button
@@ -99,7 +98,7 @@ function VideoCard({
         </div>
         {/* Top-right silk: duration */}
         <div className="absolute top-3 right-3 font-mono text-[10px] tracking-[0.16em] text-gold/80 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-sm">
-          {video.duration}
+          {video.durationSeconds}s
         </div>
         {/* Side pins (SOIC look) */}
         <div className="absolute -top-0.5 left-12 right-16 flex justify-evenly pointer-events-none">
@@ -161,15 +160,13 @@ function VideoCard({
 /* ──── Logic-analyzer modal ──── */
 function VideoModal({
   video,
-  index,
   onClose,
 }: {
   video: ShowreelVideo;
-  index: number;
   onClose: () => void;
 }) {
   const { t } = useTranslation();
-  const vt = t.showreel.videos[index];
+  const vt = t.showreel.videos[video.id];
 
   return (
     <div
@@ -203,7 +200,7 @@ function VideoModal({
           <span className="text-gold">CH1 · ANALYZER</span>
           <span className="text-foreground/35">·</span>
           <span className="text-blue">{video.titleEn}</span>
-          <span className="ml-auto text-foreground/40">T:{video.duration}</span>
+          <span className="ml-auto text-foreground/40">T:{video.durationSeconds}s</span>
           <button
             type="button"
             onClick={onClose}
