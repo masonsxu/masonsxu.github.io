@@ -12,7 +12,9 @@
  */
 
 // 锁定版本，避免 CDN 漂移导致行为变化
-const THREE_CDN = "https://unpkg.com/three@0.160.0/build/three.module.js";
+const THREE_VERSION = "0.160.0";
+const THREE_CDN = `https://unpkg.com/three@${THREE_VERSION}/build/three.module.js`;
+const ADDONS_CDN = `https://unpkg.com/three@${THREE_VERSION}/examples/jsm`;
 
 // 缓存 Promise，确保整个应用只加载一次
 let cached: Promise<any> | null = null;
@@ -22,4 +24,12 @@ export function loadThree(): Promise<any> {
     cached = import(/* @vite-ignore */ THREE_CDN);
   }
   return cached;
+}
+
+/** 动态加载 Three.js addons（如后处理）—— 与 Three.js 同版本 */
+export async function loadAddon(path: string): Promise<any> {
+  const THREE = await loadThree();
+  // 确保 THREE 挂在全局，某些 addon 需要
+  (window as any).THREE = THREE;
+  return import(/* @vite-ignore */ `${ADDONS_CDN}/${path}`);
 }

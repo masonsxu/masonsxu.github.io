@@ -23,6 +23,7 @@ import {
   memoryShards,
   requiredExhibitIds,
 } from "../../data/room-content";
+import { loadAddon } from "./loadThree";
 
 /* ------------------------------ 对外类型 ------------------------------ */
 
@@ -71,93 +72,217 @@ function addNoise(ctx: CanvasRenderingContext2D, w: number, h: number, amount: n
   ctx.putImageData(img, 0, 0);
 }
 
-/** 木地板纹理：暖木色 + 水平木纹 + 拼板缝 */
+/** 木地板纹理：暖木色 + 丰富木纹 + 拼板缝 + 木节 */
 function makeWoodTexture(THREE: any): any {
+  const S = 1024;
   const c = document.createElement("canvas");
-  c.width = c.height = 512;
+  c.width = c.height = S;
   const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#9c6b3f";
-  ctx.fillRect(0, 0, 512, 512);
-  // 木纹条
-  for (let i = 0; i < 220; i++) {
-    const y = Math.random() * 512;
-    ctx.strokeStyle = `rgba(${90 + Math.random() * 60},${55 + Math.random() * 40},${28 + Math.random() * 25},${0.06 + Math.random() * 0.12})`;
-    ctx.lineWidth = 0.5 + Math.random() * 2;
+  // 基底渐变
+  const base = ctx.createLinearGradient(0, 0, 0, S);
+  base.addColorStop(0, "#a07348");
+  base.addColorStop(0.5, "#9c6b3f");
+  base.addColorStop(1, "#8e5e36");
+  ctx.fillStyle = base;
+  ctx.fillRect(0, 0, S, S);
+  // 主木纹条（更密更自然）
+  for (let i = 0; i < 500; i++) {
+    const y = Math.random() * S;
+    const dark = Math.random() > 0.5;
+    const r = dark ? 70 + Math.random() * 40 : 120 + Math.random() * 50;
+    const g = dark ? 40 + Math.random() * 30 : 70 + Math.random() * 35;
+    const b = dark ? 18 + Math.random() * 18 : 30 + Math.random() * 25;
+    ctx.strokeStyle = `rgba(${r},${g},${b},${0.04 + Math.random() * 0.12})`;
+    ctx.lineWidth = 0.3 + Math.random() * 2.5;
     ctx.beginPath();
     ctx.moveTo(0, y);
-    ctx.bezierCurveTo(170, y + (Math.random() - 0.5) * 8, 340, y + (Math.random() - 0.5) * 8, 512, y);
+    ctx.bezierCurveTo(S * 0.33, y + (Math.random() - 0.5) * 12, S * 0.66, y + (Math.random() - 0.5) * 12, S, y);
     ctx.stroke();
   }
-  // 拼板缝（每 ~85px 一道）
-  ctx.strokeStyle = "rgba(40,24,12,0.5)";
-  ctx.lineWidth = 2;
-  for (let y = 0; y <= 512; y += 85) {
+  // 木节（偶尔出现）
+  for (let i = 0; i < 6; i++) {
+    const kx = Math.random() * S;
+    const ky = Math.random() * S;
+    const kr = 6 + Math.random() * 14;
+    const kg = ctx.createRadialGradient(kx, ky, 0, kx, ky, kr);
+    kg.addColorStop(0, "rgba(60,35,18,0.4)");
+    kg.addColorStop(0.6, "rgba(80,50,25,0.2)");
+    kg.addColorStop(1, "rgba(80,50,25,0)");
+    ctx.fillStyle = kg;
+    ctx.beginPath();
+    ctx.ellipse(kx, ky, kr, kr * 0.7, Math.random() * Math.PI, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // 拼板缝（每 ~170px 一道）
+  ctx.strokeStyle = "rgba(30,16,8,0.55)";
+  ctx.lineWidth = 2.5;
+  for (let y = 0; y <= S; y += 170) {
     ctx.beginPath();
     ctx.moveTo(0, y);
-    ctx.lineTo(512, y);
+    ctx.lineTo(S, y);
     ctx.stroke();
   }
-  addNoise(ctx, 512, 512, 26, 0.9);
+  // 板间微妙色差
+  for (let y = 0; y < S; y += 170) {
+    if (Math.random() > 0.4) {
+      ctx.fillStyle = `rgba(${Math.random() > 0.5 ? 180 : 100},${80 + Math.random() * 40},${30 + Math.random() * 20},0.04)`;
+      ctx.fillRect(0, y + 3, S, 164);
+    }
+  }
+  addNoise(ctx, S, S, 22, 0.92);
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(4, 5);
   tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
+  tex.anisotropy = 8;
   return tex;
 }
 
-/** 墙面纹理：米色灰泥 + 极轻噪点 */
+/** 墙面纹理：米色灰泥 + 纹理感 + 柔和污渍 */
 function makeWallTexture(THREE: any): any {
+  const S = 512;
   const c = document.createElement("canvas");
-  c.width = c.height = 256;
+  c.width = c.height = S;
   const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#d8c7ad";
-  ctx.fillRect(0, 0, 256, 256);
-  // 柔和污渍
-  for (let i = 0; i < 30; i++) {
-    const x = Math.random() * 256;
-    const y = Math.random() * 256;
-    const r = 20 + Math.random() * 60;
+  // 基底：微妙的暖色渐变
+  const base = ctx.createLinearGradient(0, 0, 0, S);
+  base.addColorStop(0, "#ddd0ba");
+  base.addColorStop(1, "#d5c5a8");
+  ctx.fillStyle = base;
+  ctx.fillRect(0, 0, S, S);
+  // 柔和污渍与色斑
+  for (let i = 0; i < 50; i++) {
+    const x = Math.random() * S;
+    const y = Math.random() * S;
+    const r = 15 + Math.random() * 80;
     const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-    g.addColorStop(0, "rgba(180,160,130,0.10)");
+    const tone = Math.random();
+    if (tone < 0.4) {
+      g.addColorStop(0, "rgba(180,160,130,0.12)");
+    } else if (tone < 0.7) {
+      g.addColorStop(0, "rgba(200,180,150,0.08)");
+    } else {
+      g.addColorStop(0, "rgba(160,140,110,0.10)");
+    }
     g.addColorStop(1, "rgba(180,160,130,0)");
     ctx.fillStyle = g;
     ctx.fillRect(x - r, y - r, r * 2, r * 2);
   }
-  addNoise(ctx, 256, 256, 14, 0.92);
+  // 细腻的刷痕
+  for (let i = 0; i < 80; i++) {
+    const x1 = Math.random() * S;
+    const y1 = Math.random() * S;
+    ctx.strokeStyle = `rgba(${160 + Math.random() * 40},${140 + Math.random() * 40},${110 + Math.random() * 40},${0.02 + Math.random() * 0.04})`;
+    ctx.lineWidth = 1 + Math.random() * 3;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 + (Math.random() - 0.5) * 120, y1 + (Math.random() - 0.5) * 30);
+    ctx.stroke();
+  }
+  addNoise(ctx, S, S, 12, 0.94);
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 
-/** 地毯纹理：暖红几何同心纹样 */
+/** 地毯纹理：波斯风格同心纹样，多层装饰 */
 function makeRugTexture(THREE: any): any {
+  const S = 512;
   const c = document.createElement("canvas");
-  c.width = c.height = 256;
+  c.width = c.height = S;
   const ctx = c.getContext("2d")!;
-  ctx.fillStyle = "#a23c33";
-  ctx.fillRect(0, 0, 256, 256);
-  ctx.strokeStyle = "rgba(240,200,140,0.55)";
-  ctx.lineWidth = 5;
-  ctx.strokeRect(16, 16, 224, 224);
-  ctx.strokeStyle = "rgba(40,20,18,0.5)";
+  // 底色：深红
+  ctx.fillStyle = "#8b2e25";
+  ctx.fillRect(0, 0, S, S);
+  const cx = S / 2, cy = S / 2;
+  // 最外层金边
+  ctx.strokeStyle = "rgba(240,200,140,0.6)";
+  ctx.lineWidth = 6;
+  ctx.strokeRect(10, 10, S - 20, S - 20);
+  // 外层暗色带
+  ctx.fillStyle = "rgba(60,25,18,0.5)";
+  ctx.fillRect(20, 20, S - 40, S - 40);
+  // 次外层金边
+  ctx.strokeStyle = "rgba(240,200,140,0.45)";
   ctx.lineWidth = 3;
-  ctx.strokeRect(30, 30, 196, 196);
-  // 中央菱形
-  ctx.strokeStyle = "rgba(240,200,140,0.5)";
+  ctx.strokeRect(28, 28, S - 56, S - 56);
+  // 内层暖红底
+  ctx.fillStyle = "#a23c33";
+  ctx.fillRect(36, 36, S - 72, S - 72);
+  // 四角装饰花
+  const cornerR = 40;
+  [[44, 44], [S - 44, 44], [44, S - 44], [S - 44, S - 44]].forEach(([px, py]) => {
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.strokeStyle = "rgba(240,200,140,0.4)";
+    ctx.lineWidth = 2;
+    for (let a = 0; a < 8; a++) {
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      const angle = (a / 8) * Math.PI * 2;
+      ctx.lineTo(Math.cos(angle) * cornerR, Math.sin(angle) * cornerR);
+      ctx.stroke();
+    }
+    ctx.restore();
+  });
+  // 中央大菱形
+  ctx.strokeStyle = "rgba(240,200,140,0.55)";
   ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.moveTo(128, 60);
-  ctx.lineTo(196, 128);
-  ctx.lineTo(128, 196);
-  ctx.lineTo(60, 128);
+  ctx.moveTo(cx, cy - 120);
+  ctx.lineTo(cx + 120, cy);
+  ctx.lineTo(cx, cy + 120);
+  ctx.lineTo(cx - 120, cy);
   ctx.closePath();
   ctx.stroke();
+  // 菱形内层
+  ctx.strokeStyle = "rgba(200,160,100,0.35)";
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(128, 128, 28, 0, Math.PI * 2);
+  ctx.moveTo(cx, cy - 85);
+  ctx.lineTo(cx + 85, cy);
+  ctx.lineTo(cx, cy + 85);
+  ctx.lineTo(cx - 85, cy);
+  ctx.closePath();
   ctx.stroke();
-  addNoise(ctx, 256, 256, 24, 0.85);
+  // 中央圆
+  ctx.strokeStyle = "rgba(240,200,140,0.5)";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 42, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+  ctx.stroke();
+  // 边缘细密锯齿纹
+  ctx.strokeStyle = "rgba(240,200,140,0.25)";
+  ctx.lineWidth = 1;
+  for (let x = 30; x < S - 30; x += 8) {
+    ctx.beginPath();
+    ctx.moveTo(x, 22);
+    ctx.lineTo(x + 4, 28);
+    ctx.lineTo(x + 8, 22);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, S - 22);
+    ctx.lineTo(x + 4, S - 28);
+    ctx.lineTo(x + 8, S - 22);
+    ctx.stroke();
+  }
+  for (let y = 30; y < S - 30; y += 8) {
+    ctx.beginPath();
+    ctx.moveTo(22, y);
+    ctx.lineTo(28, y + 4);
+    ctx.lineTo(22, y + 8);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(S - 22, y);
+    ctx.lineTo(S - 28, y + 4);
+    ctx.lineTo(S - 22, y + 8);
+    ctx.stroke();
+  }
+  addNoise(ctx, S, S, 20, 0.88);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
@@ -182,30 +307,74 @@ function makeGlowTexture(THREE: any, inner = "rgba(255,240,200,1)", outer = "rgb
 /** 窗外天空渐变纹理（三段色，自上而下）—— 用于「白日梦」换天 */
 function makeSkyTexture(THREE: any, colors: [string, string, string]): any {
   const c = document.createElement("canvas");
-  c.width = 64;
-  c.height = 256;
+  c.width = 256;
+  c.height = 512;
   const ctx = c.getContext("2d")!;
-  const g = ctx.createLinearGradient(0, 0, 0, 256);
+  const g = ctx.createLinearGradient(0, 0, 0, 512);
   g.addColorStop(0, colors[0]);
   g.addColorStop(0.55, colors[1]);
   g.addColorStop(1, colors[2]);
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 64, 256);
-  // 远处简笔山影 + 光晕
-  const sun = ctx.createRadialGradient(44, 70, 0, 44, 70, 60);
-  sun.addColorStop(0, "rgba(255,250,230,0.9)");
+  ctx.fillRect(0, 0, 256, 512);
+  // 柔和云彩
+  for (let i = 0; i < 8; i++) {
+    const cx = Math.random() * 256;
+    const cy = 60 + Math.random() * 180;
+    const cr = 20 + Math.random() * 50;
+    const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, cr);
+    cg.addColorStop(0, "rgba(255,255,255,0.12)");
+    cg.addColorStop(0.6, "rgba(255,255,255,0.04)");
+    cg.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = cg;
+    ctx.fillRect(cx - cr, cy - cr, cr * 2, cr * 2);
+  }
+  // 太阳光晕
+  const sun = ctx.createRadialGradient(160, 120, 0, 160, 120, 100);
+  sun.addColorStop(0, "rgba(255,250,230,0.85)");
+  sun.addColorStop(0.3, "rgba(255,245,220,0.4)");
   sun.addColorStop(1, "rgba(255,250,230,0)");
   ctx.fillStyle = sun;
-  ctx.fillRect(0, 0, 64, 200);
-  ctx.fillStyle = "rgba(40,40,55,0.30)";
+  ctx.fillRect(0, 0, 256, 350);
+  // 远处山影（多层）
+  ctx.fillStyle = "rgba(50,45,60,0.20)";
   ctx.beginPath();
-  ctx.moveTo(0, 210);
-  ctx.lineTo(18, 188);
-  ctx.lineTo(34, 205);
-  ctx.lineTo(50, 182);
-  ctx.lineTo(64, 200);
-  ctx.lineTo(64, 256);
-  ctx.lineTo(0, 256);
+  ctx.moveTo(0, 380);
+  ctx.lineTo(30, 340);
+  ctx.lineTo(70, 360);
+  ctx.lineTo(110, 330);
+  ctx.lineTo(150, 355);
+  ctx.lineTo(200, 325);
+  ctx.lineTo(256, 350);
+  ctx.lineTo(256, 512);
+  ctx.lineTo(0, 512);
+  ctx.closePath();
+  ctx.fill();
+  // 近处山影
+  ctx.fillStyle = "rgba(40,40,55,0.35)";
+  ctx.beginPath();
+  ctx.moveTo(0, 420);
+  ctx.lineTo(40, 380);
+  ctx.lineTo(80, 400);
+  ctx.lineTo(130, 370);
+  ctx.lineTo(180, 395);
+  ctx.lineTo(220, 375);
+  ctx.lineTo(256, 405);
+  ctx.lineTo(256, 512);
+  ctx.lineTo(0, 512);
+  ctx.closePath();
+  ctx.fill();
+  // 树木轮廓
+  ctx.fillStyle = "rgba(30,35,25,0.45)";
+  ctx.beginPath();
+  ctx.moveTo(0, 440);
+  for (let x = 0; x < 256; x += 12) {
+    const h = 8 + Math.random() * 25;
+    ctx.lineTo(x, 440 - h);
+    ctx.lineTo(x + 6, 440 - h + 5);
+  }
+  ctx.lineTo(256, 450);
+  ctx.lineTo(256, 512);
+  ctx.lineTo(0, 512);
   ctx.closePath();
   ctx.fill();
   const tex = new THREE.CanvasTexture(c);
@@ -373,7 +542,7 @@ export function createMemoryRoom(opts: RoomOptions) {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#e9c79a");
-  scene.fog = new THREE.FogExp2("#e7c193", 0.022);
+  scene.fog = new THREE.FogExp2("#e7c193", 0.018); // 降低雾密度，让远处更清晰
 
   const camera = new THREE.PerspectiveCamera(
     72,
@@ -384,15 +553,15 @@ export function createMemoryRoom(opts: RoomOptions) {
   // 出生点：门口，面朝房间深处（默认相机看向 -Z）
   camera.position.set(0, EYE, 4.2);
 
-  /* ---------------- 灯光（暖金色「日落时刻」）---------------- */
+  /* ---------------- 灯光（暖金色「日落时刻」，丰富层次）---------------- */
   // 半球光：天空暖、地面反射
-  const hemi = new THREE.HemisphereLight(0xffe7c4, 0x4a3826, 0.55);
+  const hemi = new THREE.HemisphereLight(0xffe7c4, 0x4a3826, 0.6);
   scene.add(hemi);
   // 环境补光，避免死黑
-  const ambient = new THREE.AmbientLight(0xffd9a8, 0.25);
+  const ambient = new THREE.AmbientLight(0xffd9a8, 0.3);
   scene.add(ambient);
   // 主光：从窗户斜射进来的「太阳」，投射柔和阴影
-  const sun = new THREE.DirectionalLight(0xffcf8f, 2.4);
+  const sun = new THREE.DirectionalLight(0xffcf8f, 2.6);
   sun.position.set(2.2, 5.2, -8.5);
   sun.target.position.set(-0.4, 0.6, -2);
   sun.castShadow = true;
@@ -408,15 +577,52 @@ export function createMemoryRoom(opts: RoomOptions) {
   scene.add(sun);
   scene.add(sun.target);
 
+  // 补充暖光：模拟地板漫反射的暖色
+  const floorBounce = new THREE.PointLight(0xffc870, 0.6, 12, 2);
+  floorBounce.position.set(0, 0.3, -2);
+  scene.add(floorBounce);
+
+  // 窗户射入的散射暖光
+  const windowFill = new THREE.SpotLight(0xffe4b5, 1.2, 16, Math.PI / 3.5, 0.6, 1.5);
+  windowFill.position.set(0, 2.8, -ROOM.halfZ + 0.5);
+  windowFill.target.position.set(0, 0, 0);
+  windowFill.castShadow = false;
+  scene.add(windowFill);
+  scene.add(windowFill.target);
+
   /* ---------------- 材质 ---------------- */
   const woodTex = makeWoodTexture(THREE);
   const wallTex = makeWallTexture(THREE);
-  const floorMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.86, metalness: 0 });
-  const wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.97, metalness: 0 });
+  const floorMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.82, metalness: 0.02 });
+  const wallMat = new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.95, metalness: 0 });
   const ceilMat = new THREE.MeshStandardMaterial({ color: 0xeaddc4, roughness: 1 });
-  const woodDark = new THREE.MeshStandardMaterial({ color: 0x5f3d24, roughness: 0.7 });
-  const woodMid = new THREE.MeshStandardMaterial({ color: 0x8a5a33, roughness: 0.75 });
-  const woodLight = new THREE.MeshStandardMaterial({ color: 0xb07d4a, roughness: 0.8 });
+  // 天花板纹理（淡淡的石膏质感）
+  const ceilTex = (() => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 256;
+    const ctx = c.getContext("2d")!;
+    ctx.fillStyle = "#eaddc4";
+    ctx.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 15; i++) {
+      const x = Math.random() * 256, y = Math.random() * 256, r = 20 + Math.random() * 50;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, "rgba(220,210,190,0.08)");
+      g.addColorStop(1, "rgba(220,210,190,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    }
+    addNoise(ctx, 256, 256, 8, 0.96);
+    const t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  })();
+  const ceilMatTextured = new THREE.MeshStandardMaterial({ map: ceilTex, roughness: 1 });
+  const woodDark = new THREE.MeshStandardMaterial({ color: 0x5f3d24, roughness: 0.65, metalness: 0.02 });
+  const woodMid = new THREE.MeshStandardMaterial({ color: 0x8a5a33, roughness: 0.7, metalness: 0.02 });
+  const woodLight = new THREE.MeshStandardMaterial({ color: 0xb07d4a, roughness: 0.75, metalness: 0.02 });
+  // 金属材质（门把手等）
+  const metalBrass = new THREE.MeshStandardMaterial({ color: 0xd9b25a, metalness: 0.85, roughness: 0.25 });
 
   /** 通用盒体辅助 */
   function addBox(
@@ -459,8 +665,8 @@ export function createMemoryRoom(opts: RoomOptions) {
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     scene.add(floor);
-    // 天花板
-    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(halfX * 2, halfZ * 2), ceilMat);
+    // 天花板（带纹理）
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(halfX * 2, halfZ * 2), ceilMatTextured);
     ceil.rotation.x = Math.PI / 2;
     ceil.position.y = height;
     scene.add(ceil);
@@ -486,6 +692,18 @@ export function createMemoryRoom(opts: RoomOptions) {
   }
   const shell = buildShell();
 
+  // 地板上的窗户光斑（一块半透明暖色平面贴在地板上）
+  const floorLight = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.5, 4.5),
+    new THREE.MeshBasicMaterial({
+      color: 0xffe8b0, transparent: true, opacity: 0.08,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    }),
+  );
+  floorLight.rotation.x = -Math.PI / 2;
+  floorLight.position.set(0.3, 0.015, -2.5);
+  scene.add(floorLight);
+
   /* =========================================================================
    *  ★结局触发 - 门：默认紧闭，集齐后开一道缝透光
    * ======================================================================= */
@@ -495,28 +713,50 @@ export function createMemoryRoom(opts: RoomOptions) {
   function buildDoor() {
     const { halfZ } = ROOM;
     const { doorW, doorH } = shell;
-    // 门框
-    addBox(doorW + 0.24, doorH + 0.12, 0.06, woodDark, 0, doorH / 2 + 0.02, halfZ - 0.02, scene, false, true);
+    // 门框（更精致）
+    addBox(doorW + 0.28, doorH + 0.14, 0.08, woodDark, 0, doorH / 2 + 0.02, halfZ - 0.02, scene, false, true);
+    // 门框装饰线
+    addBox(doorW + 0.32, 0.03, 0.10, woodMid, 0, doorH + 0.08, halfZ - 0.02, scene, false, false);
     // 铰链支点放在门洞左侧
     doorPivot.position.set(-doorW / 2, doorH / 2, halfZ - 0.06);
     scene.add(doorPivot);
-    const door = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, 0.06), woodMid);
-    door.position.set(doorW / 2, 0, 0); // 相对支点偏移半个门宽
+    // 门板
+    const door = new THREE.Mesh(new THREE.BoxGeometry(doorW, doorH, 0.05), woodMid);
+    door.position.set(doorW / 2, 0, 0);
     door.castShadow = true;
     doorPivot.add(door);
-    // 门把手
+    // 门板上的装饰面板（两块长方形凹板）
+    const panelMat = new THREE.MeshStandardMaterial({ color: 0x9a6a3e, roughness: 0.7 });
+    addBox(doorW - 0.16, doorH * 0.35, 0.008, panelMat, doorW / 2, doorH * 0.22, 0.03, doorPivot);
+    addBox(doorW - 0.16, doorH * 0.30, 0.008, panelMat, doorW / 2, -doorH * 0.18, 0.03, doorPivot);
+    // 门把手（更精致的铜把手）
     const knob = new THREE.Mesh(
-      new THREE.SphereGeometry(0.05, 12, 12),
-      new THREE.MeshStandardMaterial({ color: 0xd9b25a, metalness: 0.8, roughness: 0.3 }),
+      new THREE.SphereGeometry(0.04, 12, 12),
+      metalBrass,
     );
-    knob.position.set(doorW - 0.16, 0, 0.06);
+    knob.position.set(doorW - 0.14, 0, 0.04);
     doorPivot.add(knob);
+    // 把手底座
+    const knobBase = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.015, 0.02, 0.03, 8),
+      metalBrass,
+    );
+    knobBase.position.set(doorW - 0.14, 0, 0.028);
+    knobBase.rotation.x = Math.PI / 2;
+    doorPivot.add(knobBase);
+    // 铰链（上下两片）
+    const hingeMat = new THREE.MeshStandardMaterial({ color: 0x8a7a60, metalness: 0.7, roughness: 0.4 });
+    [0.3, -0.3].forEach((dy) => {
+      const hinge = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.10, 0.02), hingeMat);
+      hinge.position.set(0.03, dy, -0.03);
+      doorPivot.add(hinge);
+    });
     // 门缝透出的光（初始隐藏，开门时点亮）
     doorLightPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(doorW + 0.4, doorH + 0.3),
+      new THREE.PlaneGeometry(doorW + 0.5, doorH + 0.4),
       new THREE.MeshBasicMaterial({ color: 0xfff3d4, transparent: true, opacity: 0 }),
     );
-    doorLightPlane.position.set(0, doorH / 2 + 0.02, halfZ + 0.12);
+    doorLightPlane.position.set(0, doorH / 2 + 0.02, halfZ + 0.14);
     scene.add(doorLightPlane);
     doorGlow = new THREE.PointLight(0xffe6b0, 0, 6, 2);
     doorGlow.position.set(0, doorH / 2, halfZ - 0.4);
@@ -525,53 +765,103 @@ export function createMemoryRoom(opts: RoomOptions) {
   buildDoor();
 
   /* =========================================================================
-   *  窗户 + 窗外天空 + 体积光（god rays）+ 窗台
+   *  窗户 + 窗外天空 + 体积光（god rays）+ 窗台 + 窗帘
    * ======================================================================= */
   let skyMesh: any = null;
   const godRays = new THREE.Group();
   function buildWindow() {
     const { halfZ } = ROOM;
-    const frameMat = new THREE.MeshStandardMaterial({ color: 0xf2e6cf, roughness: 0.6 });
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0xf2e6cf, roughness: 0.5 });
     const winGroup = new THREE.Group();
     winGroup.position.set(0, 1.7, -halfZ + 0.05);
     scene.add(winGroup);
-    // 外框
-    addBox(2.9, 1.6, 0.1, frameMat, 0, 0, 0, winGroup, false, false);
+    // 外框（稍厚实）
+    addBox(3.0, 1.7, 0.12, frameMat, 0, 0, 0, winGroup, false, false);
+    // 窗台（更宽的窗台，有前缘装饰）
+    addBox(3.15, 0.08, 0.38, woodLight, 0, -0.85, 0.14, winGroup, true, true);
+    addBox(3.15, 0.035, 0.04, woodMid, 0, -0.81, 0.32, winGroup, false, false); // 窗台前沿
     // 十字窗棂
-    addBox(0.08, 1.5, 0.12, frameMat, 0, 0, 0.02, winGroup, false, false);
-    addBox(2.8, 0.08, 0.12, frameMat, 0, 0, 0.02, winGroup, false, false);
-    // 玻璃（淡淡反光；同时作为「窗户」可交互物件）
+    addBox(0.08, 1.55, 0.13, frameMat, 0, 0, 0.02, winGroup, false, false);
+    addBox(2.85, 0.08, 0.13, frameMat, 0, 0, 0.02, winGroup, false, false);
+    // 玻璃（更通透的反光效果）
     const glass = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.7, 1.45),
-      new THREE.MeshStandardMaterial({
-        color: 0xbfe0ff, transparent: true, opacity: 0.18,
-        roughness: 0.1, metalness: 0, emissive: 0x88bbff, emissiveIntensity: 0.15,
+      new THREE.PlaneGeometry(2.7, 1.5),
+      new THREE.MeshPhysicalMaterial({
+        color: 0xd4eaff, transparent: true, opacity: 0.12,
+        roughness: 0.05, metalness: 0, transmission: 0.6, thickness: 0.01,
+        emissive: 0x88bbff, emissiveIntensity: 0.12,
       }),
     );
     glass.position.set(0, 0, -0.02);
     winGroup.add(glass);
-    // 窗台
-    addBox(3.05, 0.1, 0.34, woodLight, 0, -0.82, 0.12, winGroup, true, true);
     // 窗外天空（在窗后一段距离的大平面）
     skyMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(9, 6),
+      new THREE.PlaneGeometry(12, 8),
       new THREE.MeshBasicMaterial({ map: makeSkyTexture(THREE, exhibits.window.visions[0].sky), fog: false }),
     );
-    skyMesh.position.set(0, 1.7, -halfZ - 1.6);
+    skyMesh.position.set(0, 1.7, -halfZ - 2.0);
     scene.add(skyMesh);
 
-    // ---- 体积光：几片沿太阳方向倾斜的加色半透明面，配合尘埃营造光柱 ----
+    // ---- 体积光：更多层次的光束，配合尘埃营造光柱 ----
     const rayMat = new THREE.MeshBasicMaterial({
-      color: 0xffe6b3, transparent: true, opacity: 0.06,
+      color: 0xffe6b3, transparent: true, opacity: 0.04,
       blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false,
     });
-    for (let i = 0; i < 4; i++) {
-      const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 6.2), rayMat.clone());
-      plane.position.set(-1.0 + i * 0.7, 1.4, -2.4);
-      plane.rotation.set(-Math.PI / 2 + 0.5, 0, 0.18 + i * 0.02);
+    for (let i = 0; i < 6; i++) {
+      const plane = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 6.5), rayMat.clone());
+      plane.position.set(-1.2 + i * 0.5, 1.5, -2.0 + i * 0.15);
+      plane.rotation.set(-Math.PI / 2 + 0.45, 0, 0.15 + i * 0.025);
       godRays.add(plane);
     }
     scene.add(godRays);
+
+    // ---- 窗帘（两侧垂下的布料感） ----
+    const curtainMat = new THREE.MeshStandardMaterial({
+      color: 0xf0e6d2, roughness: 0.95, metalness: 0,
+      transparent: true, opacity: 0.85, side: THREE.DoubleSide,
+    });
+    // 左窗帘
+    const curtainL = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 2.0), curtainMat);
+    curtainL.position.set(-1.65, 0.85, 0.15);
+    curtainL.rotation.y = 0.15;
+    curtainL.castShadow = true;
+    winGroup.add(curtainL);
+    // 右窗帘
+    const curtainR = new THREE.Mesh(new THREE.PlaneGeometry(0.55, 2.0), curtainMat.clone());
+    curtainR.position.set(1.65, 0.85, 0.15);
+    curtainR.rotation.y = -0.15;
+    curtainR.castShadow = true;
+    winGroup.add(curtainR);
+    // 窗帘杆
+    const rodMat = new THREE.MeshStandardMaterial({ color: 0x8a6a40, metalness: 0.6, roughness: 0.3 });
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 3.6, 8), rodMat);
+    rod.rotation.z = Math.PI / 2;
+    rod.position.set(0, 1.72, 0.18);
+    winGroup.add(rod);
+    // 窗帘杆两端的装饰球
+    const finial = new THREE.SphereGeometry(0.04, 8, 8);
+    const fL = new THREE.Mesh(finial, rodMat);
+    fL.position.set(-1.8, 1.72, 0.18);
+    winGroup.add(fL);
+    const fR = new THREE.Mesh(finial, rodMat);
+    fR.position.set(1.8, 1.72, 0.18);
+    winGroup.add(fR);
+
+    // 窗台上的小盆栽
+    const potMini = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.07, 0.055, 0.12, 10),
+      new THREE.MeshStandardMaterial({ color: 0xc47a50, roughness: 0.8 }),
+    );
+    potMini.position.set(0.9, -0.79, 0.08);
+    potMini.castShadow = true;
+    winGroup.add(potMini);
+    const miniLeaf = new THREE.Mesh(
+      new THREE.SphereGeometry(0.09, 8, 6),
+      new THREE.MeshStandardMaterial({ color: 0x5a8a4a, roughness: 0.85 }),
+    );
+    miniLeaf.position.set(0.9, -0.66, 0.08);
+    miniLeaf.scale.y = 1.2;
+    winGroup.add(miniLeaf);
 
     // 窗户作为可交互物件（★物件交互：切换白日梦）
     registerInteractable(glass, "window", "window", exhibits.window.label, V3(0, 1.6, -2.6), V3(0, 1.75, -halfZ));
@@ -616,18 +906,41 @@ export function createMemoryRoom(opts: RoomOptions) {
   }
   buildRug();
 
-  // 书桌（靠远墙，窗下）
+  // 书桌（靠远墙，窗下）—— 更细致的结构
   const DESK = { x: -0.3, y: 0.78, z: -4.25, w: 2.4, d: 0.9 };
   function buildDesk() {
     const g = new THREE.Group();
     scene.add(g);
-    addBox(DESK.w, 0.06, DESK.d, woodMid, DESK.x, DESK.y, DESK.z, g); // 桌面
+    // 桌面（加前缘装饰条）
+    addBox(DESK.w, 0.055, DESK.d, woodMid, DESK.x, DESK.y, DESK.z, g);
+    addBox(DESK.w + 0.02, 0.03, 0.03, woodDark, DESK.x, DESK.y - 0.04, DESK.z + DESK.d / 2 - 0.015, g);
+    // 桌腿（方形带锥度感）
     const lx = DESK.w / 2 - 0.08, lz = DESK.d / 2 - 0.08;
     [[-lx, -lz], [lx, -lz], [-lx, lz], [lx, lz]].forEach(([dx, dz]) => {
-      addBox(0.08, DESK.y, 0.08, woodDark, DESK.x + dx, DESK.y / 2, DESK.z + dz, g);
+      addBox(0.07, DESK.y - 0.06, 0.07, woodDark, DESK.x + dx, (DESK.y - 0.06) / 2, DESK.z + dz, g);
     });
-    // 桌下抽屉柜
-    addBox(0.7, 0.5, 0.7, woodDark, DESK.x + 0.75, 0.28, DESK.z, g);
+    // 桌下抽屉柜（更细致，有拉手）
+    addBox(0.72, 0.48, 0.65, woodDark, DESK.x + 0.75, 0.26, DESK.z, g);
+    // 抽屉面板线
+    for (let i = 0; i < 3; i++) {
+      addBox(0.62, 0.008, 0.008, metalBrass, DESK.x + 0.75, 0.10 + i * 0.14, DESK.z + 0.33, g);
+    }
+    // 抽屉拉手
+    for (let i = 0; i < 3; i++) {
+      const knob = new THREE.Mesh(
+        new THREE.SphereGeometry(0.018, 8, 8),
+        metalBrass,
+      );
+      knob.position.set(DESK.x + 0.75, 0.10 + i * 0.14 + 0.04, DESK.z + 0.34);
+      g.add(knob);
+    }
+    // 桌上散落的笔
+    const penMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.5, metalness: 0.3 });
+    const pen = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.18, 6), penMat);
+    pen.position.set(DESK.x + 1.05, DESK.y + 0.04, DESK.z + 0.25);
+    pen.rotation.z = Math.PI / 2;
+    pen.rotation.y = 0.3;
+    g.add(pen);
   }
   buildDesk();
 
@@ -635,11 +948,20 @@ export function createMemoryRoom(opts: RoomOptions) {
     const g = new THREE.Group();
     g.position.set(DESK.x, 0, DESK.z + 1.05);
     scene.add(g);
-    addBox(0.5, 0.06, 0.5, woodMid, 0, 0.46, 0, g); // 坐垫
-    addBox(0.5, 0.5, 0.06, woodMid, 0, 0.72, -0.22, g); // 靠背
+    // 坐垫（木框 + 软垫感）
+    addBox(0.5, 0.05, 0.5, woodMid, 0, 0.46, 0, g);
+    const cushionMat = new THREE.MeshStandardMaterial({ color: 0x6a7a5a, roughness: 0.95 });
+    addBox(0.42, 0.06, 0.42, cushionMat, 0, 0.52, 0, g);
+    // 靠背（略弯，带横条）
+    addBox(0.5, 0.5, 0.05, woodMid, 0, 0.74, -0.22, g);
+    addBox(0.4, 0.06, 0.04, woodMid, 0, 0.62, -0.22, g); // 横条
+    // 椅腿
     [[-0.2, -0.2], [0.2, -0.2], [-0.2, 0.2], [0.2, 0.2]].forEach(([dx, dz]) => {
-      addBox(0.05, 0.46, 0.05, woodDark, dx, 0.23, dz, g);
+      addBox(0.045, 0.46, 0.045, woodDark, dx, 0.23, dz, g);
     });
+    // 后腿延伸为靠背支撑
+    addBox(0.045, 0.82, 0.045, woodDark, -0.2, 0.41, -0.2, g);
+    addBox(0.045, 0.82, 0.045, woodDark, 0.2, 0.41, -0.2, g);
   }
   buildChair();
 
@@ -648,24 +970,43 @@ export function createMemoryRoom(opts: RoomOptions) {
     g.position.set(-ROOM.halfX + 0.28, 0, -1.0);
     scene.add(g);
     const shelfMat = woodDark;
-    addBox(0.34, 2.6, 2.6, shelfMat, 0, 1.3, 0, g); // 背板厚度
+    // 背板
+    addBox(0.34, 2.6, 2.6, shelfMat, 0, 1.3, 0, g);
+    // 隔板（更厚实）
     for (let i = 0; i <= 4; i++) {
-      addBox(0.34, 0.05, 2.6, woodMid, 0, 0.3 + i * 0.56, 0, g); // 隔板
+      addBox(0.36, 0.04, 2.6, woodMid, 0, 0.3 + i * 0.56, 0, g);
     }
-    // 书（彩色低多边形小盒）
-    const bookColors = [0x9c4a3c, 0x3c6e71, 0xd4a017, 0x5a6f5a, 0x84563c, 0x6b5b95];
+    // 侧板
+    addBox(0.04, 2.6, 2.6, woodMid, 0.16, 1.3, 0, g);
+    addBox(0.04, 2.6, 2.6, woodMid, -0.16, 1.3, 0, g);
+    // 书（彩色小盒，有更丰富的颜色变化）
+    const bookColors = [0x9c4a3c, 0x3c6e71, 0xd4a017, 0x5a6f5a, 0x84563c, 0x6b5b95, 0xb85c3a, 0x4a7c59, 0xc48a3a, 0x7a5a8a];
     for (let s = 0; s < 4; s++) {
-      let z = -1.1;
-      while (z < 1.0) {
-        const h = 0.34 + Math.random() * 0.12;
-        const w = 0.05 + Math.random() * 0.04;
+      let z = -1.15;
+      while (z < 1.05) {
+        const h = 0.32 + Math.random() * 0.14;
+        const w = 0.04 + Math.random() * 0.05;
         const col = bookColors[Math.floor(Math.random() * bookColors.length)];
-        const b = addBox(0.22, h, w, new THREE.MeshStandardMaterial({ color: col, roughness: 0.9 }),
+        const bookMat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.88 });
+        const b = addBox(0.20, h, w, bookMat,
           0.02, 0.3 + s * 0.56 + h / 2 + 0.03, z, g);
         b.rotation.y = (Math.random() - 0.5) * 0.04;
-        z += w + 0.012;
+        // 有些书有装饰线条（书脊）
+        if (Math.random() > 0.6) {
+          const stripe = addBox(0.21, 0.008, w + 0.002,
+            new THREE.MeshStandardMaterial({ color: 0xd4b070, roughness: 0.6, metalness: 0.3 }),
+            0.025, 0.3 + s * 0.56 + h * 0.35 + 0.03, z, g);
+        }
+        z += w + 0.008 + Math.random() * 0.008;
       }
     }
+    // 书架顶部放一个小摆件
+    const figurine = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.04, 0.06, 0.18, 8),
+      new THREE.MeshStandardMaterial({ color: 0xd4b896, roughness: 0.7 }),
+    );
+    figurine.position.set(0.02, 2.62, 0.5);
+    g.add(figurine);
   }
   buildBookshelf();
 
@@ -673,22 +1014,47 @@ export function createMemoryRoom(opts: RoomOptions) {
     const g = new THREE.Group();
     g.position.set(ROOM.halfX - 0.7, 0, -ROOM.halfZ + 0.8);
     scene.add(g);
-    // 花盆
+    // 花盆（陶土质感，有盆沿）
     const pot = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.26, 0.2, 0.42, 12),
-      new THREE.MeshStandardMaterial({ color: 0xb5683f, roughness: 0.8 }),
+      new THREE.CylinderGeometry(0.26, 0.19, 0.42, 14),
+      new THREE.MeshStandardMaterial({ color: 0xb5683f, roughness: 0.75 }),
     );
     pot.position.y = 0.21; pot.castShadow = true; pot.receiveShadow = true;
     g.add(pot);
-    // 叶子（几片锥体）
-    const leafMat = new THREE.MeshStandardMaterial({ color: 0x5e7d4f, roughness: 0.85 });
-    for (let i = 0; i < 7; i++) {
-      const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.9 + Math.random() * 0.4, 5), leafMat);
-      leaf.position.set((Math.random() - 0.5) * 0.18, 0.85, (Math.random() - 0.5) * 0.18);
-      leaf.rotation.set((Math.random() - 0.5) * 0.6, Math.random() * Math.PI, (Math.random() - 0.5) * 0.6);
+    // 盆沿
+    const rim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.26, 0.02, 8, 16),
+      new THREE.MeshStandardMaterial({ color: 0xc47850, roughness: 0.7 }),
+    );
+    rim.position.y = 0.42;
+    rim.rotation.x = Math.PI / 2;
+    g.add(rim);
+    // 土壤
+    const soil = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.24, 0.24, 0.04, 14),
+      new THREE.MeshStandardMaterial({ color: 0x5a3d2a, roughness: 1 }),
+    );
+    soil.position.y = 0.40;
+    g.add(soil);
+    // 叶子（更多层次，两种绿色）
+    const leafMat1 = new THREE.MeshStandardMaterial({ color: 0x5e7d4f, roughness: 0.85 });
+    const leafMat2 = new THREE.MeshStandardMaterial({ color: 0x4a6d3a, roughness: 0.85 });
+    for (let i = 0; i < 10; i++) {
+      const mat = i % 2 === 0 ? leafMat1 : leafMat2;
+      const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.08 + Math.random() * 0.05, 0.8 + Math.random() * 0.5, 5), mat);
+      leaf.position.set((Math.random() - 0.5) * 0.22, 0.75 + Math.random() * 0.2, (Math.random() - 0.5) * 0.22);
+      leaf.rotation.set((Math.random() - 0.5) * 0.7, Math.random() * Math.PI, (Math.random() - 0.5) * 0.7);
       leaf.castShadow = true;
       g.add(leaf);
     }
+    // 主茎（一根较高的）
+    const stem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.015, 0.012, 0.6, 6),
+      new THREE.MeshStandardMaterial({ color: 0x3a5a2a, roughness: 0.9 }),
+    );
+    stem.position.y = 0.72;
+    stem.rotation.set(0.1, 0, 0.05);
+    g.add(stem);
     return g;
   }
   const plantGroup = buildPlant();
@@ -698,33 +1064,84 @@ export function createMemoryRoom(opts: RoomOptions) {
     g.position.set(ROOM.halfX - 0.55, 0, 1.3);
     g.rotation.y = -Math.PI / 2;
     scene.add(g);
-    const sofaMat = new THREE.MeshStandardMaterial({ color: 0x7d8a6b, roughness: 1 });
-    addBox(1.8, 0.4, 0.8, sofaMat, 0, 0.3, 0, g); // 坐垫基座
-    addBox(1.8, 0.5, 0.2, sofaMat, 0, 0.6, -0.3, g); // 靠背
-    addBox(0.2, 0.5, 0.8, sofaMat, -0.8, 0.55, 0, g); // 左扶手
-    addBox(0.2, 0.5, 0.8, sofaMat, 0.8, 0.55, 0, g); // 右扶手
-    // 抱枕
-    addBox(0.4, 0.4, 0.15, new THREE.MeshStandardMaterial({ color: 0xc77b4a, roughness: 1 }), -0.4, 0.6, 0.1, g);
+    const sofaMat = new THREE.MeshStandardMaterial({ color: 0x7d8a6b, roughness: 0.95 });
+    const sofaDark = new THREE.MeshStandardMaterial({ color: 0x5e6b4e, roughness: 0.9 });
+    // 底座
+    addBox(1.8, 0.12, 0.78, sofaDark, 0, 0.1, 0, g);
+    // 坐垫（有分段感）
+    addBox(0.85, 0.18, 0.72, sofaMat, -0.44, 0.28, 0, g);
+    addBox(0.85, 0.18, 0.72, sofaMat, 0.44, 0.28, 0, g);
+    // 靠背（更厚实）
+    addBox(1.8, 0.42, 0.2, sofaMat, 0, 0.56, -0.28, g);
+    // 扶手（圆润感用多段叠加模拟）
+    addBox(0.18, 0.36, 0.72, sofaMat, -0.82, 0.5, 0, g);
+    addBox(0.18, 0.36, 0.72, sofaMat, 0.82, 0.5, 0, g);
+    // 扶手顶部圆角
+    addBox(0.18, 0.06, 0.72, sofaDark, -0.82, 0.7, 0, g);
+    addBox(0.18, 0.06, 0.72, sofaDark, 0.82, 0.7, 0, g);
+    // 抱枕（两个不同颜色）
+    const pillow1Mat = new THREE.MeshStandardMaterial({ color: 0xc77b4a, roughness: 0.95 });
+    const pillow2Mat = new THREE.MeshStandardMaterial({ color: 0x8a7a5a, roughness: 0.95 });
+    const p1 = addBox(0.35, 0.35, 0.12, pillow1Mat, -0.4, 0.52, 0.12, g);
+    p1.rotation.y = 0.15; p1.rotation.z = 0.08;
+    const p2 = addBox(0.35, 0.35, 0.12, pillow2Mat, 0.35, 0.52, 0.1, g);
+    p2.rotation.y = -0.2; p2.rotation.z = -0.05;
+    // 沙发脚
+    const sofaFootMat = new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.6 });
+    [[-0.8, 0.32], [0.8, 0.32], [-0.8, -0.32], [0.8, -0.32]].forEach(([dx, dz]) => {
+      const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.06, 8), sofaFootMat);
+      foot.position.set(dx, 0.03, dz);
+      g.add(foot);
+    });
   }
   buildSofa();
 
-  // 台灯（含暖色点光源）—— 也是碎片「rookie」的藏匿点光晕
+  // 台灯（含暖色点光源 + 光晕）—— 也是碎片「rookie」的藏匿点
   let lampLight: any = null;
   function buildLamp() {
     const g = new THREE.Group();
     g.position.set(DESK.x - 0.85, DESK.y + 0.03, DESK.z + 0.05);
     scene.add(g);
-    addBox(0.18, 0.02, 0.18, woodDark, 0, 0, 0, g); // 底座
-    addBox(0.025, 0.42, 0.025, woodDark, 0, 0.22, 0, g); // 灯杆
+    // 底座（圆形）
+    const base = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.10, 0.12, 0.02, 16),
+      woodDark,
+    );
+    base.castShadow = true;
+    g.add(base);
+    // 灯杆（稍细，有装饰环）
+    addBox(0.022, 0.40, 0.022, woodDark, 0, 0.21, 0, g);
+    const ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.03, 0.006, 6, 12),
+      metalBrass,
+    );
+    ring.position.y = 0.15;
+    ring.rotation.x = Math.PI / 2;
+    g.add(ring);
+    // 灯罩（圆台，发光材质）
     const shade = new THREE.Mesh(
-      new THREE.ConeGeometry(0.16, 0.2, 16, 1, true),
-      new THREE.MeshStandardMaterial({ color: 0xe9c27a, roughness: 0.6, side: THREE.DoubleSide,
-        emissive: 0xffcf7a, emissiveIntensity: 0.6 }),
+      new THREE.ConeGeometry(0.16, 0.22, 16, 1, true),
+      new THREE.MeshStandardMaterial({
+        color: 0xe9c27a, roughness: 0.55, side: THREE.DoubleSide,
+        emissive: 0xffcf7a, emissiveIntensity: 0.7,
+      }),
     );
     shade.position.y = 0.45;
+    shade.castShadow = false;
     g.add(shade);
-    lampLight = new THREE.PointLight(0xffce82, 1.4, 4.5, 2);
+    // 灯泡发光点
+    const bulb = new THREE.Mesh(
+      new THREE.SphereGeometry(0.025, 8, 8),
+      new THREE.MeshStandardMaterial({ color: 0xfff5e0, emissive: 0xffe8a0, emissiveIntensity: 3 }),
+    );
+    bulb.position.y = 0.40;
+    g.add(bulb);
+    // 暖色点光源
+    lampLight = new THREE.PointLight(0xffce82, 1.6, 5.0, 2);
     lampLight.position.set(0, 0.42, 0);
+    lampLight.castShadow = true;
+    lampLight.shadow.mapSize.set(512, 512);
+    lampLight.shadow.bias = -0.002;
     g.add(lampLight);
   }
   buildLamp();
@@ -736,18 +1153,57 @@ export function createMemoryRoom(opts: RoomOptions) {
     const g = new THREE.Group();
     g.position.set(DESK.x + 0.15, DESK.y + 0.03, DESK.z - 0.05);
     scene.add(g);
-    const caseMat = new THREE.MeshStandardMaterial({ color: 0xd9cdb0, roughness: 0.7 });
-    // 显示器外壳
-    addBox(0.62, 0.5, 0.5, caseMat, 0, 0.27, 0, g);
+    const caseMat = new THREE.MeshStandardMaterial({ color: 0xd9cdb0, roughness: 0.65 });
+    // 显示器外壳（CRT 造型，后部更厚）
+    addBox(0.62, 0.48, 0.52, caseMat, 0, 0.27, 0, g);
+    // CRT 后部圆弧（用扁球模拟）
+    const crtBack = new THREE.Mesh(
+      new THREE.SphereGeometry(0.28, 10, 8),
+      new THREE.MeshStandardMaterial({ color: 0xc9bd9f, roughness: 0.7 }),
+    );
+    crtBack.position.set(0, 0.27, -0.18);
+    crtBack.scale.set(1.1, 0.85, 0.6);
+    crtBack.castShadow = true;
+    g.add(crtBack);
     // 屏幕（自发光，呼应「开机」）
     const screen = new THREE.Mesh(
       new THREE.PlaneGeometry(0.46, 0.34),
       new THREE.MeshStandardMaterial({ color: 0x1d3b34, emissive: 0x2fae8e, emissiveIntensity: 0.7, roughness: 0.4 }),
     );
-    screen.position.set(0, 0.3, 0.255);
+    screen.position.set(0, 0.3, 0.265);
     g.add(screen);
-    // 键盘
-    addBox(0.5, 0.04, 0.18, caseMat, 0, 0.02, 0.42, g);
+    // 屏幕发光溢出
+    const screenGlow = new THREE.PointLight(0x2fae8e, 0.4, 1.5, 2);
+    screenGlow.position.set(0, 0.3, 0.35);
+    g.add(screenGlow);
+    // 显示器底座
+    addBox(0.3, 0.03, 0.22, caseMat, 0, 0.015, 0.08, g);
+    // 显示器按钮
+    const btnMat = new THREE.MeshStandardMaterial({ color: 0x8a7a6a, roughness: 0.5 });
+    for (let i = 0; i < 3; i++) {
+      const btn = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.01, 8), btnMat);
+      btn.position.set(-0.08 + i * 0.08, 0.06, 0.265);
+      btn.rotation.x = Math.PI / 2;
+      g.add(btn);
+    }
+    // 键盘（有键帽起伏感）
+    addBox(0.5, 0.035, 0.18, caseMat, 0, 0.02, 0.42, g);
+    // 键盘按键行（简化为几排小凸起）
+    const keyMat = new THREE.MeshStandardMaterial({ color: 0xc9bda0, roughness: 0.6 });
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 10; col++) {
+        const key = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.008, 0.032), keyMat);
+        key.position.set(-0.18 + col * 0.04, 0.043, 0.34 + row * 0.04);
+        g.add(key);
+      }
+    }
+    // 鼠标
+    const mouse = new THREE.Mesh(
+      new THREE.BoxGeometry(0.06, 0.025, 0.1),
+      new THREE.MeshStandardMaterial({ color: 0xc9bda0, roughness: 0.6 }),
+    );
+    mouse.position.set(0.35, 0.02, 0.42);
+    g.add(mouse);
     registerInteractable(g, "exhibit", "computer", exhibits.computer.label,
       V3(DESK.x + 0.15, 1.18, DESK.z + 1.15), V3(DESK.x + 0.15, 1.05, DESK.z - 0.05));
   }
@@ -890,11 +1346,11 @@ export function createMemoryRoom(opts: RoomOptions) {
   buildShards();
 
   /* =========================================================================
-   *  尘埃粒子：在体积光中缓慢漂浮
+   *  尘埃粒子：在体积光中缓慢漂浮（更丰富）
    * ======================================================================= */
   let dust: any = null;
   function buildDust() {
-    const count = isMobile ? 220 : 420;
+    const count = isMobile ? 320 : 600;
     const geo = new THREE.BufferGeometry();
     const arr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -904,12 +1360,57 @@ export function createMemoryRoom(opts: RoomOptions) {
     }
     geo.setAttribute("position", new THREE.BufferAttribute(arr, 3));
     dust = new THREE.Points(geo, new THREE.PointsMaterial({
-      map: glowTex, color: 0xffe6b8, size: 0.05, transparent: true, opacity: 0.5,
+      map: glowTex, color: 0xffe6b8, size: 0.06, transparent: true, opacity: 0.45,
       blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, fog: false,
     }));
     scene.add(dust);
   }
   buildDust();
+
+  /* =========================================================================
+   *  天花板灯具：复古吊灯
+   * ======================================================================= */
+  let ceilingLight: any = null;
+  function buildCeilingLamp() {
+    const g = new THREE.Group();
+    g.position.set(0, ROOM.height, -1.5);
+    scene.add(g);
+    // 吊链/线
+    const wire = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.008, 0.008, 0.4, 4),
+      new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.8, roughness: 0.3 }),
+    );
+    wire.position.y = 0.2;
+    g.add(wire);
+    // 灯罩（碗形，用圆锥倒扣）
+    const shade = new THREE.Mesh(
+      new THREE.ConeGeometry(0.25, 0.15, 16, 1, true),
+      new THREE.MeshStandardMaterial({
+        color: 0xd4b886, roughness: 0.6, side: THREE.DoubleSide,
+        emissive: 0xffe8b0, emissiveIntensity: 0.4,
+      }),
+    );
+    shade.position.y = 0;
+    shade.rotation.x = Math.PI;
+    g.add(shade);
+    // 灯泡
+    const bulb = new THREE.Mesh(
+      new THREE.SphereGeometry(0.05, 10, 8),
+      new THREE.MeshStandardMaterial({
+        color: 0xfff5e0, emissive: 0xffe8a0, emissiveIntensity: 2.5,
+      }),
+    );
+    bulb.position.y = -0.02;
+    g.add(bulb);
+    // 灯光
+    ceilingLight = new THREE.PointLight(0xffe0a0, 0.8, 8, 2);
+    ceilingLight.position.set(0, -0.1, 0);
+    ceilingLight.castShadow = true;
+    ceilingLight.shadow.mapSize.set(512, 512);
+    ceilingLight.shadow.bias = -0.002;
+    g.add(ceilingLight);
+  }
+  buildCeilingLamp();
 
   /* =========================================================================
    *  ★漫游控制：状态机 + 输入
@@ -1158,6 +1659,44 @@ export function createMemoryRoom(opts: RoomOptions) {
   }
 
   /* =========================================================================
+   *  后处理：暖光 Bloom + Vignette（异步加载 addon）
+   * ======================================================================= */
+  let composer: any = null;
+  let bloomPass: any = null;
+  // 异步加载后处理管线（不阻塞首帧渲染）
+  (async () => {
+    try {
+      const { EffectComposer } = await loadAddon("postprocessing/EffectComposer.js");
+      const { RenderPass } = await loadAddon("postprocessing/RenderPass.js");
+      const { UnrealBloomPass } = await loadAddon("postprocessing/UnrealBloomPass.js");
+      const { ShaderPass } = await loadAddon("postprocessing/ShaderPass.js");
+      composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(container.clientWidth, container.clientHeight),
+        0.35,  // strength — 微妙暖光晕
+        0.6,   // radius
+        0.82,  // threshold — 只有较亮区域泛光
+      );
+      composer.addPass(bloomPass);
+      // 简单暗角 shader
+      const vignetteShader = {
+        uniforms: {
+          tDiffuse: { value: null },
+          offset: { value: 1.0 },
+          darkness: { value: 1.2 },
+        },
+        vertexShader: `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+        fragmentShader: `uniform sampler2D tDiffuse;uniform float offset;uniform float darkness;varying vec2 vUv;void main(){vec4 texel=texture2D(tDiffuse,vUv);vec2 uv=(vUv-vec2(0.5))*vec2(offset);float v=clamp(1.0-dot(uv,uv),0.0,1.0);texel.rgb*=mix(1.0-darkness,1.0,v);gl_FragColor=texel;}`,
+      };
+      const vignettePass = new ShaderPass(vignetteShader);
+      composer.addPass(vignettePass);
+    } catch (e) {
+      console.warn("Post-processing load failed, using basic renderer:", e);
+    }
+  })();
+
+  /* =========================================================================
    *  动画主循环
    * ======================================================================= */
   let raf = 0;
@@ -1182,28 +1721,33 @@ export function createMemoryRoom(opts: RoomOptions) {
       if (s.collected) continue;
       s.core.rotation.y += dt * 1.2;
       s.core.rotation.x += dt * 0.6;
-      s.group.position.y = s.baseY + Math.sin(t * 1.8 + s.baseY) * 0.045;
-      const pulse = 0.55 + Math.sin(t * 3 + s.baseY * 4) * 0.12;
+      s.group.position.y = s.baseY + Math.sin(t * 1.8 + s.baseY) * 0.055;
+      const pulse = 0.55 + Math.sin(t * 3 + s.baseY * 4) * 0.15;
       s.halo.scale.setScalar(pulse);
-      s.core.material.emissiveIntensity = 2.0 + Math.sin(t * 4) * 0.5;
+      s.core.material.emissiveIntensity = 2.2 + Math.sin(t * 4) * 0.6;
     }
 
-    // 尘埃缓慢上浮（循环回底部）
+    // 尘埃缓慢上浮 + 水平漂移（更自然）
     if (dust) {
       const pos = dust.geometry.attributes.position;
       for (let i = 0; i < pos.count; i++) {
-        let y = pos.getY(i) + dt * 0.08;
+        let y = pos.getY(i) + dt * (0.06 + Math.sin(i * 0.1) * 0.02);
         if (y > ROOM.height) y = 0;
         pos.setY(i, y);
-        pos.setX(i, pos.getX(i) + Math.sin(t * 0.3 + i) * dt * 0.02);
+        pos.setX(i, pos.getX(i) + Math.sin(t * 0.25 + i * 0.7) * dt * 0.015);
+        pos.setZ(i, pos.getZ(i) + Math.cos(t * 0.2 + i * 0.5) * dt * 0.01);
       }
       pos.needsUpdate = true;
-      dust.rotation.y = t * 0.01;
     }
     // 体积光轻微呼吸
     godRays.children.forEach((p: any, i: number) => {
-      p.material.opacity = 0.05 + Math.sin(t * 0.6 + i) * 0.018;
+      p.material.opacity = 0.04 + Math.sin(t * 0.5 + i * 0.7) * 0.015;
     });
+
+    // 天花板灯轻微闪烁
+    if (ceilingLight) {
+      ceilingLight.intensity = 0.8 + Math.sin(t * 8) * 0.02 + Math.sin(t * 13) * 0.01;
+    }
 
     // ★结局：门缓缓打开 + 透光
     if (doorOpening && doorAngle > -0.62) {
@@ -1224,7 +1768,12 @@ export function createMemoryRoom(opts: RoomOptions) {
       updateFocusAnim(dt);
     }
 
-    renderer.render(scene, camera);
+    // 渲染（有后处理用 composer，否则直接渲染）
+    if (composer) {
+      composer.render();
+    } else {
+      renderer.render(scene, camera);
+    }
     if (!ready) { ready = true; callbacks.onReady?.(); }
   }
 
@@ -1257,6 +1806,7 @@ export function createMemoryRoom(opts: RoomOptions) {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
+    if (composer) composer.setSize(w, h);
   };
   function requestLock() {
     audio.resume();

@@ -474,57 +474,102 @@ export default function MemoryRoom() {
           alignItems: "center",
           justifyContent: "center",
           background:
-            "radial-gradient(ellipse at 50% 40%, #f6d78e55 0%, #e8c49a44 40%, #d4a06855 100%), #f5ead6",
+            "radial-gradient(ellipse at 50% 35%, #f6d78e66 0%, #e8c49a55 30%, #d4a06866 70%, #b8885444 100%), linear-gradient(180deg, #f5ead6 0%, #ead5b5 100%)",
           fontFamily: "'Inter','Noto Sans SC',system-ui,sans-serif",
           color: "#3a2e22",
           flexDirection: "column",
           textAlign: "center",
           padding: 24,
           cursor: "pointer",
+          position: "relative",
+          overflow: "hidden",
         }}
         onClick={handleEnter}
       >
-        <div style={{ maxWidth: 420 }}>
+        {/* 模拟窗户光斑 */}
+        <div
+          style={{
+            position: "absolute",
+            top: "8%",
+            left: "35%",
+            width: "30%",
+            height: "50%",
+            background: "radial-gradient(ellipse at 50% 50%, rgba(255,230,170,0.35) 0%, rgba(255,220,150,0.1) 40%, transparent 70%)",
+            pointerEvents: "none",
+            animation: "introGlow 6s ease-in-out infinite alternate",
+          }}
+        />
+        {/* 尘埃粒子动画层 */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='2' cy='2' r='0.5' fill='rgba(180,150,100,0.15)'/%3E%3C/svg%3E\") repeat",
+            opacity: 0.4,
+            pointerEvents: "none",
+            animation: "dustDrift 30s linear infinite",
+          }}
+        />
+        <div style={{ maxWidth: 440, position: "relative", zIndex: 1 }}>
           <h1
             style={{
-              fontSize: 32,
+              fontSize: 36,
               fontWeight: 700,
-              letterSpacing: "-0.02em",
-              marginBottom: 12,
+              letterSpacing: "-0.03em",
+              marginBottom: 8,
+              textShadow: "0 2px 12px rgba(180,140,80,0.2)",
             }}
           >
             我记忆的旧房间
           </h1>
-          <p style={{ fontSize: 15, color: "#7a6a5a", marginBottom: 32, lineHeight: 1.7 }}>
+          <p
+            style={{
+              fontSize: 14,
+              color: "#8a7a6a",
+              marginBottom: 6,
+              fontWeight: 500,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+            }}
+          >
+            A Room of My Memories
+          </p>
+          <p style={{ fontSize: 15, color: "#7a6a5a", marginBottom: 36, lineHeight: 1.7 }}>
             {guide.enterSubtitle}
           </p>
           <div
             style={{
               display: "inline-block",
-              padding: "14px 36px",
-              borderRadius: 12,
-              background: "rgba(180,145,90,0.2)",
+              padding: "16px 42px",
+              borderRadius: 14,
+              background: "linear-gradient(135deg, rgba(180,145,90,0.22), rgba(200,165,100,0.18))",
               border: "1px solid rgba(180,145,90,0.35)",
+              boxShadow: "0 4px 20px rgba(160,120,60,0.15), inset 0 1px 0 rgba(255,255,255,0.15)",
               fontSize: 16,
               fontWeight: 600,
               color: "#6b5030",
-              transition: "transform 0.2s, background 0.2s",
+              transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease",
+              cursor: "pointer",
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.transform = "scale(1.04)";
-              e.currentTarget.style.background = "rgba(180,145,90,0.3)";
+              e.currentTarget.style.transform = "scale(1.05)";
+              e.currentTarget.style.boxShadow = "0 8px 32px rgba(160,120,60,0.25), inset 0 1px 0 rgba(255,255,255,0.2)";
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.background = "rgba(180,145,90,0.2)";
+              e.currentTarget.style.boxShadow = "0 4px 20px rgba(160,120,60,0.15), inset 0 1px 0 rgba(255,255,255,0.15)";
             }}
           >
             {guide.enterButton}
           </div>
-          <p style={{ fontSize: 11, color: "#a09080", marginTop: 24, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 11, color: "#a09080", marginTop: 28, lineHeight: 1.6 }}>
             {isMobile.current ? guide.enterHintMobile : guide.enterHintDesktop}
           </p>
         </div>
+        <style>{`
+          @keyframes introGlow{0%{opacity:0.6;transform:scale(1)}100%{opacity:1;transform:scale(1.05)}}
+          @keyframes dustDrift{from{background-position:0 0}to{background-position:100px 200px}}
+        `}</style>
       </div>
     );
   }
@@ -540,87 +585,106 @@ export default function MemoryRoom() {
           alignItems: "center",
           justifyContent: "center",
           background:
-            "radial-gradient(ellipse at 50% 35%, #fff8e766 0%, #f5ead6 60%, #e0c9a0 100%)",
+            "radial-gradient(ellipse at 50% 30%, #fff8e788 0%, #f5ead6 50%, #e0c9a0 100%)",
           fontFamily: "'Inter','Noto Sans SC',system-ui,sans-serif",
           color: "#3a2e22",
           flexDirection: "column",
           textAlign: "center",
           padding: 32,
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <h1
-          style={{
-            fontSize: 28,
-            fontWeight: 700,
-            marginBottom: 12,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          {ending.title}
-        </h1>
-        <p
-          style={{
-            fontSize: 20,
-            fontWeight: 600,
-            color: "#6b5030",
-            marginBottom: 20,
-          }}
-        >
-          {ending.message}
-        </p>
-        <p
-          style={{
-            fontSize: 15,
-            lineHeight: 1.8,
-            maxWidth: 460,
-            color: "#5a4a3a",
-            marginBottom: 24,
-          }}
-        >
-          {ending.body}
-        </p>
-        <p style={{ fontSize: 13, color: "#9a8a7a", marginBottom: 32 }}>
-          {ending.signature}
-        </p>
+        {/* 光晕效果 */}
         <div
           style={{
-            ...GLASS,
-            padding: "20px 28px",
-            maxWidth: 380,
-            width: "100%",
-            textAlign: "left",
+            position: "absolute",
+            top: "-20%",
+            left: "30%",
+            width: "40%",
+            height: "60%",
+            background: "radial-gradient(ellipse, rgba(255,240,180,0.3) 0%, transparent 70%)",
+            pointerEvents: "none",
           }}
-        >
-          <h4
+        />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: 500 }}>
+          <h1
             style={{
-              fontSize: 14,
-              fontWeight: 600,
-              marginBottom: 12,
-              color: "#6b5030",
+              fontSize: 30,
+              fontWeight: 700,
+              marginBottom: 16,
+              letterSpacing: "-0.02em",
+              textShadow: "0 2px 12px rgba(180,140,80,0.2)",
             }}
           >
-            {contact.title}
-          </h4>
-          {contact.links.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              target={l.href.startsWith("http") ? "_blank" : undefined}
-              rel="noopener noreferrer"
+            {ending.title}
+          </h1>
+          <p
+            style={{
+              fontSize: 20,
+              fontWeight: 600,
+              color: "#6b5030",
+              marginBottom: 20,
+            }}
+          >
+            {ending.message}
+          </p>
+          <p
+            style={{
+              fontSize: 15,
+              lineHeight: 1.8,
+              maxWidth: 460,
+              color: "#5a4a3a",
+              marginBottom: 24,
+            }}
+          >
+            {ending.body}
+          </p>
+          <p style={{ fontSize: 13, color: "#9a8a7a", marginBottom: 32 }}>
+            {ending.signature}
+          </p>
+          <div
+            style={{
+              ...GLASS,
+              ...SOFT_SHADOW,
+              padding: "20px 28px",
+              maxWidth: 380,
+              width: "100%",
+              textAlign: "left",
+              margin: "0 auto",
+            }}
+          >
+            <h4
               style={{
-                display: "block",
-                fontSize: 13,
-                color: "#5a7a9a",
-                textDecoration: "none",
-                margin: "6px 0",
-                transition: "color 0.15s",
+                fontSize: 14,
+                fontWeight: 600,
+                marginBottom: 12,
+                color: "#6b5030",
               }}
-              onMouseOver={(e) => (e.currentTarget.style.color = "#3a5a7a")}
-              onMouseOut={(e) => (e.currentTarget.style.color = "#5a7a9a")}
             >
-              <strong>{l.label}:</strong> {l.value}
-            </a>
-          ))}
+              {contact.title}
+            </h4>
+            {contact.links.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                target={l.href.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                style={{
+                  display: "block",
+                  fontSize: 13,
+                  color: "#5a7a9a",
+                  textDecoration: "none",
+                  margin: "6px 0",
+                  transition: "color 0.15s",
+                }}
+                onMouseOver={(e) => (e.currentTarget.style.color = "#3a5a7a")}
+                onMouseOut={(e) => (e.currentTarget.style.color = "#5a7a9a")}
+              >
+                <strong>{l.label}:</strong> {l.value}
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -659,25 +723,26 @@ export default function MemoryRoom() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: "#f5ead6",
+            background: "linear-gradient(180deg, #f5ead6 0%, #ead5b5 100%)",
             zIndex: 100,
             flexDirection: "column",
-            gap: 16,
+            gap: 20,
             fontFamily: "'Inter','Noto Sans SC',system-ui,sans-serif",
             color: "#6b5030",
           }}
         >
           <div
             style={{
-              width: 40,
-              height: 40,
-              border: "3px solid rgba(180,145,90,0.3)",
+              width: 44,
+              height: 44,
+              border: "3px solid rgba(180,145,90,0.25)",
               borderTopColor: "#b4915a",
               borderRadius: "50%",
-              animation: "spin 1s linear infinite",
+              animation: "spin 0.9s linear infinite",
             }}
           />
-          <p style={{ fontSize: 14 }}>正在布置房间…</p>
+          <p style={{ fontSize: 15, fontWeight: 500 }}>正在布置房间…</p>
+          <p style={{ fontSize: 11, color: "#9a8a7a" }}>推开那扇记忆的门</p>
           <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
         </div>
       )}
