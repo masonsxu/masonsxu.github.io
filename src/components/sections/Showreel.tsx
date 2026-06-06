@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Player } from "@remotion/player";
 import { VIDEO } from "../../../remotion/shared/theme";
 import { showreelVideos, type ShowreelVideo } from "../../data/showreel-registry";
+import { subscribePlay } from "../../data/showreelBus";
 import { useTranslation } from "../../i18n";
 import { ScrollReveal } from "../ScrollReveal";
 import { SmdTag } from "../chip/SmdTag";
@@ -19,6 +20,14 @@ export function Showreel() {
     setActiveVideo(null);
     document.body.style.overflow = "";
   }, []);
+
+  // Play requests from the terminal `play` command / command palette.
+  useEffect(() => {
+    return subscribePlay((id) => {
+      const v = showreelVideos.find((x) => x.id === id);
+      if (v) openVideo(v);
+    });
+  }, [openVideo]);
 
   return (
     <section className="section-padding relative">
@@ -167,6 +176,14 @@ function VideoModal({
 }) {
   const { t } = useTranslation();
   const vt = t.showreel.videos[video.id];
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   return (
     <div
