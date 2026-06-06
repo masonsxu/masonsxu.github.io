@@ -95,4 +95,40 @@ export interface TranslationSet {
     resumeValue: string;
     copyright: string;
   };
+  terminal: {
+    title: string;
+    hintOpen: string;
+    welcome: readonly string[];
+    promptHelp: string;
+    unknown: string;
+    closeHint: string;
+    chips: readonly { cmd: string; label: string }[];
+    cmd: {
+      help: string;
+      whoami: string;
+      neofetch: string;
+      ls: string;
+      cat: string;
+      about: string;
+      metrics: string;
+      contact: string;
+      lang: string;
+      clear: string;
+      sudo: string;
+      play: string;
+      showreel: string;
+    };
+  };
+  palette: {
+    placeholder: string;
+    empty: string;
+    groupNav: string;
+    groupRun: string;
+    groupPlay: string;
+    hint: string;
+    sections: readonly { id: string; label: string }[];
+  };
+  diagrams: {
+    hint: string;
+  };
 }
