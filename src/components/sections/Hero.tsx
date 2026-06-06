@@ -1,6 +1,7 @@
 import { useTranslation } from "../../i18n";
 import { useInView, useAnimatedCounter } from "../../hooks";
 import { ChipFrame } from "../chip/ChipFrame";
+import { Terminal } from "../terminal/Terminal";
 
 interface DipPin {
   idx: string;
@@ -88,6 +89,12 @@ export function Hero() {
             ))}
           </div>
 
+          {/* Live console — inline terminal */}
+          <div className="mt-10">
+            <div className="silicon-eyebrow mb-3">0x0002 · LIVE_CONSOLE.tty</div>
+            <Terminal variant="inline" autoFocus={false} bodyMaxHeight={200} />
+          </div>
+
           {/* Footer status line */}
           <div className="mt-8 flex flex-wrap items-center gap-4 font-mono text-[11px] text-foreground/40 uppercase tracking-[0.2em]">
             <span className="inline-flex items-center gap-2">
@@ -99,6 +106,14 @@ export function Hero() {
             </span>
             <span className="text-foreground/20">·</span>
             <span>{t.hero.scroll}</span>
+            <span className="text-foreground/20">·</span>
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("mx:palette:open"))}
+              className="uppercase tracking-[0.2em] text-gold/70 transition-colors hover:text-gold"
+            >
+              {t.palette.hint}
+            </button>
           </div>
         </ChipFrame>
       </div>
