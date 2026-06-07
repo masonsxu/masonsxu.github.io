@@ -177,8 +177,9 @@ interface Command {
   - `diagrams/ProjectDiagram.tsx`：`DiagramContext` 共享 active 状态 + `DiagramFrame` 说明栏 + 交互式 `ChipBox`（带 `info` 的节点可悬停/聚焦/点击/键盘 Enter·Space → 高亮 + 下方说明）；19 个关键节点已注解；svg `role="group"` + 节点 `role="button"` 可达；trace 脉冲沿用 SVG `<animate>`（reduced-motion 友好）；Projects 图列加高避免与底部 silk 重叠。
   - **验收**：✅ 节点可交互高亮+说明、键盘可达、trace 动画在、`vite build` 绿。
   - 注：节点 `info` 目前为中文（en UI 回退中文，符合决策 #3），双语化进 Backlog。
-- [ ] **Phase 5 · 打磨上线**
-  - boot→终端衔接、a11y、移动端、SEO/meta、性能（懒加载/分包）。**验收**：Lighthouse 达标、无 console 报错、移动端干净。
+- [x] **Phase 5 · 打磨上线** ✅（2026-06-04，Lighthouse 跑分按用户要求跳过）
+  - 共享引用计数滚动锁 `lib/scrollLock.ts`（终端/面板/放映厅统一，修复叠加竞态）；终端/面板/视频弹窗 `role="dialog"` + 焦点管理 `lib/focus.ts`（关闭回焦 + Tab 焦点陷阱；终端因 Tab 补全仅回焦）；终端弹窗加大（`max-w-[860px]` + 更高输出区）；放映厅移除 `autoPlay` 改 `PlayerRef` 显式 `play()` 修复"假播放"；`<title>` → `Masons Xu — Go Backend Engineer · Distributed Systems`；BootSequence → MasonsOS 叙事衔接。
+  - **验收**：✅ 无 console 报错、`vite build` 绿；SEO/meta 与代码分包此前已良好；Lighthouse/真机由用户侧确认。
 
 ---
 
@@ -218,3 +219,4 @@ interface Command {
 - 2026-06-04 — 精简 Hero 状态行（移除冗余 `~` 提示，`~` 快捷键改在终端欢迎语展示）。
 - 2026-06-04 — Phase 3 完成：`play <name>`/`showreel` 命令 + 面板「播放」分组 + `showreelBus` latch 总线 + 修复 Esc 关闭；remotion 保持懒加载独立 chunk，`vite build` 绿（78 modules）。下一步 Phase 4（活架构图）。
 - 2026-06-04 — Phase 4 完成：ProjectDiagram 升级为活架构图（Context 共享 active + 说明栏 + 19 交互节点 + a11y role 修正），Projects 图列加高，`vite build` 绿。下一步 Phase 5（打磨上线）。
+- 2026-06-04 — Phase 5 完成：共享滚动锁 + 焦点管理（回焦 / Tab 陷阱）+ 弹层 dialog a11y + 终端弹窗加大 + 视频自动播放修复 + 英文 `<title>` + boot 叙事衔接；文档移至仓库根目录。Lighthouse 按用户要求跳过。路线图 0–5 全部完成。
