@@ -1,6 +1,64 @@
 import type { TranslationSet } from "./types";
 
 export const zh: TranslationSet = {
+  terminal: {
+    title: "MasonsOS 终端",
+    hintOpen: "敲 ~ 打开终端",
+    welcome: [
+      "MasonsOS v2026.6 · 交互式作品集 shell",
+      "输入 help 查看命令，或试试 whoami / neofetch / sudo hire-me。",
+      "快捷键：~ 随处唤起终端 · ⌘K 命令面板",
+    ],
+    promptHelp: "输入 help 查看可用命令",
+    unknown: "command not found: {cmd} — 输入 help 看看？",
+    closeHint: "ESC 关闭",
+    chips: [
+      { cmd: "help", label: "help" },
+      { cmd: "whoami", label: "whoami" },
+      { cmd: "neofetch", label: "neofetch" },
+      { cmd: "ls", label: "ls projects" },
+      { cmd: "about", label: "about" },
+      { cmd: "contact", label: "contact" },
+      { cmd: "sudo hire-me", label: "sudo hire-me" },
+    ],
+    cmd: {
+      help: "列出所有命令",
+      whoami: "我是谁",
+      neofetch: "系统信息身份卡",
+      ls: "列出项目",
+      cat: "查看某个项目（如 cat p01）",
+      about: "关于我",
+      metrics: "关键指标",
+      contact: "联系方式",
+      lang: "切换语言 zh|en",
+      clear: "清屏",
+      sudo: "🥚 试试 sudo hire-me",
+      play: "播放某支视频（如 play arch）",
+      showreel: "列出技术影集",
+    },
+  },
+  palette: {
+    placeholder: "跳转到… 或运行命令",
+    empty: "无匹配项",
+    groupNav: "跳转",
+    groupRun: "运行命令",
+    groupPlay: "播放影片",
+    hint: "⌘K 命令面板",
+    sections: [
+      { id: "hero", label: "概览 / 首页" },
+      { id: "about", label: "关于我" },
+      { id: "projects", label: "项目" },
+      { id: "architecture", label: "架构能力" },
+      { id: "essence", label: "灵魂底色" },
+      { id: "showreel", label: "技术影集" },
+      { id: "timeline", label: "经历 & 教育" },
+      { id: "community", label: "开源贡献" },
+      { id: "contact", label: "联系方式" },
+    ],
+  },
+  diagrams: {
+    hint: "悬停 / 聚焦 / 点击节点查看说明",
+  },
   hero: {
     tagline: "Go 后端工程师 · 分布式系统 · 云原生基础设施",
     description:

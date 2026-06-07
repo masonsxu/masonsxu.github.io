@@ -109,7 +109,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
         {/* DIAGRAM column */}
         <div
-          className={`relative min-h-[320px] lg:min-h-[460px] flex items-center justify-center p-6 ${
+          className={`relative min-h-[380px] lg:min-h-[520px] flex items-center justify-center p-6 ${
             reverse ? "lg:order-1" : ""
           }`}
           style={{

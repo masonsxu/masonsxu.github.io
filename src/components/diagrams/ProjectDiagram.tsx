@@ -1,22 +1,97 @@
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+  type SVGProps,
+  type KeyboardEvent as ReactKeyboardEvent,
+} from "react";
+import { useTranslation } from "../../i18n";
+import type { Locale } from "../../i18n/types";
+
 interface ProjectDiagramProps {
   variant: number;
 }
 
+/** Bilingual node detail; resolved against the active locale. */
+type NodeInfo = { zh: string; en: string };
+
 /**
- * ProjectDiagram — minimal IC-topology SVG used as the right column of each
- * project card. Variants chosen by index; each one is a different abstract
- * topology (microservices, data lake, monolith, contribution graph) so cards
- * read as distinct chips rather than the same picture repeated.
+ * ProjectDiagram — IC-topology SVG used as the right column of each project
+ * card. Nodes carrying an `info` prop become interactive (hover / focus /
+ * click) and surface their detail in the caption strip below the board.
  *
- * Self-contained — no external deps, no animation state. Trace pulse is
- * driven by SVG `<animate>` for prefers-reduced-motion compatibility.
+ * Interaction + locale are shared via DiagramContext so individual nodes need
+ * not be prop-drilled. The passive critical-path pulse uses SVG `<animate>`
+ * for prefers-reduced-motion compatibility.
  */
 export function ProjectDiagram({ variant }: ProjectDiagramProps) {
   const v = variant % 4;
-  if (v === 0) return <Microservices />;
-  if (v === 1) return <DataLake />;
-  if (v === 2) return <Monolith />;
-  return <ContribGraph />;
+  let board: ReactNode;
+  if (v === 0) board = <Microservices />;
+  else if (v === 1) board = <DataLake />;
+  else if (v === 2) board = <Monolith />;
+  else board = <ContribGraph />;
+  return <DiagramFrame>{board}</DiagramFrame>;
+}
+
+/* ──── Interaction context + caption frame ──── */
+interface DiagramCtx {
+  activeId: string | null;
+  activate: (id: string, info: string) => void;
+  clear: () => void;
+  locale: Locale;
+}
+
+const DiagramContext = createContext<DiagramCtx>({
+  activeId: null,
+  activate: () => {},
+  clear: () => {},
+  locale: "zh",
+});
+
+function useDiagram() {
+  return useContext(DiagramContext);
+}
+
+function DiagramFrame({ children }: { children: ReactNode }) {
+  const { t, locale } = useTranslation();
+  const [active, setActive] = useState<{ id: string; info: string } | null>(null);
+  const ctx = useMemo<DiagramCtx>(
+    () => ({
+      activeId: active?.id ?? null,
+      activate: (id, info) => setActive({ id, info }),
+      clear: () => setActive(null),
+      locale,
+    }),
+    [active, locale],
+  );
+
+  return (
+    <DiagramContext.Provider value={ctx}>
+      <div className="relative z-10 w-full max-w-[520px]">
+        {children}
+        <div
+          className="mt-2 min-h-[36px] rounded-md px-3 py-2 font-mono text-[11px] leading-snug"
+          style={{
+            boxShadow: "inset 0 0 0 1px rgba(0,153,255,0.14)",
+            background: "rgba(0,153,255,0.03)",
+          }}
+        >
+          {active ? (
+            <span className="text-foreground/75">
+              <span className="text-gold/90">{active.id}</span>
+              <span className="text-foreground/30"> · </span>
+              {active.info}
+            </span>
+          ) : (
+            <span className="text-foreground/35">{t.diagrams.hint}</span>
+          )}
+        </div>
+      </div>
+    </DiagramContext.Provider>
+  );
 }
 
 const COMMON_DEFS = (
@@ -59,6 +134,7 @@ function ChipBox({
   label,
   sub,
   tone = "blue",
+  info,
 }: {
   x: number;
   y: number;
@@ -67,25 +143,64 @@ function ChipBox({
   label: string;
   sub?: string;
   tone?: "blue" | "gold";
+  info?: string | NodeInfo;
 }) {
+  const ctx = useDiagram();
+  const detail = !info ? "" : typeof info === "string" ? info : info[ctx.locale];
+  const interactive = detail !== "";
+  const isActive = interactive && ctx.activeId === label;
   const stroke = tone === "gold" ? "#D4AF37" : "#0099ff";
-  const opacity = tone === "gold" ? 0.7 : 0.55;
-  const fill =
-    tone === "gold"
-      ? "rgba(212, 175, 55, 0.05)"
-      : "rgba(0, 153, 255, 0.04)";
+  const baseOpacity = tone === "gold" ? 0.7 : 0.55;
+  const fill = tone === "gold" ? "rgba(212, 175, 55, 0.05)" : "rgba(0, 153, 255, 0.04)";
+
+  const toggle = () => (isActive ? ctx.clear() : ctx.activate(label, detail));
+
+  const handlers: SVGProps<SVGGElement> = interactive
+    ? {
+        role: "button",
+        tabIndex: 0,
+        "aria-label": `${label}: ${detail}`,
+        onMouseEnter: () => ctx.activate(label, detail),
+        onMouseLeave: () => ctx.clear(),
+        onFocus: () => ctx.activate(label, detail),
+        onBlur: () => ctx.clear(),
+        onClick: toggle,
+        onKeyDown: (e: ReactKeyboardEvent<SVGGElement>) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggle();
+          }
+        },
+        style: { cursor: "pointer", outline: "none" },
+      }
+    : { "aria-hidden": true };
+
   return (
-    <g>
+    <g {...handlers}>
+      {isActive && (
+        <rect
+          x={x - 3}
+          y={y - 3}
+          width={w + 6}
+          height={h + 6}
+          rx="8"
+          fill="none"
+          stroke="#D4AF37"
+          strokeOpacity="0.5"
+          strokeWidth="1"
+        />
+      )}
       <rect
         x={x}
         y={y}
         width={w}
         height={h}
         rx="6"
-        fill={fill}
-        stroke={stroke}
-        strokeOpacity={opacity}
-        strokeWidth="1"
+        fill={isActive ? "rgba(212, 175, 55, 0.09)" : fill}
+        stroke={isActive ? "#D4AF37" : stroke}
+        strokeOpacity={isActive ? 1 : baseOpacity}
+        strokeWidth={isActive ? 1.5 : 1}
+        style={{ transition: "stroke-opacity 0.2s ease, stroke-width 0.2s ease" }}
       />
       {sub && (
         <text
@@ -97,6 +212,7 @@ function ChipBox({
           textAnchor="middle"
           letterSpacing="2"
           opacity="0.85"
+          style={{ pointerEvents: "none" }}
         >
           {sub}
         </text>
@@ -109,6 +225,7 @@ function ChipBox({
         fontSize="11"
         textAnchor="middle"
         fontWeight="500"
+        style={{ pointerEvents: "none" }}
       >
         {label}
       </text>
@@ -118,11 +235,7 @@ function ChipBox({
 
 function Microservices() {
   return (
-    <svg
-      viewBox="0 0 560 420"
-      className="w-full max-w-[520px] h-auto relative z-10"
-      aria-hidden
-    >
+    <svg viewBox="0 0 560 420" className="w-full h-auto" role="group" aria-label="Microservices topology">
       {COMMON_DEFS}
       {/* Critical-path pulse */}
       <path
@@ -146,19 +259,19 @@ function Microservices() {
       <line x1="64" y1="200" x2="118" y2="200" stroke="#0099ff" strokeOpacity="0.55" markerEnd="url(#diag-arr-blue)" />
 
       {/* Gateway (gold critical) */}
-      <ChipBox x={120} y={160} w={140} h={80} label="Hertz HTTP" sub="API GATEWAY" tone="gold" />
+      <ChipBox x={120} y={160} w={140} h={80} label="Hertz HTTP" sub="API GATEWAY" tone="gold" info={{ zh: "API 网关 · JWT 三位置查找 + Casbin RBAC · trace 入口", en: "API gateway · JWT 3-source lookup + Casbin RBAC · trace entry" }} />
       <text x="190" y="224" fill="#A1A1AA" fontFamily="Inter" fontSize="9" textAnchor="middle">JWT · Casbin RBAC</text>
 
       {/* Etcd registry */}
-      <ChipBox x={380} y={70} w={140} h={56} label="etcd" sub="SERVICE REGISTRY" />
+      <ChipBox x={380} y={70} w={140} h={56} label="etcd" sub="SERVICE REGISTRY" info={{ zh: "服务注册发现 · 通告地址解决容器网络映射", en: "Service registry · advertise addr fixes container networking" }} />
       <path d="M 220 160 C 240 110, 350 95, 380 92" stroke="#0099ff" strokeOpacity="0.4" fill="none" strokeDasharray="3 3" markerEnd="url(#diag-arr-blue)" />
 
       {/* RPC services row */}
       {[
-        { x: 110, name: "user-svc" },
-        { x: 215, name: "form-svc" },
-        { x: 320, name: "etl-svc" },
-        { x: 425, name: "menu-svc" },
+        { x: 110, name: "user-svc", info: { zh: "Kitex RPC · 身份与权限", en: "Kitex RPC · identity & auth" } },
+        { x: 215, name: "form-svc", info: { zh: "Kitex RPC · 自定义表单引擎", en: "Kitex RPC · custom form engine" } },
+        { x: 320, name: "etl-svc", info: { zh: "Kitex RPC · 数据入湖流水线", en: "Kitex RPC · data-lake pipeline" } },
+        { x: 425, name: "menu-svc", info: { zh: "Kitex RPC · 菜单与 RBAC 治理", en: "Kitex RPC · menu & RBAC" } },
       ].map((s) => (
         <g key={s.name}>
           <line
@@ -170,7 +283,7 @@ function Microservices() {
             strokeOpacity="0.42"
             markerEnd="url(#diag-arr-blue)"
           />
-          <ChipBox x={s.x} y={310} w={90} h={58} label={s.name} sub="KITEX RPC" />
+          <ChipBox x={s.x} y={310} w={90} h={58} label={s.name} sub="KITEX RPC" info={s.info} />
         </g>
       ))}
 
@@ -188,20 +301,16 @@ function Microservices() {
 
 function DataLake() {
   return (
-    <svg
-      viewBox="0 0 560 420"
-      className="w-full max-w-[520px] h-auto relative z-10"
-      aria-hidden
-    >
+    <svg viewBox="0 0 560 420" className="w-full h-auto" role="group" aria-label="Data lake topology">
       {COMMON_DEFS}
 
       {/* Sources */}
-      <ChipBox x={20} y={80} w={120} h={50} label="MySQL" sub="SOURCE 01" />
-      <ChipBox x={20} y={180} w={120} h={50} label="MongoDB" sub="SOURCE 02" />
-      <ChipBox x={20} y={280} w={120} h={50} label="REST API" sub="SOURCE 03" />
+      <ChipBox x={20} y={80} w={120} h={50} label="MySQL" sub="SOURCE 01" info={{ zh: "SSDictCursor 流式游标增量入湖", en: "SSDictCursor streaming cursor ingest" }} />
+      <ChipBox x={20} y={180} w={120} h={50} label="MongoDB" sub="SOURCE 02" info={{ zh: "raw_document JSON → 三列 schema", en: "raw_document JSON → 3-column schema" }} />
+      <ChipBox x={20} y={280} w={120} h={50} label="REST API" sub="SOURCE 03" info={{ zh: "多源业务 API 统一抽取", en: "Unified multi-source API extraction" }} />
 
       {/* Airflow orchestrator */}
-      <ChipBox x={210} y={170} w={140} h={70} label="Airflow 3.1" sub="DAG ORCHESTRATOR" tone="gold" />
+      <ChipBox x={210} y={170} w={140} h={70} label="Airflow 3.1" sub="DAG ORCHESTRATOR" tone="gold" info={{ zh: "DAG 编排 · PyIceberg 直写 · BFS 最优 JOIN 路径", en: "DAG orchestration · PyIceberg write · BFS optimal JOIN path" }} />
       <text x="280" y="222" fill="#A1A1AA" fontFamily="Inter" fontSize="9" textAnchor="middle">PyIceberg · BFS Join</text>
 
       {/* Lines into Airflow */}
@@ -210,13 +319,13 @@ function DataLake() {
       ))}
 
       {/* Iceberg lake */}
-      <ChipBox x={400} y={120} w={140} h={70} label="Iceberg" sub="DATA LAKE" tone="gold" />
+      <ChipBox x={400} y={120} w={140} h={70} label="Iceberg" sub="DATA LAKE" tone="gold" info={{ zh: "湖仓表格式 · Schema Evolution · Parquet", en: "Lakehouse table format · schema evolution · Parquet" }} />
       <line x1="350" y1="190" x2="398" y2="155" stroke="#D4AF37" strokeOpacity="0.7" markerEnd="url(#diag-arr-gold)" strokeDasharray="4 3" />
 
       {/* Trino + Polars */}
-      <ChipBox x={400} y={230} w={140} h={50} label="Trino" sub="QUERY ENGINE" />
+      <ChipBox x={400} y={230} w={140} h={50} label="Trino" sub="QUERY ENGINE" info={{ zh: "分布式 SQL · 维表查询", en: "Distributed SQL · dimension queries" }} />
       <line x1="470" y1="190" x2="470" y2="228" stroke="#0099ff" strokeOpacity="0.55" markerEnd="url(#diag-arr-blue)" />
-      <ChipBox x={400} y={310} w={140} h={50} label="Polars" sub="IN-MEM JOIN" />
+      <ChipBox x={400} y={310} w={140} h={50} label="Polars" sub="IN-MEM JOIN" info={{ zh: "内存 5 表链式 LEFT JOIN", en: "In-memory 5-table chained LEFT JOIN" }} />
       <line x1="470" y1="280" x2="470" y2="308" stroke="#0099ff" strokeOpacity="0.55" markerEnd="url(#diag-arr-blue)" />
 
       {/* Pulse */}
@@ -243,11 +352,7 @@ function DataLake() {
 
 function Monolith() {
   return (
-    <svg
-      viewBox="0 0 560 420"
-      className="w-full max-w-[520px] h-auto relative z-10"
-      aria-hidden
-    >
+    <svg viewBox="0 0 560 420" className="w-full h-auto" role="group" aria-label="Monolith topology">
       {COMMON_DEFS}
 
       {/* Big monolith chip */}
@@ -257,12 +362,12 @@ function Monolith() {
       </text>
 
       {/* Inner blocks */}
-      <ChipBox x={140} y={100} w={130} h={56} label="Form Tree" sub="MONGO 4-LVL" />
-      <ChipBox x={290} y={100} w={130} h={56} label="Workflow" sub="JSON DAG" />
-      <ChipBox x={140} y={172} w={130} h={56} label="Cross-form" sub="3-REF MODEL" />
-      <ChipBox x={290} y={172} w={130} h={56} label="Adapter" sub="25+ EXTERNAL" />
-      <ChipBox x={140} y={244} w={130} h={56} label="Asyncio" sub="50% LATENCY" tone="gold" />
-      <ChipBox x={290} y={244} w={130} h={56} label="Container" sub="87% DEPLOY" tone="gold" />
+      <ChipBox x={140} y={100} w={130} h={56} label="Form Tree" sub="MONGO 4-LVL" info={{ zh: "MongoDB 文档嵌套树 · 4 层深度 · 30+ 组件类型", en: "MongoDB nested document tree · 4 levels · 30+ component types" }} />
+      <ChipBox x={290} y={100} w={130} h={56} label="Workflow" sub="JSON DAG" info={{ zh: "JSON 驱动节点拓扑 · NEXT / PREV / REJECT", en: "JSON-driven node topology · NEXT / PREV / REJECT" }} />
+      <ChipBox x={140} y={172} w={130} h={56} label="Cross-form" sub="3-REF MODEL" info={{ zh: "三元引用模型 · 跨表单实时数据联动", en: "Tri-reference model · cross-form realtime sync" }} />
+      <ChipBox x={290} y={172} w={130} h={56} label="Adapter" sub="25+ EXTERNAL" info={{ zh: "适配器模式对接 25+ 第三方系统", en: "Adapter pattern · 25+ external integrations" }} />
+      <ChipBox x={140} y={244} w={130} h={56} label="Asyncio" sub="50% LATENCY" tone="gold" info={{ zh: "异步重构核心链路 · 查询效率 +50%", en: "Async rewrite of core paths · +50% query throughput" }} />
+      <ChipBox x={290} y={244} w={130} h={56} label="Container" sub="87% DEPLOY" tone="gold" info={{ zh: "容器化交付 · 部署 4h → 30min（+87%）", en: "Containerized delivery · deploy 4h → 30min (+87%)" }} />
 
       {/* IO ports left/right */}
       <ChipBox x={20} y={180} w={80} h={40} label="HTTP" />
@@ -301,11 +406,7 @@ function ContribGraph() {
     }
   }
   return (
-    <svg
-      viewBox="0 0 560 420"
-      className="w-full max-w-[520px] h-auto relative z-10"
-      aria-hidden
-    >
+    <svg viewBox="0 0 560 420" className="w-full h-auto" role="group" aria-label="Contribution graph">
       {COMMON_DEFS}
 
       <text x="30" y="80" fill="#D4AF37" fontFamily="JetBrains Mono" fontSize="9" letterSpacing="2.5">
@@ -329,9 +430,9 @@ function ContribGraph() {
       })}
 
       {/* PR markers */}
-      <ChipBox x={30} y={270} w={155} h={50} label="hertz/jwt #27" sub="MERGED" tone="gold" />
-      <ChipBox x={205} y={270} w={155} h={50} label="obs-otel #67" sub="MERGED" tone="gold" />
-      <ChipBox x={380} y={270} w={155} h={50} label="abcoder #84" sub="MERGED" tone="gold" />
+      <ChipBox x={30} y={270} w={155} h={50} label="hertz/jwt #27" sub="MERGED" tone="gold" info={{ zh: "修复 RefreshToken orig_iat 重置导致 MaxRefresh 窗口失效", en: "Fix RefreshToken orig_iat reset breaking the MaxRefresh window" }} />
+      <ChipBox x={205} y={270} w={155} h={50} label="obs-otel #67" sub="MERGED" tone="gold" info={{ zh: "优化可观测性组件 · 提升链路追踪稳定性", en: "Harden observability component · tracing stability" }} />
+      <ChipBox x={380} y={270} w={155} h={50} label="abcoder #84" sub="MERGED" tone="gold" info={{ zh: "修复 Go 1.25+ sonic 依赖编译兼容性", en: "Fix Go 1.25+ sonic dependency build compatibility" }} />
 
       {/* Connect heatmap → PRs */}
       {[107, 281, 455].map((x, i) => (

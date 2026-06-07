@@ -18,6 +18,11 @@ Thumbs.db
 # Node
 node_modules/
 
+# Lockfiles — repo standardizes on bun.lock; ignore other package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
 # Build output
 dist/
 docs/

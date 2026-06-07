@@ -1,6 +1,64 @@
 import type { TranslationSet } from "./types";
 
 export const en: TranslationSet = {
+  terminal: {
+    title: "MasonsOS Terminal",
+    hintOpen: "press ~ for console",
+    welcome: [
+      "MasonsOS v2026.6 · interactive portfolio shell",
+      "Type help to list commands, or try whoami / neofetch / sudo hire-me.",
+      "shortcuts: ~ summon terminal · ⌘K command palette",
+    ],
+    promptHelp: "type help to list commands",
+    unknown: "command not found: {cmd} — try help?",
+    closeHint: "ESC to close",
+    chips: [
+      { cmd: "help", label: "help" },
+      { cmd: "whoami", label: "whoami" },
+      { cmd: "neofetch", label: "neofetch" },
+      { cmd: "ls", label: "ls projects" },
+      { cmd: "about", label: "about" },
+      { cmd: "contact", label: "contact" },
+      { cmd: "sudo hire-me", label: "sudo hire-me" },
+    ],
+    cmd: {
+      help: "list all commands",
+      whoami: "who am I",
+      neofetch: "system info / identity card",
+      ls: "list projects",
+      cat: "open a project (e.g. cat p01)",
+      about: "about me",
+      metrics: "key metrics",
+      contact: "contact info",
+      lang: "switch language zh|en",
+      clear: "clear the screen",
+      sudo: "🥚 try sudo hire-me",
+      play: "play a clip (e.g. play arch)",
+      showreel: "list the technical showreel",
+    },
+  },
+  palette: {
+    placeholder: "Jump to… or run a command",
+    empty: "No matches",
+    groupNav: "Navigate",
+    groupRun: "Run command",
+    groupPlay: "Play clip",
+    hint: "⌘K palette",
+    sections: [
+      { id: "hero", label: "Overview / Home" },
+      { id: "about", label: "About" },
+      { id: "projects", label: "Projects" },
+      { id: "architecture", label: "Architecture" },
+      { id: "essence", label: "Essence" },
+      { id: "showreel", label: "Showreel" },
+      { id: "timeline", label: "Career & Education" },
+      { id: "community", label: "Open Source" },
+      { id: "contact", label: "Contact" },
+    ],
+  },
+  diagrams: {
+    hint: "Hover / focus / click a node to inspect",
+  },
   hero: {
     tagline: "Go Backend Engineer · Distributed Systems · Cloud Native Infrastructure",
     description:
