@@ -1,4 +1,5 @@
 import type { TranslationSet } from "../../../i18n/types";
+import { downloadNeofetchCard } from "../../../lib/neofetchCard";
 import type { Command } from "./types";
 import { line, blank, node } from "./types";
 
@@ -11,8 +12,10 @@ const LOGO = [
   "╚═╝     ╚═╝ ╚═╝  ╚═╝",
 ];
 
-function Neofetch({ t }: { t: TranslationSet }) {
-  const rows: [string, string][] = [
+const CARD_FOOTER = "MasonsOS · github.com/masonsxu";
+
+function neofetchRows(t: TranslationSet): [string, string][] {
+  return [
     ["host", "徐俊飞 / Masons Xu"],
     ["role", t.hero.tagline],
     ["uptime", "5 years in production"],
@@ -24,6 +27,10 @@ function Neofetch({ t }: { t: TranslationSet }) {
     ["avail", "99.9%"],
     ["contact", "masonsxu@foxmail.com"],
   ];
+}
+
+function Neofetch({ t }: { t: TranslationSet }) {
+  const rows = neofetchRows(t);
   const swatches = ["#D4AF37", "#0099FF", "#FCFCFC", "rgba(252,252,252,0.25)"];
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 py-1">
@@ -39,14 +46,26 @@ function Neofetch({ t }: { t: TranslationSet }) {
             <span className="break-words text-foreground/80">{v}</span>
           </div>
         ))}
-        <div className="mt-2 flex gap-1.5">
-          {swatches.map((c, i) => (
-            <span
-              key={i}
-              className="inline-block h-3 w-5 rounded-[2px]"
-              style={{ background: c }}
-            />
-          ))}
+        <div className="mt-2 flex items-center gap-3">
+          <div className="flex gap-1.5">
+            {swatches.map((c, i) => (
+              <span
+                key={i}
+                className="inline-block h-3 w-5 rounded-[2px]"
+                style={{ background: c }}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadNeofetchCard({ logo: LOGO, rows, footer: CARD_FOOTER });
+            }}
+            className="text-[10px] uppercase tracking-[0.15em] text-foreground/40 transition-colors hover:text-gold/90"
+          >
+            ⬇ export .png
+          </button>
         </div>
       </div>
     </div>
