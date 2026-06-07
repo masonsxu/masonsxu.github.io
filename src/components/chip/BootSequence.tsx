@@ -68,7 +68,7 @@ export function BootSequence({ onDone }: { onDone?: () => void }) {
     >
       <div className="font-mono text-[12px] md:text-[13px] leading-[1.7] text-foreground/80 tracking-[0.06em]">
         <div className="mb-3 text-gold/80 uppercase text-[10px] tracking-[0.32em]">
-          MX-Silicon · POST · {new Date().getFullYear()}
+          MasonsOS · POST · {new Date().getFullYear()}
         </div>
         {LINES.map((line, i) => {
           const visible = i < revealed;
@@ -98,7 +98,7 @@ export function BootSequence({ onDone }: { onDone?: () => void }) {
             transition: "opacity 0.3s ease",
           }}
         >
-          ready · entering fabric_
+          MasonsOS v2026.6 · console online_
           <span
             className="inline-block w-2 h-3 ml-1 bg-gold/80 align-middle"
             style={{ animation: "clkBlink 0.7s steps(1) infinite" }}
