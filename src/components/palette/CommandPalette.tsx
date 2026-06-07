@@ -4,6 +4,8 @@ import { useReducedMotion } from "../../lib/silicon";
 import { findCommand } from "../terminal/commands";
 import { showreelContent, type ShowreelId } from "../../data/showreel-content";
 import { requestPlay } from "../../data/showreelBus";
+import { useScrollLock } from "../../lib/scrollLock";
+import { useFocusTrap } from "../../lib/focus";
 
 const OPEN_EVENT = "mx:palette:open";
 
@@ -62,6 +64,9 @@ export function CommandPalette() {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const openRef = useRef(false);
+  const restoreRef = useRef<HTMLElement | null>(null);
 
   const navItems = useMemo<NavItem[]>(
     () => t.palette.sections.map((s) => ({ kind: "nav", label: s.label, sectionId: s.id })),
@@ -110,12 +115,20 @@ export function CommandPalette() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.key === "k" || e.key === "K") && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((v) => !v);
+        if (openRef.current) {
+          setOpen(false);
+        } else {
+          restoreRef.current = document.activeElement as HTMLElement | null;
+          setOpen(true);
+        }
       } else if (e.key === "Escape") {
         setOpen(false);
       }
     };
-    const onOpen = () => setOpen(true);
+    const onOpen = () => {
+      restoreRef.current = document.activeElement as HTMLElement | null;
+      setOpen(true);
+    };
     window.addEventListener("keydown", onKey);
     window.addEventListener(OPEN_EVENT, onOpen);
     return () => {
@@ -124,21 +137,23 @@ export function CommandPalette() {
     };
   }, []);
 
+  useScrollLock(open);
+  useFocusTrap(open, panelRef);
+
   useEffect(() => {
+    openRef.current = open;
     if (open) {
-      document.body.style.overflow = "hidden";
       setQuery("");
       requestAnimationFrame(() => inputRef.current?.focus());
-    } else {
-      document.body.style.overflow = "";
+    } else if (restoreRef.current) {
+      restoreRef.current.focus?.();
+      restoreRef.current = null;
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
   }, [open]);
 
   const execute = useCallback(
     (it: Item) => {
+      if (it.kind !== "nav") restoreRef.current = null; // hand focus to terminal / player
       setOpen(false);
       if (it.kind === "nav") {
         document.getElementById(it.sectionId)?.scrollIntoView({
@@ -217,6 +232,7 @@ export function CommandPalette() {
       onClick={() => setOpen(false)}
     >
       <div
+        ref={panelRef}
         className="w-full max-w-xl overflow-hidden rounded-lg bg-[#060608]/95"
         style={{ boxShadow: "inset 0 0 0 1px rgba(0,153,255,0.18), 0 30px 80px rgba(0,0,0,0.55)" }}
         onClick={(e) => e.stopPropagation()}

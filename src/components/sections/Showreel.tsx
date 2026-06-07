@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
-import { Player } from "@remotion/player";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Player, type PlayerRef } from "@remotion/player";
 import { VIDEO } from "../../../remotion/shared/theme";
 import { showreelVideos, type ShowreelVideo } from "../../data/showreel-registry";
 import { subscribePlay } from "../../data/showreelBus";
+import { useScrollLock } from "../../lib/scrollLock";
+import { useFocusTrap } from "../../lib/focus";
 import { useTranslation } from "../../i18n";
 import { ScrollReveal } from "../ScrollReveal";
 import { SmdTag } from "../chip/SmdTag";
@@ -10,15 +12,17 @@ import { SmdTag } from "../chip/SmdTag";
 export function Showreel() {
   const { t } = useTranslation();
   const [activeVideo, setActiveVideo] = useState<ShowreelVideo | null>(null);
+  const restoreRef = useRef<HTMLElement | null>(null);
 
   const openVideo = useCallback((video: ShowreelVideo) => {
+    restoreRef.current = document.activeElement as HTMLElement | null;
     setActiveVideo(video);
-    document.body.style.overflow = "hidden";
   }, []);
 
   const closeVideo = useCallback(() => {
     setActiveVideo(null);
-    document.body.style.overflow = "";
+    restoreRef.current?.focus?.();
+    restoreRef.current = null;
   }, []);
 
   // Play requests from the terminal `play` command / command palette.
@@ -176,6 +180,18 @@ function VideoModal({
 }) {
   const { t } = useTranslation();
   const vt = t.showreel.videos[video.id];
+  const playerRef = useRef<PlayerRef>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useScrollLock(true);
+  useFocusTrap(true, modalRef);
+
+  // autoPlay alone can stall inside a freshly-mounted modal — start playback
+  // explicitly once layout has settled (mirrors a manual pause→play toggle).
+  useEffect(() => {
+    const id = window.setTimeout(() => playerRef.current?.play(), 120);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -198,7 +214,7 @@ function VideoModal({
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
 
-      <div className="relative z-10 w-full max-w-6xl mx-4 animate-[fadeInUp_0.4s_cubic-bezier(0.16,1,0.3,1)_forwards]">
+      <div ref={modalRef} className="relative z-10 w-full max-w-6xl mx-4 animate-[fadeInUp_0.4s_cubic-bezier(0.16,1,0.3,1)_forwards]">
         {/* Header bar — analyzer style */}
         <div
           className="flex items-center gap-4 px-4 py-2.5 rounded-t-md font-mono text-[10.5px] tracking-[0.16em] uppercase text-foreground/65"
@@ -248,12 +264,12 @@ function VideoModal({
           }}
         >
           <Player
+            ref={playerRef}
             component={video.component}
             durationInFrames={video.durationInFrames}
             fps={VIDEO.fps}
             compositionWidth={VIDEO.width}
             compositionHeight={VIDEO.height}
-            autoPlay
             controls
             style={{
               width: "100%",

@@ -95,7 +95,10 @@ export function Terminal({ variant = "inline", onClose, autoFocus = true, initia
         role="log"
         aria-live="polite"
         className="min-h-[180px] flex-1 overflow-y-auto px-4 py-3"
-        style={{ maxHeight: bodyMaxHeight ? `${bodyMaxHeight}px` : variant === "overlay" ? "min(56vh, 460px)" : "320px" }}
+        style={{
+          minHeight: bodyMaxHeight ? undefined : variant === "overlay" ? "min(50vh, 440px)" : undefined,
+          maxHeight: bodyMaxHeight ? `${bodyMaxHeight}px` : variant === "overlay" ? "min(68vh, 660px)" : "320px",
+        }}
       >
         {entries.map((entry) => (
           <div key={entry.id} className="mb-1">
