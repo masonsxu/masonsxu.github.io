@@ -203,10 +203,10 @@ interface Command {
 ---
 
 ## 11. Backlog（后续）
-- 项目正文 `site-content.ts` 全量双语化。
-- 架构图节点 `info` 文案双语化（如 `t.diagrams.nodes`）。
-- 终端命令补全更丰富的彩蛋（`top`、`uptime`、`fortune`）。
-- 分享卡：`neofetch` 输出一键导出 PNG。
+- [x] 架构图节点 `info` 双语化 ✅（inline `{zh,en}`，随 locale 解析）。
+- [x] 终端彩蛋 `top` / `uptime` / `fortune` ✅。
+- [x] 分享卡：`neofetch` 一键导出 PNG ✅（零依赖 canvas）。
+- 站点可见正文已由 i18n（`t.*`）双语覆盖；`site-content.ts` 的中文字段仅供语言中性数据（techs / 指标值），无需额外双语化。
 
 ---
 
@@ -220,3 +220,4 @@ interface Command {
 - 2026-06-04 — Phase 3 完成：`play <name>`/`showreel` 命令 + 面板「播放」分组 + `showreelBus` latch 总线 + 修复 Esc 关闭；remotion 保持懒加载独立 chunk，`vite build` 绿（78 modules）。下一步 Phase 4（活架构图）。
 - 2026-06-04 — Phase 4 完成：ProjectDiagram 升级为活架构图（Context 共享 active + 说明栏 + 19 交互节点 + a11y role 修正），Projects 图列加高，`vite build` 绿。下一步 Phase 5（打磨上线）。
 - 2026-06-04 — Phase 5 完成：共享滚动锁 + 焦点管理（回焦 / Tab 陷阱）+ 弹层 dialog a11y + 终端弹窗加大 + 视频自动播放修复 + 英文 `<title>` + boot 叙事衔接；文档移至仓库根目录。Lighthouse 按用户要求跳过。路线图 0–5 全部完成。
+- 2026-06-04 — 收尾打磨：依赖清理（移除 three / `package-lock.json`，统一 bun 单锁）+ 架构图节点双语 + 终端彩蛋（top/uptime/fortune）+ neofetch 导出分享卡 PNG（零依赖 canvas）。Backlog 主项清空。
