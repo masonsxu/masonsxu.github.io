@@ -1,0 +1,183 @@
+/* ============================================================
+   OBSERVATORY — free-flight HUD layer (extends synapse tokens)
+   ============================================================ */
+
+.obs-root {
+  position: relative;
+  background: var(--syn-bg);
+  color: var(--syn-fg);
+  font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.obs-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0;
+  cursor: crosshair;
+}
+
+/* crosshair */
+.obs-cross {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  pointer-events: none;
+  width: 26px;
+  height: 26px;
+  opacity: 0.5;
+}
+.obs-cross::before,
+.obs-cross::after {
+  content: "";
+  position: absolute;
+  background: rgba(238, 242, 255, 0.7);
+}
+.obs-cross::before {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+.obs-cross::after {
+  top: 50%;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
+/* station 3D labels */
+.obs-label {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transform: translate(-50%, -50%);
+  will-change: transform, opacity;
+}
+.obs-label-name {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--syn-fg);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+.obs-label-dist {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--syn-faint);
+}
+.obs-label-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dot, #22d3ee);
+  box-shadow: 0 0 10px var(--dot, #22d3ee);
+  margin-top: 2px;
+}
+.obs-label[data-near="true"] .obs-label-dot {
+  width: 10px;
+  height: 10px;
+  animation: obsPulse 1.6s ease-in-out infinite;
+}
+@keyframes obsPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+}
+
+/* bottom station dock */
+.obs-dock {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  background: rgba(4, 6, 18, 0.55);
+  border: 1px solid var(--syn-panel-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  max-width: 94vw;
+  overflow-x: auto;
+}
+.obs-dock-chip {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--syn-dim);
+  background: rgba(150, 180, 255, 0.05);
+  border: 1px solid rgba(150, 180, 255, 0.16);
+  border-radius: 10px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.obs-dock-chip i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--dot, #22d3ee);
+}
+.obs-dock-chip:hover { color: var(--syn-fg); border-color: rgba(150, 180, 255, 0.45); }
+.obs-dock-chip[data-near="true"] {
+  color: var(--syn-fg);
+  border-color: var(--dot, #22d3ee);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--dot, #22d3ee) 30%, transparent);
+}
+
+/* warp overlay streak */
+.obs-warp {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 30%, rgba(120, 180, 255, 0.13) 100%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.obs-warp[data-on="true"] { opacity: 1; }
+
+/* control hints */
+.obs-help {
+  position: fixed;
+  left: clamp(16px, 3vw, 32px);
+  bottom: 76px;
+  z-index: 3;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--syn-faint);
+  line-height: 2;
+  pointer-events: none;
+}
+.obs-help b { color: var(--syn-dim); font-weight: 500; }
+
+@media (max-width: 720px) {
+  .obs-help { display: none; }
+  .obs-dock { bottom: 12px; }
+}

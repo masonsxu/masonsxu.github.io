@@ -24,6 +24,7 @@ export interface TranslationSet {
     items: readonly {
       title: string;
       subtitle: string;
+      time: string;
       summary: string;
       highlights: readonly { title: string; desc: string }[];
       metrics: readonly { value: string; label: string }[];
@@ -75,7 +76,7 @@ export interface TranslationSet {
     school: string;
     major: string;
     honorsLabel: string;
-    awards: readonly { text: string; detail?: string }[];
+    awards: readonly { text: string; detail?: string; year?: string }[];
   };
   community: {
     label: string;
