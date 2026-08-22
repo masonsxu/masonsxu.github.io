@@ -84,7 +84,14 @@ npm run build            # Run TypeScript check + build to dist/
 npm run preview          # Preview production build locally
 ```
 
-### Testing (Vitest)
+### 图片资产标准（硬约束）
+
+- 仓库内图片资产**只允许 SVG 源文件**（favicon、logo、og 源图均已邨从）；禁止向 git 提交 PNG/JPG 等位图
+- 唯一例外：`og:image` 因社交平台爬虫只解析位图，由 `vite.config.ts` 的 `og-image` 插件在构建结束时从 `public/og-image.svg` 派生 `dist/og-image.png`，产物只进 dist，永不入库
+- 渲染字体子集固定在 `assets/fonts/`（Clash Display / JetBrains Mono / Noto Sans SC 900 子集）；修改 `og-image.svg` 中的中文文案后必须重新子集化：`uvx --from fonttools pyftsubset <font> --text=<全部用字> --output-file=assets/fonts/NotoSansSC-900-subset.ttf --no-hinting`
+- 改动 og 卡设计后自验：`bun run build && uvx --with pillow python -c "..."` 采样像素确认 ink/bone/accent 三色存在、CJK 文本区非空
+
+## Testing (Vitest)
 ```bash
 # No explicit test script in package.json, run vitest directly:
 npx vitest               # Run all tests in watch mode

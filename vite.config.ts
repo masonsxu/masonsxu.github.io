@@ -1,7 +1,19 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+
+function ogImage(): Plugin {
+  return {
+    name: 'og-image',
+    apply: 'build',
+    async closeBundle() {
+      const { generateOg } = await import('./scripts/gen-og.mjs')
+      const r = await generateOg()
+      console.log(`og-image: ${r.width}x${r.height} -> dist/og-image.png (${r.fonts} fonts)`)
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -9,7 +21,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), ogImage()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -20,26 +32,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // React 生态
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
             return 'react-vendor'
           }
-          // Remotion 重型库
-          if (id.includes('node_modules/@remotion') || id.includes('node_modules/remotion')) {
-            return 'remotion-vendor'
-          }
-          // Framer Motion
-          if (id.includes('node_modules/framer-motion')) {
-            return 'motion-vendor'
-          }
-          // 其他 npm 包
-          if (id.includes('node_modules')) {
-            return 'vendor'
-          }
+          return 'vendor'
         },
       },
     },
-    // 提高 chunk 大小警告阈值
     chunkSizeWarningLimit: 1000,
   },
 })
