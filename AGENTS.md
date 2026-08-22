@@ -133,6 +133,7 @@ interface Props {
 ```
 
 ### Styling (Tailwind CSS v4)
+- **DESIGN.md 是 normative token 来源**：任何 UI 任务（新页面/组件/视觉改动）开始前先读根目录 `DESIGN.md`。颜色、字体、圆角、间距 token 以其 YAML front matter 为准（与 `styles/*.css` 变量同源）；改动 token 后必须同步 DESIGN.md 并跑 `bunx @google/design.md lint DESIGN.md`（errors: 0 才算通过，warnings 白名单见文件内注释）
 - **Theme colors** (defined via `@theme` in `src/index.css`):
   - Backgrounds: `bg-bg`, `bg-surface`, `bg-surface-light`
   - Text: `text-text`, `text-muted`, `text-primary`, `text-accent`
