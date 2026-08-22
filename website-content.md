@@ -208,48 +208,6 @@ Go、微服务、DDD、CloudWeGo、OpenTelemetry、容器化、AI 辅助开发�
 
 ---
 
-## 技术演示影集 / Technical Showreel
-
-使用 Remotion 框架构建，用可视化叙事呈现真实的技术身份、架构演进与贡献轨迹。
-
-### 1. 技术身份短片 (Tech Card)
-
-围绕真实技术身份与能力边界重构的 15 秒 Remotion 短片。以 Go、CloudWeGo、OpenTelemetry 与数据平台栈为线索，呈现技术定位、能力域和问题边界。
-
-**时长：** 15s | **技术：** Remotion、Go Backend、CloudWeGo、Observability
-
-### 2. 开源项目看板 (Open Source Dashboard)
-
-围绕真实 CloudWeGo 贡献的 Remotion 技术叙事片。通过终端上下文、贡献事实卡与作用域拓扑，展示 jwt 修复、可观测性稳定性与 Go 1.25+ 兼容性问题。
-
-**时长：** 20s | **技术：** Remotion、CloudWeGo PRs、Contribution Facts
-
-### 3. 架构演进历程 (Architecture Evolution)
-
-围绕真实请求路径的 Remotion 架构演进叙事。展示单体职责拆分、Hertz/Kitex 调用链显式化、服务内分层组织，以及 trace 驱动的诊断闭环。
-
-**时长：** 25s | **技术：** Remotion、Boundary Split、Hertz + Kitex、Trace Visibility
-
-### 4. 数据湖平台 (Data Lake Platform)
-
-围绕真实配置驱动 ETL 的 Remotion 机制叙事片。展示多源异构入湖、mapping_rules 到 DAG 的转换、BFS 最优 JOIN 路径，以及两阶段抽取后的 api_payload 回传闭环。
-
-**时长：** 25s | **技术：** Remotion、Config-Driven ETL、BFS Join Path
-
-### 5. GitHub 贡献热力图 (Contribution Heatmap)
-
-围绕真实 52 周 GitHub contribution matrix 的 Remotion 贡献轨迹叙事片。展示年度贡献墙生长、高峰格子对应的关键事件，以及总贡献数与连续贡献窗口等事实卡。
-
-**时长：** 20s | **技术：** Remotion、52-Week Timeline、Contribution Facts
-
-### 6. 作品集总叙事片 (Portfolio Trailer)
-
-围绕真实技术身份、系统机制、开源证据与长期贡献轨迹重组的 60 秒 Remotion 总叙事片。通过跨视频 excerpt 与全局桥接层，把作品集从片段轮播升级为完整技术画像。
-
-**时长：** 60s | **技术：** Remotion、Narrative Excerpts、System Proof、Contribution Track
-
----
-
 ## 开源贡献与教育背景 / Open Source & Education
 
 ### 开源项目

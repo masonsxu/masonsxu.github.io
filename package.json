@@ -5,23 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "remotion:preview": "remotion studio remotion/Root.tsx"
+    "build": "vite build"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-select": "^2.2.6",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@remotion/cli": "^4.0.445",
-    "@remotion/player": "^4.0.445",
-    "@remotion/transitions": "^4.0.445",
     "bun-plugin-tailwind": "^0.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.545.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "remotion": "^4.0.445",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {

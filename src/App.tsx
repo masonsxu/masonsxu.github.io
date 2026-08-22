@@ -1,6 +1,10 @@
 import { lazy, Suspense } from "react";
-import { ObservatoryApp } from "./components/v3/ObservatoryApp";
+import { StudioApp } from "./components/v5/StudioApp";
 import "./index.css";
+
+const ObservatoryApp = lazy(() =>
+  import("./components/v3/ObservatoryApp").then(m => ({ default: m.ObservatoryApp })),
+);
 
 const NeuralApp = lazy(() =>
   import("./components/v2/NeuralApp").then(m => ({ default: m.NeuralApp })),
@@ -15,8 +19,14 @@ export function App() {
       </Suspense>
     );
   }
-  // default: EVENT HORIZON (black hole observatory) · ?v=obs: plain flight
-  return <ObservatoryApp blackhole={v !== "obs"} />;
+  if (v === "obs") {
+    return (
+      <Suspense fallback={null}>
+        <ObservatoryApp blackhole />
+      </Suspense>
+    );
+  }
+  return <StudioApp />;
 }
 
 export default App;

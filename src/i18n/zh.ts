@@ -1,64 +1,6 @@
 import type { TranslationSet } from "./types";
 
 export const zh: TranslationSet = {
-  terminal: {
-    title: "MasonsOS 终端",
-    hintOpen: "敲 ~ 打开终端",
-    welcome: [
-      "MasonsOS v2026.6 · 交互式作品集 shell",
-      "输入 help 查看命令，或试试 whoami / neofetch / sudo hire-me。",
-      "快捷键：~ 随处唤起终端 · ⌘K 命令面板",
-    ],
-    promptHelp: "输入 help 查看可用命令",
-    unknown: "command not found: {cmd} — 输入 help 看看？",
-    closeHint: "ESC 关闭",
-    chips: [
-      { cmd: "help", label: "help" },
-      { cmd: "whoami", label: "whoami" },
-      { cmd: "neofetch", label: "neofetch" },
-      { cmd: "ls", label: "ls projects" },
-      { cmd: "about", label: "about" },
-      { cmd: "contact", label: "contact" },
-      { cmd: "sudo hire-me", label: "sudo hire-me" },
-    ],
-    cmd: {
-      help: "列出所有命令",
-      whoami: "我是谁",
-      neofetch: "系统信息身份卡",
-      ls: "列出项目",
-      cat: "查看某个项目（如 cat p01）",
-      about: "关于我",
-      metrics: "关键指标",
-      contact: "联系方式",
-      lang: "切换语言 zh|en",
-      clear: "清屏",
-      sudo: "🥚 试试 sudo hire-me",
-      play: "播放某支视频（如 play arch）",
-      showreel: "列出技术影集",
-    },
-  },
-  palette: {
-    placeholder: "跳转到… 或运行命令",
-    empty: "无匹配项",
-    groupNav: "跳转",
-    groupRun: "运行命令",
-    groupPlay: "播放影片",
-    hint: "⌘K 命令面板",
-    sections: [
-      { id: "hero", label: "概览 / 首页" },
-      { id: "about", label: "关于我" },
-      { id: "projects", label: "项目" },
-      { id: "architecture", label: "架构能力" },
-      { id: "essence", label: "灵魂底色" },
-      { id: "showreel", label: "技术影集" },
-      { id: "timeline", label: "经历 & 教育" },
-      { id: "community", label: "开源贡献" },
-      { id: "contact", label: "联系方式" },
-    ],
-  },
-  diagrams: {
-    hint: "悬停 / 聚焦 / 点击节点查看说明",
-  },
   hero: {
     tagline: "Go 后端工程师 · 分布式系统 · 云原生基础设施",
     description:
@@ -264,63 +206,6 @@ export const zh: TranslationSet = {
       { id: "data-etl", title: "数据湖与 ETL" },
       { id: "cloud-eng", title: "云原生与工程化" },
     ],
-  },
-  essence: {
-    label: "灵魂底色",
-    titleBefore: "设计与架构的",
-    titleAccent: "华丽交响",
-    description:
-      "我认为，一段优雅的代码应当如顶级奢侈品般，在隐秘处追求极致的细节。Midnight Pearl 不仅仅是一套配色方案，它代表了我对系统架构的追求：深邃、稳定且散发着理性的光芒。",
-    pillars: [
-      {
-        meaning: "Stability / 稳健",
-        desc: "如同分布式系统的基石，沉稳可靠，承载一切",
-      },
-      {
-        meaning: "Clarity / 纯粹",
-        desc: "代码的纯净与逻辑的透明，每一行都经得起审视",
-      },
-      {
-        meaning: "Excellence / 卓越",
-        desc: "对细节的极致追求，在隐秘处散发理性的光芒",
-      },
-    ],
-    taurusQuote:
-      '"Luxury is balance of design and function, much like steady heart of the Bull."',
-    taurusTraits: ["Reliable（可靠）", "Artistic（艺术感）"],
-  },
-  showreel: {
-    label: "技术演示影集",
-    title: "让技术作品集",
-    accent: "可见",
-    description:
-      "通过可视化视频演示展示 Go 微服务架构、分布式系统演进、GitHub 开源贡献与数据平台实践",
-    videos: {
-      "tech-card": {
-        title: "技术身份短片",
-        desc: "围绕真实技术身份与能力边界重构的 15 秒短叙事片。以 Go、CloudWeGo、OpenTelemetry 与数据平台栈为线索，呈现技术定位、能力域和问题边界，而非虚构 KPI。",
-      },
-      "oss-dashboard": {
-        title: "开源项目看板",
-        desc: "围绕真实 CloudWeGo 贡献重构的技术叙事片。通过终端上下文、贡献事实卡与作用域拓扑，展示 jwt 修复、可观测性稳定性与 Go 1.25+ 兼容性问题。",
-      },
-      "arch-evolution": {
-        title: "架构演进历程",
-        desc: "围绕真实请求路径的架构演进叙事。展示单体职责拆分、Hertz/Kitex 调用链显式化、服务内分层组织，以及 trace 驱动的诊断闭环。",
-      },
-      "data-lake": {
-        title: "数据湖平台",
-        desc: "围绕真实配置驱动 ETL 重构的机制叙事片。展示多源异构入湖、mapping_rules 到 DAG 的转换、BFS 最优 JOIN 路径，以及两阶段抽取后的 api_payload 回传闭环。",
-      },
-      "contribution-heatmap": {
-        title: "GitHub 贡献热力图",
-        desc: "围绕真实 52 周 GitHub contribution matrix 重构的贡献轨迹叙事片。展示年度贡献墙生长、高峰格子对应的关键事件，以及总贡献数与连续贡献窗口等事实卡。",
-      },
-      "portfolio-trailer": {
-        title: "作品集总叙事片",
-        desc: "围绕真实技术身份、系统机制、开源证据与长期贡献轨迹重组的 60 秒总叙事片。通过跨视频 excerpt 与全局桥接层，把作品集从片段轮播升级为完整技术画像。",
-      },
-    },
   },
   timeline: {
     careerLabel: "职业经历",

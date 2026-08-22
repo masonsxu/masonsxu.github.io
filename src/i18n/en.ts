@@ -1,64 +1,6 @@
 import type { TranslationSet } from "./types";
 
 export const en: TranslationSet = {
-  terminal: {
-    title: "MasonsOS Terminal",
-    hintOpen: "press ~ for console",
-    welcome: [
-      "MasonsOS v2026.6 · interactive portfolio shell",
-      "Type help to list commands, or try whoami / neofetch / sudo hire-me.",
-      "shortcuts: ~ summon terminal · ⌘K command palette",
-    ],
-    promptHelp: "type help to list commands",
-    unknown: "command not found: {cmd} — try help?",
-    closeHint: "ESC to close",
-    chips: [
-      { cmd: "help", label: "help" },
-      { cmd: "whoami", label: "whoami" },
-      { cmd: "neofetch", label: "neofetch" },
-      { cmd: "ls", label: "ls projects" },
-      { cmd: "about", label: "about" },
-      { cmd: "contact", label: "contact" },
-      { cmd: "sudo hire-me", label: "sudo hire-me" },
-    ],
-    cmd: {
-      help: "list all commands",
-      whoami: "who am I",
-      neofetch: "system info / identity card",
-      ls: "list projects",
-      cat: "open a project (e.g. cat p01)",
-      about: "about me",
-      metrics: "key metrics",
-      contact: "contact info",
-      lang: "switch language zh|en",
-      clear: "clear the screen",
-      sudo: "🥚 try sudo hire-me",
-      play: "play a clip (e.g. play arch)",
-      showreel: "list the technical showreel",
-    },
-  },
-  palette: {
-    placeholder: "Jump to… or run a command",
-    empty: "No matches",
-    groupNav: "Navigate",
-    groupRun: "Run command",
-    groupPlay: "Play clip",
-    hint: "⌘K palette",
-    sections: [
-      { id: "hero", label: "Overview / Home" },
-      { id: "about", label: "About" },
-      { id: "projects", label: "Projects" },
-      { id: "architecture", label: "Architecture" },
-      { id: "essence", label: "Essence" },
-      { id: "showreel", label: "Showreel" },
-      { id: "timeline", label: "Career & Education" },
-      { id: "community", label: "Open Source" },
-      { id: "contact", label: "Contact" },
-    ],
-  },
-  diagrams: {
-    hint: "Hover / focus / click a node to inspect",
-  },
   hero: {
     tagline: "Go Backend Engineer · Distributed Systems · Cloud Native Infrastructure",
     description:
@@ -266,63 +208,6 @@ export const en: TranslationSet = {
       { id: "data-etl", title: "Data Lake & ETL" },
       { id: "cloud-eng", title: "Cloud Native & Engineering" },
     ],
-  },
-  essence: {
-    label: "The Essence",
-    titleBefore: "Design & Architecture's",
-    titleAccent: "Grand Symphony",
-    description:
-      "I believe elegant code should be like fine craftsmanship — pursuing ultimate detail in places unseen. Midnight Pearl is more than a color scheme; it represents my pursuit of system architecture: deep, stable, and radiating rational brilliance.",
-    pillars: [
-      {
-        meaning: "Stability / 稳健",
-        desc: "The bedrock of distributed systems — steady, reliable, bearing the weight of everything above",
-      },
-      {
-        meaning: "Clarity / 纯粹",
-        desc: "Purity of code and transparency of logic — every line stands up to scrutiny",
-      },
-      {
-        meaning: "Excellence / 卓越",
-        desc: "The relentless pursuit of detail, radiating rational brilliance in places unseen",
-      },
-    ],
-    taurusQuote:
-      '"Luxury is balance of design and function, much like steady heart of the Bull."',
-    taurusTraits: ["Reliable", "Artistic"],
-  },
-  showreel: {
-    label: "Technical Showreel",
-    title: "Making the Portfolio",
-    accent: "Visible",
-    description:
-      "Visual video demonstrations showcasing Go microservices architecture, distributed system evolution, GitHub open-source contributions, and data platform practices",
-    videos: {
-      "tech-card": {
-        title: "Tech Identity Card",
-        desc: "A 15-second narrative short reconstructed around real technical identity and capability boundaries. Using Go, CloudWeGo, OpenTelemetry and data platform stack as threads, presenting technical positioning, capability domains, and problem boundaries — not fabricated KPIs.",
-      },
-      "oss-dashboard": {
-        title: "Open Source Dashboard",
-        desc: "A technical narrative reconstructed around real CloudWeGo contributions. Through terminal context, contribution fact cards, and scope topology, showcasing jwt fixes, observability stability, and Go 1.25+ compatibility issues.",
-      },
-      "arch-evolution": {
-        title: "Architecture Evolution",
-        desc: "An architecture evolution narrative around real request paths. Demonstrating monolith responsibility splitting, Hertz/Kitex call chain explicitization, intra-service layering, and trace-driven diagnostic loops.",
-      },
-      "data-lake": {
-        title: "Data Lake Platform",
-        desc: "A mechanism narrative around real config-driven ETL. Showcasing multi-source heterogeneous ingestion, mapping_rules to DAG transformation, BFS optimal JOIN paths, and the two-phase extraction api_payload backfill loop.",
-      },
-      "contribution-heatmap": {
-        title: "GitHub Contribution Heatmap",
-        desc: "A contribution trajectory narrative around a real 52-week GitHub contribution matrix. Showcasing annual contribution wall growth, peak cells mapped to key events, and fact cards for total contributions and consecutive windows.",
-      },
-      "portfolio-trailer": {
-        title: "Portfolio Trailer",
-        desc: "A 60-second master narrative reconstructed around real technical identity, system mechanisms, open-source evidence, and long-term contribution trajectory. Upgrading the portfolio from a clip reel to a complete technical portrait through cross-video excerpts and global bridging layers.",
-      },
-    },
   },
   timeline: {
     careerLabel: "Career",

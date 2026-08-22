@@ -1,5 +1,3 @@
-import type { ShowreelId } from "../data/showreel-content";
-
 export type Locale = "zh" | "en";
 
 export interface TranslationSet {
@@ -42,22 +40,6 @@ export interface TranslationSet {
     domainsLabel: string;
     domains: readonly { id: string; title: string }[];
   };
-  essence: {
-    label: string;
-    titleBefore: string;
-    titleAccent: string;
-    description: string;
-    pillars: readonly { meaning: string; desc: string }[];
-    taurusQuote: string;
-    taurusTraits: readonly string[];
-  };
-  showreel: {
-    label: string;
-    title: string;
-    accent: string;
-    description: string;
-    videos: Readonly<Record<ShowreelId, { title: string; desc: string }>>;
-  };
   timeline: {
     careerLabel: string;
     careerTitle: string;
@@ -95,41 +77,5 @@ export interface TranslationSet {
     accent: string;
     resumeValue: string;
     copyright: string;
-  };
-  terminal: {
-    title: string;
-    hintOpen: string;
-    welcome: readonly string[];
-    promptHelp: string;
-    unknown: string;
-    closeHint: string;
-    chips: readonly { cmd: string; label: string }[];
-    cmd: {
-      help: string;
-      whoami: string;
-      neofetch: string;
-      ls: string;
-      cat: string;
-      about: string;
-      metrics: string;
-      contact: string;
-      lang: string;
-      clear: string;
-      sudo: string;
-      play: string;
-      showreel: string;
-    };
-  };
-  palette: {
-    placeholder: string;
-    empty: string;
-    groupNav: string;
-    groupRun: string;
-    groupPlay: string;
-    hint: string;
-    sections: readonly { id: string; label: string }[];
-  };
-  diagrams: {
-    hint: string;
   };
 }
