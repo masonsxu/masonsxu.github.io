@@ -1,160 +1,257 @@
-# Design System — Masons Xu Personal Brand Site
-
-> **Core Aesthetic:** Framer's cinematic void black + Midnight Pearl accent system.
-> **Role:** A senior backend engineer's portfolio — code structure, architecture diagrams, and metrics as visual hero.
-
+---
+version: alpha
+name: Masons Xu — Void Black Technical Portfolio
+description: >-
+  Senior backend engineer's personal brand site. Pure void black canvas,
+  single gold accent discipline, architecture diagrams as primary visual
+  assets. Three visual layers on one token base: shadcn base layer,
+  SYNAPSE/OBSERVATORY WebGL layers, v5 editorial layer.
+colors:
+  background: "#000000"
+  foreground: "#FCFCFC"
+  card: "#050507"
+  muted-foreground: "#A1A1AA"
+  primary: "#D4AF37"
+  gold-light: "#F8E7B9"
+  gold-deep: "#7A5810"
+  blue: "#0099FF"
+  border: "rgba(0, 153, 255, 0.12)"
+  ring: "rgba(0, 153, 255, 0.4)"
+  destructive: "#DC2626"
+  ink: "#0A0B0D"
+  panel: "#121419"
+  bone: "#EFEDE6"
+  dim: "#9BA0A8"
+  faint: "#5A5F67"
+  indigo: "#4353FF"
+  indigo-hi: "#8B96FF"
+  syn-bg: "#02030A"
+  syn-fg: "#EEF2FF"
+  syn-cyan: "#22D3EE"
+  syn-gold: "#D4AF37"
+typography:
+  hero-name:
+    fontFamily: Clash Display
+    fontSize: 6.875rem
+    fontWeight: 500
+    lineHeight: 0.85
+    letterSpacing: "-0.055em"
+  section-title:
+    fontFamily: Clash Display
+    fontSize: 4.5rem
+    fontWeight: 500
+    lineHeight: 0.9
+    letterSpacing: "-0.05em"
+  project-name:
+    fontFamily: Clash Display
+    fontSize: 2.625rem
+    fontWeight: 500
+    lineHeight: 0.95
+    letterSpacing: "-0.048em"
+  metric-number:
+    fontFamily: Inter
+    fontSize: 3.5rem
+    fontWeight: 700
+    lineHeight: 1.0
+    letterSpacing: "-1.5px"
+  card-title:
+    fontFamily: Inter
+    fontSize: 1.375rem
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "-0.5px"
+  body-lg:
+    fontFamily: Inter
+    fontSize: 1.125rem
+    fontWeight: 400
+    lineHeight: 1.5
+  body:
+    fontFamily: Inter
+    fontSize: 0.9375rem
+    fontWeight: 400
+    lineHeight: 1.5
+  code:
+    fontFamily: JetBrains Mono
+    fontSize: 0.75rem
+    fontWeight: 400
+    lineHeight: 1.4
+  eyebrow:
+    fontFamily: JetBrains Mono
+    fontSize: 0.6875rem
+    fontWeight: 500
+    lineHeight: 1.2
+    letterSpacing: "0.24em"
+  cn-body:
+    fontFamily: Noto Sans SC
+    fontSize: 1rem
+    fontWeight: 400
+    lineHeight: 1.5
+rounded:
+  code: 8px
+  card: 12px
+  pill: 999px
+spacing:
+  unit: 8px
+  card-padding: 32px
+  section-y: 120px
+components:
+  button-solid-pill:
+    backgroundColor: "#FFFFFF"
+    textColor: "#000000"
+    rounded: "{rounded.pill}"
+    padding: 28px
+  button-frosted-pill:
+    backgroundColor: "rgba(255, 255, 255, 0.08)"
+    textColor: "{colors.foreground}"
+    rounded: 40px
+    padding: 20px
+  button-gold-outline:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.primary}"
+    rounded: 40px
+    padding: 20px
+  card-project:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.card}"
+    padding: "{spacing.card-padding}"
+  card-metric:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.primary}"
+    rounded: "{rounded.card}"
+    padding: "{spacing.card-padding}"
+  tag-tech:
+    backgroundColor: "rgba(255, 255, 255, 0.05)"
+    textColor: "{colors.foreground}"
+    typography: "{typography.code}"
+    rounded: 20px
+  syn-panel:
+    backgroundColor: "rgba(4, 6, 18, 0.62)"
+    textColor: "{colors.syn-fg}"
+    rounded: 20px
+    padding: 36px
+  nav-link-active:
+    textColor: "{colors.primary}"
+    typography: "{typography.body}"
+  link-inline:
+    textColor: "{colors.blue}"
+    typography: "{typography.body}"
+  link-v5:
+    textColor: "{colors.indigo-hi}"
+    typography: "{typography.body}"
+  text-muted:
+    textColor: "{colors.muted-foreground}"
+    typography: "{typography.body}"
+  metric-gold-glow:
+    textColor: "{colors.gold-light}"
+    typography: "{typography.metric-number}"
+  quote-v5:
+    backgroundColor: "{colors.panel}"
+    textColor: "{colors.bone}"
+    rounded: 8px
+    padding: 24px
+  text-v5-caption:
+    textColor: "{colors.dim}"
+    typography: "{typography.code}"
+  text-decorative:
+    textColor: "{colors.faint}"
+    typography: "{typography.eyebrow}"
+  badge-syn:
+    backgroundColor: "rgba(238, 242, 255, 0.06)"
+    textColor: "{colors.syn-cyan}"
+    typography: "{typography.eyebrow}"
+    rounded: 20px
+  syn-canvas:
+    backgroundColor: "{colors.syn-bg}"
+  button-destructive:
+    backgroundColor: "{colors.destructive}"
+    textColor: "{colors.foreground}"
+    rounded: 12px
+    padding: 20px
 ---
 
-## 1. Visual Language & Atmosphere
+## Overview
 
-The site is a pure black (`#000000`) technical portfolio. The primary visual artifacts are architecture topology maps, data pipeline flows, and performance metrics. The feeling is calm, profoundly structured, and precise — like reading a well-composed system design doc in a dark IDE.
+资深后端工程师的个人品牌站：在纯虚空黑画布上，把架构拓扑图、数据流和性能指标作为第一视觉资产。整体气质是"暗色 IDE 里读一份排版精良的系统设计文档"——冷静、结构化、精确。
 
-- **Primary canvas:** Void Black `#000000` — absolute dark, no warm tint.
-- **Hero visual:** Large typography for the name, supported by key metrics glowing in Pearl Gold.
-- **Secondary visual:** Architecture diagrams (SVG) rendered with clean lines, blue nodes, and gold highlights for critical paths.
-- **Interactive elements:** Pill-shaped buttons only. Frosted glass surfaces on cards.
-- **Accents:** Two colors only — Framer Blue for standard links/interactions, Pearl Gold for personal branding and key metrics.
+站点由三层视觉体系共用一套 token 基座：
 
----
+1. **shadcn 基座层**（`styles/globals.css`）：全局组件与交互色，暗色单主题
+2. **SYNAPSE / OBSERVATORY 层**（`styles/v2.css`、`styles/v3.css`）：WebGPU 神经组织与 HUD 沉浸层
+3. **v5 编辑层**（`styles/v5.css`）：ink/bone 报刊风内容排版
 
-## 2. Color Palette
+三层的色值与字体全部从本文件 token 推导，禁止在 JSX 中硬编码。
 
-### Base
-- Background: `#000000`
-- Text Primary: `#ffffff`
-- Text Secondary: `#a6a6a6`
-- Text Tertiary: `rgba(255,255,255,0.55)`
+## Colors
 
-### Accents
-- **Framer Blue:** `#0099ff` — links, focus rings, standard interactive borders.
-- **Pearl Gold:** `#d4a853` — personal monogram, key metrics (99.9%, 50%, 10+, 87%), section dividers, primary CTA outline.
+金色纪律是整个配色体系的核心约束：**金色（`primary` / `gold-light` / `gold-deep`）只出现在个人 monogram、关键指标数字、分节线和高强调 CTA 上，覆盖面不超过页面的 10%**。
 
-### Surfaces & Depth
-- Frosted Card: `rgba(255,255,255,0.08)` background, `rgba(0,153,255,0.15)` ring border.
-- Elevated Card: same + `rgba(255,255,255,0.1) 0px 0.5px 0px 0.5px` top highlight + `rgba(0,0,0,0.25) 0px 10px 30px` shadow.
-- Metric Highlight Card: `rgba(212,168,83,0.2)` ring border.
+- **background (#000000)**：绝对黑，无暖调。任何场景不得替换为暖灰或深蓝灰。
+- **foreground (#FCFCFC)**：主文字，比纯白柔和一档。
+- **primary (#D4AF37)**：金属金（代码 `--primary` / `--syn-gold` 同值），品牌与关键指标专用。
+- **blue (#0099FF)**：标准交互色——链接、focus ring（`ring`）、常规边框（`border`）。
+- **card (#050507) / muted-foreground (#A1A1AA)**：卡片面与次级文字。
+- **ink / panel / bone / dim / faint**：v5 编辑层五阶——ink 为内容页底色，bone 为正文，dim/faint 为两级弱化文字（faint 仅装饰性文本，不承载关键信息）。
+- **indigo (#4353FF) / indigo-hi (#8B96FF)**：v5 层的电光靛蓝，用于该层内的交互与强调。
+- **syn-bg / syn-fg / syn-cyan**：SYNAPSE 层的深空底、冷白前景与生物荧光青。
 
-### Glows
-- Blue Glow: `rgba(0,153,255,0.12)` — subtle behind diagrams.
-- Gold Glow: `rgba(212,168,83,0.12)` — behind hero metrics.
+## Typography
 
----
+字体栈实际加载为 Clash Display / Inter / Noto Sans SC / JetBrains Mono（Cabinet Grotesk 为 display 回退）。旧文档中的 GT Walsheim 已弃用，display 职责由 Clash Display 承担，全部仅用 weight 500。
 
-## 3. Typography
+- **Clash Display**：`hero-name`（110px）、`section-title`（72px）、`project-name`（42px）三级大标题，负字距（-0.055em 起）制造收紧的标题块
+- **Inter**：正文双轨（`body-lg` 18px / `body` 15px）、`card-title`、`metric-number`（56px/700，金色）
+- **JetBrains Mono**：`code`、`eyebrow`（11px 大写、0.24em 字距，SYNAPSE 眉标横线样式）
+- **Noto Sans SC**：中文正文（`cn-body`），与 Inter 混排时作为 fallback 链成员
 
-| Element | Font | Size / Weight / Line / LS |
-|---------|------|---------------------------|
-| Hero Name | GT Walsheim Medium | 110px / 500 / 0.85 / -5.5px |
-| Section Title | GT Walsheim Medium | 72px / 500 / 0.9 / -3.6px |
-| Project Name | GT Walsheim Medium | 42px / 500 / 0.95 / -2px |
-| Metric Number | Inter | 56px / 700 / 1.0 / -1.5px (Gold) |
-| Card Title | Inter | 22px / 700 / 1.2 / -0.5px |
-| Body Large | Inter | 18px / 400 / 1.5 / normal |
-| Body | Inter | 15px / 400 / 1.5 / normal |
-| Code / Tags | JetBrains Mono | 12px / 400 / 1.4 / normal |
-| Micro | Inter | 11px / 500 / 1.2 / 0.5px uppercase |
+Metric 数字固定 700 weight + 金色；标题禁止加粗到 600 以上。
 
-- GT Walsheim is used at weight 500 only.
-- Inter uses OpenType features: `cv01`, `cv05`, `cv09`, `cv11`, `ss03`, `ss07`.
-- Gold color appears only on metric numbers and the personal monogram.
+## Layout
 
----
+- 内容最大宽度 1200px 居中；间距基单位 8px
+- 分节纵向留白：桌面 120px / 平板 80px / 移动 60px
+- Hero 占满首屏：居中名字 + 下方 4 列金色指标网格（移动端 2 列）
+- Projects 为左右交替双栏（文 45% / 图 55%），移动端堆叠
+- 响应式断点：<809px 单列 + 汉堡导航；809–1199px 双栏收紧；>1199px 完整桌面
 
-## 4. Component Library
+## Elevation & Depth
 
-### Buttons
-- **Solid White Pill:** `#fff` bg, `#000` text, `100px` radius, `14px 28px` padding. Primary CTA.
-- **Frosted Pill:** `rgba(255,255,255,0.08)` bg, white text, `40px` radius, `10px 20px`. Secondary actions.
-- **Gold Outline Pill:** `1px solid #d4a853`, transparent bg, gold text, `40px` radius. High-emphasis contact.
-- Hover: `transform: scale(1.02)` transition 0.2s.
+深度只来自四种手段，按层归属使用：
 
-### Cards (Project / Capability)
-- `.card`: black bg, blue ring `0px 0px 0px 1px rgba(0,153,255,0.15)`, radius `12px`, padding `32px`.
-- `.card--elevated`: adds top white edge and deep shadow.
-- `.card--metric`: gold ring instead of blue for highlighted stats.
+- **毛玻璃卡**：`rgba(255,255,255,0.08)` 底 + 蓝色 ring 边框 + `backdrop-filter: blur`
+- **抬升卡**：在毛玻璃卡上叠加顶部 0.5px 白色高光边 + `0px 10px 30px rgba(0,0,0,0.25)` 投影
+- **SYNAPSE 面板**：`rgba(4,6,18,0.62)` 底 + `blur(18px) saturate(1.3)` + 24px/80px 深投影
+- **辉光**：蓝 `rgba(0,153,255,0.12)` / 金 `rgba(212,175,55,0.12)`，只垫在图表和指标之后
 
-### Navigation
-- Fixed top, black bg with `backdrop-filter: blur(12px)`, height `64px`.
-- Links: Inter 15px white, active state gold underline.
-- CTA: Gold outline pill `Contact` at right.
-- Mobile: hamburger icon, same dark panel.
+> 半透明 token 的对比度说明：毛玻璃类背景（`rgba(255,255,255,0.08)` 等）按 lint 白底合成会报 1.03:1，实际叠合在 `background` (#000000) 上有效对比度约 17:1，符合 WCAG AA；此类 warning 为半透明值的合成误报。
+>
+> `border` / `ring` / `gold-deep` / `ink` / `indigo` / `syn-gold` 为行级 token（线条、描边、页面底色、v5 强调），不进入组件表，由 CSS 变量直接消费，orphaned 警告按此接受。
 
-### Architecture Diagrams (SVG)
-- Nodes: rounded rectangle with frosted fill, blue border, white label text (Inter 11px).
-- Arrows: `#0099ff` at 60% opacity.
-- Gold nodes for critical services or data paths.
-- Responsive scaling within `.diagram` container.
+## Shapes
 
-### Tags / Tech Stack
-- Pill shape, `rgba(255,255,255,0.05)` bg, `1px solid rgba(0,153,255,0.2)`, `20px` radius, JetBrains Mono 11px text.
+- 按钮只有 pill 形：实心白 pill（主 CTA）、毛玻璃 pill（次级）、金色描边 pill（高强调），禁止直角/圆角矩形按钮
+- 卡片 12px、代码块 8px、tech 标签 20px、SYNAPSE 面板 20px
+- 架构图节点为圆角矩形毛玻璃填充 + 蓝边框，关键路径节点用金色
 
----
+## Components
 
-## 5. Layout & Spacing
+- **button-solid-pill**：白色实心 pill，唯一主 CTA，hover `scale(1.02)` / 0.2s
+- **button-frosted-pill / button-gold-outline**：次级与高强调动作；Contact 固定用 gold-outline
+- **card-project / card-metric**：黑底蓝 ring；metric 变体的数字用金色
+- **tag-tech**：JetBrains Mono 11px 的技术栈胶囊
+- **syn-panel**：SYNAPSE 层浮层面板，`data-side` 控制左/右/中/底四种停靠
 
-- Max width: `1200px`, centered.
-- Base unit: 8px. Section padding: `120px 0` desktop, `80px` tablet, `60px` mobile.
-- Hero: full viewport height, centered text block + metrics grid below.
-- Projects: alternating two-column (text 45% / diagram 55%) stacked on mobile.
-- Metrics: 4-column grid desktop, 2-column mobile.
-- Border Radius Scale: Code blocks `8px`, Cards `12px`, Buttons `40px–100px`.
+## Do's and Don'ts
 
----
+**Do**
 
-## 6. Page Structure & Content Map
+- 背景永远 `#000000`；所有颜色经 CSS 变量引用本文件 token
+- 图标只用 lucide-react，图内文字用真实 SVG text 元素
+- 金色克制纪律：指标、分节线、monogram、高强调 CTA 之外不用金
+- 动效尊重 `prefers-reduced-motion`；Remotion 内禁 CSS 动画，全部时间线驱动
 
-1. **Hero** — name, subtitle, 4 gold metrics, CTA `View Architecture`
-2. **About** — narrative text + quote, frosted card
-3. **Projects** — 4 project sections, each as elevated card with diagram
-4. **Architecture Capabilities** — 3-column grid + metric highlights
-5. **Career Timeline** — vertical frosted nodes, gold accent on current role
-6. **Essence** — short philosophy text, no cards
-7. **Showreel** — 6 Remotion video cards in 3-column grid (desktop)
-8. **Open Source & Education** — 2-column
-9. **Contact** — centered, gold outline CTA
-10. **Footer** — minimal silver text
+**Don't**
 
----
-
-## 7. Interaction & Motion
-
-- Section transitions: subtle fade-up on scroll (Intersection Observer).
-- Buttons: scale hover.
-- Navigation: background blur increases on scroll.
-- Metric numbers: count-up animation on enter viewport.
-
----
-
-## 8. Do's and Don'ts
-
-**Do:**
-- Pure black `#000000` background always.
-- Pill-shaped buttons everywhere.
-- Gold only on metrics, dividers, and personal monogram.
-- Architecture diagrams as primary visual assets.
-
-**Don't:**
-- Use warm dark grays.
-- Use gold on more than 10% of elements.
-- Use serif fonts.
-- Add decorative illustrations — diagrams and code are the decoration.
-
----
-
-## 9. Responsive Breakpoints
-
-| Breakpoint | Layout |
-|------------|--------|
-| < 809px | Single column, hero name 48px, stacked diagrams, hamburger nav |
-| 809–1199px | Two-column projects, reduced header sizes |
-| > 1199px | Full desktop layout |
-
----
-
-## 10. Implementation Notes for Agent
-
-- Use semantic HTML, CSS custom properties for all colors.
-- All icons/text in diagrams should be actual SVG text elements for accessibility.
-- Remotion videos: embedded as muted, looping background videos in their cards (or linked).
-- Count-up animation: use `requestAnimationFrame` with easing.
-- Performance: lazy load diagrams and videos. Serve fonts locally.
+- 禁止暖深灰背景、衬线字体、装饰性插画——架构图和代码就是装饰
+- 禁止在 JSX 硬编码 hex；禁止动态类名拼接
+- 金色覆盖不超过 10% 的元素；faint (#5A5F67) 不用于承载关键信息的文字
